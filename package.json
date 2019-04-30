@@ -1,7 +1,7 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.0.1",
-  "description": "Create easily an excel from a json",
+  "version": "1.0.2",
+  "description": "Easy create excel from json",
   "license": "MIT",
   "main": "index.js",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",

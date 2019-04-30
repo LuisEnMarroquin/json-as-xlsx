@@ -7,7 +7,7 @@ json-as-xlsx is a tool that helps to build an excel from a json. It depends only
 Just import and use it
 
 ```js
-var xlsx = require('./json-as-xlsx')
+var xlsx = require('json-as-xlsx')
 
 var columns = [
     { label: 'Email', value: 'email' }, // Top level data

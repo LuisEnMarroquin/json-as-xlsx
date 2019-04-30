@@ -1,13 +1,13 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create easily an excel from a json",
   "license": "MIT",
   "main": "index.js",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LuisEnMarroquin"
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx"
   },
   "keywords": [
     "xlsx",

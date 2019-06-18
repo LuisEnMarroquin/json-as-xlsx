@@ -1,7 +1,4 @@
-// const { utils, writeFile } = require('xlsx')
-
-import utils from 'xlsx/utils'
-import writeFile from 'xlsx/writeFile'
+const { utils, writeFile } = require('xlsx')
 
 module.exports = (columns, content, settings = {}) => {
   // Where new data will be stored

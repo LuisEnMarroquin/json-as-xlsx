@@ -1,4 +1,7 @@
+# Folders
 node_modules
-.DS_Store
+
+# File managers
 desktop.ini
 .directory
+.DS_Store

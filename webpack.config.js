@@ -2,22 +2,22 @@ const path = require('path')
 
 module.exports = {
   mode: 'production',
-  entry: './develop.js',
+  entry: './src/index.js',
   output: {
-    path: path.resolve(''),
+    path: path.resolve('dist'),
     filename: 'index.js',
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs2'
   },
   module: {
     rules: [
       {
         test: /\.js?$/,
         exclude: /(node_modules)/,
-        use: 'babel-loader',
-      },
-    ],
+        use: 'babel-loader'
+      }
+    ]
   },
   resolve: {
-    extensions: ['.js'],
-  },
+    extensions: ['.js']
+  }
 }

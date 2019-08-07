@@ -19,7 +19,7 @@
     "table"
   ],
   "dependencies": {
-    "xlsx": "^0.14.2"
+    "xlsx": "^0.15.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",

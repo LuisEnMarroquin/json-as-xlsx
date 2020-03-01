@@ -45,13 +45,17 @@ module.exports = (columns, content, settings = {}) => {
     // Default width is the header width + 1
     let size = { width: newSheet[xx].v.length + 1 }
     // Setting each col width based on max width element
-    excelContent.forEach(yy => {
-      try {
-        if (yy[xx].length > size.width) {
-          size.width = yy[xx].length + 1
+    for(let key_index in newSheet){
+      if(newSheet.hasOwnProperty(key_index) && key_index.startsWith(xx.slice(0,-1)) && key_index.length == xx.length){
+        let considered_element = newSheet[key_index].v;
+        if(typeof considered_element == 'number'){
+          considered_element = '' + considered_element
         }
-      } catch (e) { /* console.log(e) */ }
-    })
+        if((typeof considered_element != 'undefined') && considered_element.length >= size.width){
+          size.width = considered_element.length + 1
+        }
+      }
+    }
     newSheet['!cols'].push(size)
     whileLoop++
   }

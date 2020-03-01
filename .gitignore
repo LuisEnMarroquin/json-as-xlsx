@@ -6,3 +6,4 @@ dist
 desktop.ini
 .directory
 .DS_Store
+package-lock.json

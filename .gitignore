@@ -1,9 +1,11 @@
 # Folders
-node_modules
-dist
+node_modules/
 
 # File managers
-desktop.ini
-.directory
 .DS_Store
+.directory
+desktop.ini
+
+# Other lockfiles
 package-lock.json
+npm-shrinkwrap.json

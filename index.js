@@ -3,9 +3,8 @@ const { utils, writeFile } = require('xlsx')
 module.exports = (columns, content, settings = {}) => {
   // Where new data will be stored
   let excelContent = []
-  // // Indexes object, add more to it if you have a lot of cols
-  // let indexes = [ 'A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1', 'J1', 'K1', 'L1', 'M1', 'N1', 'O1', 'P1', 'Q1', 'R1', 'S1', 'T1', 'V1', 'W1', 'X1', 'Y1', 'Z1', 'AA1' ]
-  let indexes = [];
+  // Indexes object
+  let indexes = []
   // How many cols will be in excel
   let howMuchColumns = 0
   // creating new excel data array
@@ -23,13 +22,13 @@ module.exports = (columns, content, settings = {}) => {
     excelContent.push(obj)
   })
   // export json to Worksheet of Excel // only array possible
-  let newSheet = utils.json_to_sheet(excelContent);
-  //variable filling based on the columns present into the workbook
+  let newSheet = utils.json_to_sheet(excelContent)
+  // variable filling based on the columns present into the workbook
   {
-    let rangeOfColumns = utils.decode_range(newSheet['!ref']);
-    for(let C = rangeOfColumns.s.c; C <= rangeOfColumns.e.c; C++) {
-      let address = utils.encode_col(C) + "1"; // <-- first row, column character C
-      indexes.push(address);
+    let rangeOfColumns = utils.decode_range(newSheet['!ref'])
+    for (let C = rangeOfColumns.s.c; C <= rangeOfColumns.e.c; C++) {
+      let address = utils.encode_col(C) + '1' // <-- first row, column character C
+      indexes.push(address)
     }
   }
   // Cols width array
@@ -38,21 +37,21 @@ module.exports = (columns, content, settings = {}) => {
   let whileLoop = 0
   while (whileLoop < howMuchColumns) {
     // setting let xx
-    let xx = indexes[whileLoop];
-    //No need to set headers, already present
+    let xx = indexes[whileLoop]
+    // No need to set headers, already present
     // // setting headers
     // newSheet[xx].v = columns[whileLoop].label
     // Default width is the header width + 1
     let size = { width: newSheet[xx].v.length + 1 }
     // Setting each col width based on max width element
-    for(let key_index in newSheet){
-      if(newSheet.hasOwnProperty(key_index) && key_index.startsWith(xx.slice(0,-1)) && key_index.length == xx.length){
-        let considered_element = newSheet[key_index].v;
-        if(typeof considered_element == 'number'){
-          considered_element = '' + considered_element
+    for (let keyIndex in newSheet) {
+      if (newSheet.hasOwnProperty(keyIndex) && keyIndex.startsWith(xx.slice(0, -1)) && keyIndex.length == xx.length) {
+        let consideredElement = newSheet[keyIndex].v
+        if (typeof consideredElement === 'number') {
+          consideredElement = '' + consideredElement
         }
-        if((typeof considered_element != 'undefined') && considered_element.length >= size.width){
-          size.width = considered_element.length + 1
+        if ((typeof consideredElement !== 'undefined') && consideredElement.length >= size.width) {
+          size.width = consideredElement.length + 1
         }
       }
     }

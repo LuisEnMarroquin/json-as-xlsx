@@ -1,0 +1,18 @@
+{
+  "editor.tabSize": 2,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+  "editor.detectIndentation": false,
+  "files.trimTrailingWhitespace": true,
+  "search.exclude": {
+    "**/yarn.lock": true,
+    "**/package-lock.json": true,
+    "**/npm-shrinkwrap.json": true
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.directory": true,
+    "**/desktop.ini": true,
+    "**/node_modules/": true,
+  }
+}

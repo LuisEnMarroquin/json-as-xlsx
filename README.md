@@ -16,17 +16,20 @@ var columns = [
 ]
 
 var content = [
-  { email: 'Luis', age: 19, hidden: { password: '12345678' } },
-  { email: 'Ana', age: 16, hidden: { password: '11111111' } }
+  { email: 'Ana', age: 16, hidden: { password: '11111111' } },
+  { email: 'Luis', age: 19, hidden: { password: '12345678' } }
 ]
 
 var settings = {
   sheetName: 'First sheet',
-  fileName: 'Users'
+  fileName: 'Users',
+  extraLength: 3
 }
 
-xlsx(columns, content, settings)
+xlsx(columns, content, settings) // Will download the excel file
 ```
+
+You can also see it being used with Vue 3 [here](blob/master/src/App.vue)
 
 ## Publish package
 
@@ -36,10 +39,29 @@ Will publish the following files:
 * README.md
 * package.json
 
+Login to npm registry
 ```shell
-# Login to npm
 npm login
+```
 
-# Publish package
+Publish package
+```shell
 npm publish
+```
+
+## Testing
+
+Install dependencies
+```shell
+yarn install
+```
+
+Compile and hot-reload for development
+```shell
+yarn start
+```
+
+Compile and minify for production
+```shell
+yarn build
 ```

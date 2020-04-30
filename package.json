@@ -1,8 +1,11 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "license": "MIT",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "description": "Create excel from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "repository": {
@@ -10,7 +13,8 @@
     "url": "https://github.com/LuisEnMarroquin/json-as-xlsx"
   },
   "scripts": {
-    "test": "nodemon test/server.js"
+    "start": "vue-cli-service serve",
+    "build": "vue-cli-service build"
   },
   "keywords": [
     "xlsx",
@@ -22,13 +26,18 @@
     "json-to-excel",
     "xlsx-from-json"
   ],
-  "files": [
-    "index.js"
-  ],
   "dependencies": {
     "xlsx": "^0.15.0"
   },
   "devDependencies": {
-    "axios": "^0.19.2"
-  }
+    "@vue/cli-service": "^4.3.0",
+    "json-as-xlsx": "^1.0.5",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

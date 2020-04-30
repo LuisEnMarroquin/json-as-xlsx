@@ -10,6 +10,8 @@
     "**/npm-shrinkwrap.json": true
   },
   "files.exclude": {
+    "dist/": true,
+    ".github/": false,
     "**/.DS_Store": true,
     "**/.directory": true,
     "**/desktop.ini": true,

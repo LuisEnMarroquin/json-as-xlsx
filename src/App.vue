@@ -6,8 +6,8 @@
 </template>
 
 <script>
-// const xlsx = require('json-as-xlsx')
-const xlsx = require('../index.js')
+const xlsx = require('json-as-xlsx')
+// const xlsx = require('../index.js')
 export default {
   name: 'App',
   methods: {

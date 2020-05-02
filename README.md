@@ -2,6 +2,8 @@
 
 This is a tool that helps to build an excel from a json and it depends only on `xlsx`
 
+You can see a live example of how it works on this site: [xlsx.marroquin.dev](https://xlsx.marroquin.dev)
+
 ## Usage
 
 Just import and use it

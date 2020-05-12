@@ -2,6 +2,9 @@
   <div id="app">
     <h1>Testing json-as-xlsx</h1>
     <button @click="downloadFile">Download</button>
+    <h2>
+      <a href="https://github.com/LuisEnMarroquin/json-as-xlsx">GitHub</a>
+    </h2>
   </div>
 </template>
 

@@ -31,7 +31,7 @@ var settings = {
 xlsx(columns, content, settings) // Will download the excel file
 ```
 
-You can also see it being used with Vue 3 [here](src/App.vue)
+You can also see it being used with Vue 3 [here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
 
 ## Publish package
 

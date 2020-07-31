@@ -39,8 +39,8 @@ This are my files used for development, remember to change:
 
 `require('./index.js')` and `require('../index.js')` to `require('json-as-xlsx')`
 
-* Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
-* Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/server.js)
+* Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/src/App.vue)
+* Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/server.js)
 
 <!--
 
@@ -57,7 +57,7 @@ gac New commit # Git add and commit + message
 npm login # Login to npm registry
 yarn compile # TypeScript compile and uglify code
 npm publish # Publish package to NPM
-git tag -a -m "Published v1.1.4" v1.1.4 # Tag your release
+git tag -a -m "Published v1.1.5" v1.1.5 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

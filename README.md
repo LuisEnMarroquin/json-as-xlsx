@@ -23,9 +23,9 @@ var content = [
 ]
 
 var settings = {
-  sheetName: 'First sheet',
-  fileName: 'Users',
-  extraLength: 3 // Expands the sizes of the columns
+  sheetName: 'First sheet', // The name of the sheet
+  fileName: 'Users', // The name of the spreadsheet
+  extraLength: 3 // A bigger number means that columns should be wider
 }
 
 var download = true // If true will download the xlsx file, otherwise will return a buffer
@@ -34,6 +34,10 @@ xlsx(columns, content, settings, download) // Will download the excel file
 ```
 
 ## Examples
+
+This are my files used for development, remember to change:
+
+`const xlsx = require('../index.js')` => `const xlsx = require('json-as-xlsx')`
 
 * Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
 * Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/server.js)

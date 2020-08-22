@@ -25,13 +25,20 @@ var content = [
 var settings = {
   sheetName: 'First sheet',
   fileName: 'Users',
-  extraLength: 3
+  extraLength: 3 // Expands the sizes of the columns
 }
 
-xlsx(columns, content, settings) // Will download the excel file
+var download = true // If true will download the xlsx file, otherwise will return a buffer
+
+xlsx(columns, content, settings, download) // Will download the excel file
 ```
 
-You can also see it being used with Vue 3 [here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
+## Examples
+
+* Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
+* Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/server.js)
+
+<!--
 
 ## Testing Vue
 
@@ -50,9 +57,7 @@ Compile and minify for production
 yarn build
 ```
 
-<!--
-
-## Publish package
+## Publish to NPM
 
 Will publish the following files:
 * LICENSE
@@ -60,14 +65,18 @@ Will publish the following files:
 * README.md
 * package.json
 
-Login to npm registry
 ```shell
-npm login
+npm login # Login to npm registry
+npm publish # Publish package
 ```
 
-Publish package
+## Create and publish Tag
+
+Remember to change the version number first for all files
+
 ```shell
-npm publish
+git tag -a -m "Published v1.1.0" v1.1.0 # Tag your release
+git push --follow-tags # Push commit and tags
 ```
 
 -->

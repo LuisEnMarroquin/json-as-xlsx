@@ -1,6 +1,6 @@
-const { utils, writeFile } = require('xlsx')
+const { utils, write, writeFile } = require('xlsx')
 
-module.exports = (columns, content, settings = {}) => {
+module.exports = (columns, content, settings = {}, download = true) => {
   let extraLength = settings.extraLength || 1
   let excelColumns = 0
   let excelContent = []
@@ -40,5 +40,5 @@ module.exports = (columns, content, settings = {}) => {
   console.log(excelContent, excelIndexes)
   let wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   utils.book_append_sheet(wb, newSheet, `${settings.sheetName || 'Sheet 1'}`) // add Worksheet to Workbook // Workbook contains one or more worksheets
-  writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`) // Download Excel file // Giving this file a name
+  return (download ? writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`) : write(wb, { type: 'buffer', bookType: 'xlsx' }))
 }

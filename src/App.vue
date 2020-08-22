@@ -9,8 +9,7 @@
 </template>
 
 <script>
-const xlsx = require('json-as-xlsx')
-// const xlsx = require('../index.js')
+const xlsx = require('../index.js')
 export default {
   name: 'App',
   methods: {
@@ -18,19 +17,16 @@ export default {
       var columns = [
         { label: 'Email', value: 'email' },
         { label: 'Age', value: row => (row.age + ' years') },
-        { label: 'Password', value: row => (row.hidden ? row.hidden.password : '') },
+        { label: 'Password', value: row => (row.hidden ? row.hidden.password : '') }
       ]
-
       var content = [
         { email: 'Ana', age: 16, hidden: { password: '11111111' } },
         { email: 'Luis', age: 19, hidden: { password: '12345678' } }
       ]
-
       var settings = {
         sheetName: 'First sheet',
         fileName: 'Users'
       }
-
       xlsx(columns, content, settings)
     }
   }

@@ -2,7 +2,7 @@
 
 This is a tool that helps to build an excel from a json and it depends only on `xlsx`
 
-You can see a live example of how it works on this site: [xlsx.marroquin.dev](https://xlsx.marroquin.dev)
+You can see a live example of how it works on this site: [luisenmarroquin.github.io/json-as-xlsx](https://luisenmarroquin.github.io/json-as-xlsx)
 
 ## Usage
 
@@ -33,6 +33,25 @@ xlsx(columns, content, settings) // Will download the excel file
 
 You can also see it being used with Vue 3 [here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
 
+## Testing Vue
+
+Install dependencies
+```shell
+yarn install
+```
+
+Compile and hot-reload for development
+```shell
+yarn start
+```
+
+Compile and minify for production
+```shell
+yarn build
+```
+
+<!--
+
 ## Publish package
 
 Will publish the following files:
@@ -51,19 +70,4 @@ Publish package
 npm publish
 ```
 
-## Testing
-
-Install dependencies
-```shell
-yarn install
-```
-
-Compile and hot-reload for development
-```shell
-yarn start
-```
-
-Compile and minify for production
-```shell
-yarn build
-```
+-->

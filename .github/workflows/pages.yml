@@ -1,4 +1,4 @@
-name: Deploy Vue
+name: Deployment
 
 on:
   push:
@@ -9,15 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: yarn install --ignore-optional --pure-lockfile --non-interactive
-    - name: Build site
-      run: yarn build
-    - name: Deploy with github-pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+    - uses: actions/checkout@v2
+    - run: yarn install --ignore-optional --pure-lockfile --non-interactive
+    - run: yarn build
+    - uses: LuisEnMarroquin/gh-pages-publish@v2.3.2
       with:
-        ACCESS_TOKEN: ${{ secrets.PUBLIC_REPO }}
-        BASE_BRANCH: master
-        BRANCH: gh-pages
         FOLDER: dist
+        SSHKEY: ${{ secrets.SSH }}

@@ -21,7 +21,8 @@ export default {
       ]
       var content = [
         { email: 'Ana', age: 16, hidden: { password: '11111111' } },
-        { email: 'Luis', age: 19, hidden: { password: '12345678' } }
+        { email: 'Luis', age: 19, hidden: { password: '12345678' } },
+        { email: null, age: 21, hidden: { password: '87654321' } }
       ]
       var settings = {
         sheetName: 'First sheet',

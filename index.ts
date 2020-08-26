@@ -1,10 +1,16 @@
 const { utils, write, writeFile } = require('xlsx')
 
-module.exports = (columns, content, settings = {}, download = true) => {
+interface ISettings {
+  extraLength?: number;
+  sheetName?: string;
+  fileName?: string;
+}
+
+module.exports = (columns, content, settings:ISettings = {}, download:boolean = true) => {
   let extraLength = settings.extraLength || 1
-  let excelColumns = 0
-  let excelContent = []
-  let excelIndexes = []
+  let excelColumns:number = 0
+  let excelContent:Array<any> = []
+  let excelIndexes:Array<string> = []
   content.forEach(el1 => { // creating new excel data array
     let obj = {}
     columns.forEach((el2, in2) => {

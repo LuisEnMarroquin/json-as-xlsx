@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "main": "index.js",
   "files": [
@@ -12,15 +12,17 @@
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "serve": "nodemon server.js"
+    "serve": "nodemon server.js",
+    "watch": "tsc --watch index.ts",
+    "compile": "tsc index.ts && uglifyjs index.js --output index.js"
   },
   "keywords": [
-    "xlsx",
     "json",
+    "xlsx",
     "excel",
-    "table",
-    "json-to-xlsx",
     "json-as-xlsx",
+    "json-to-xlsx",
+    "json-as-excel",
     "json-to-excel",
     "xlsx-from-json"
   ],
@@ -30,6 +32,8 @@
   "devDependencies": {
     "@vue/cli-service": "^4.3.0",
     "express": "^4.17.1",
+    "typescript": "^4.0.2",
+    "uglify-js": "^3.10.2",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
   },

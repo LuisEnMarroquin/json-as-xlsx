@@ -37,29 +37,12 @@ xlsx(columns, content, settings, download) // Will download the excel file
 
 This are my files used for development, remember to change:
 
-`const xlsx = require('../index.js')` || `const xlsx = require('../index.js')` => `const xlsx = require('json-as-xlsx')`
+`require('./index.js')` and `require('../index.js')` for `require('json-as-xlsx')`
 
 * Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
 * Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/server.js)
 
 <!--
-
-## Testing Vue
-
-Install dependencies
-```shell
-yarn install
-```
-
-Compile and hot-reload for development
-```shell
-yarn start
-```
-
-Compile and minify for production
-```shell
-yarn build
-```
 
 ## Publish to NPM
 
@@ -71,15 +54,16 @@ Will publish the following files:
 
 ```shell
 npm login # Login to npm registry
-npm publish # Publish package
+yarn compile # TypeScript compile and uglify code
+npm publish # Publish package to NPM
 ```
 
 ## Create and publish Tag
 
-Remember to change the version number first for all files and commit first
+Remember to commit first
 
 ```shell
-git tag -a -m "Published v1.1.1" v1.1.1 # Tag your release
+git tag -a -m "Published v1.1.2" v1.1.2 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

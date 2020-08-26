@@ -11,6 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: yarn install --ignore-optional --pure-lockfile --non-interactive
+    - run: yarn compile
     - run: yarn build
     - uses: LuisEnMarroquin/gh-pages-publish@v2.3.2
       with:

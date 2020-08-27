@@ -11,7 +11,7 @@
   },
   "files.exclude": {
     "dist/": true,
-    ".github/": false,
+    "index.js": true,
     "**/.DS_Store": true,
     "**/.directory": true,
     "**/desktop.ini": true,

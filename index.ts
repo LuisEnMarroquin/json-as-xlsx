@@ -34,7 +34,7 @@ module.exports = (columns, content, settings:ISettings = {}, download:boolean = 
     let xx = excelIndexes[whileLoop]
     let size = { width: newSheet[xx].v.length + extraLength } // Default width is the header width
     for (let keyIndex in newSheet) { // Setting each col width based on max width element
-      if (newSheet.hasOwnProperty(keyIndex) && keyIndex.startsWith(xx.slice(0, -1)) && keyIndex.length === xx.length) {
+      if (newSheet.hasOwnProperty(keyIndex) && (xx.charAt(0) === keyIndex.charAt(0)) && keyIndex.length === xx.length) {
         let consideredElement = newSheet[keyIndex].v
         if (typeof consideredElement === 'number') consideredElement = '' + consideredElement
         if (consideredElement && consideredElement.length >= size.width) size.width = consideredElement.length + extraLength

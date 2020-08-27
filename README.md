@@ -60,10 +60,9 @@ npm publish # Publish package to NPM
 
 ## Create and publish Tag
 
-Remember to commit first
-
 ```shell
-git tag -a -m "Published v1.1.2" v1.1.2 # Tag your release
+gac New commit # Git add and commit + message
+git tag -a -m "Published v1.1.3" v1.1.3 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

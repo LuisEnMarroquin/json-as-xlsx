@@ -3,6 +3,7 @@
     <h1>Testing json-as-xlsx</h1>
     <button @click="downloadFile">Download</button>
     <h2>
+      <span>See this project on: </span>
       <a href="https://github.com/LuisEnMarroquin/json-as-xlsx">GitHub</a>
     </h2>
   </div>
@@ -13,11 +14,11 @@ const xlsx = require('../index.js')
 export default {
   name: 'App',
   methods: {
-    downloadFile: (event) => {
+    downloadFile: function (event) {
       var columns = [
         { label: 'Email', value: 'email' },
-        { label: 'Age', value: row => (row.age + ' years') },
-        { label: 'Password', value: row => (row.hidden ? row.hidden.password : '') }
+        { label: 'Age', value: function x(row) { return (row.age + ' years') } },
+        { label: 'Password', value: function x(row) { return (row.hidden ? row.hidden.password : '') } }
       ]
       var content = [
         { email: 'Ana', age: 16, hidden: { password: '11111111' } },

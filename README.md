@@ -37,7 +37,7 @@ xlsx(columns, content, settings, download) // Will download the excel file
 
 This are my files used for development, remember to change:
 
-`require('./index.js')` and `require('../index.js')` for `require('json-as-xlsx')`
+`require('./index.js')` and `require('../index.js')` to `require('json-as-xlsx')`
 
 * Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/src/App.vue)
 * Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/master/server.js)

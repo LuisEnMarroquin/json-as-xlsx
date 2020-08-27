@@ -3,8 +3,8 @@
     <h1>Testing json-as-xlsx</h1>
     <button @click="downloadFile">Download</button>
     <h2>
-      <span>See this project on: </span>
-      <a href="https://github.com/LuisEnMarroquin/json-as-xlsx">GitHub</a>
+      <span>Visit this project on: </span>
+      <a href="https://github.com/LuisEnMarroquin/json-as-xlsx" target="_blank">GitHub</a>
     </h2>
   </div>
 </template>

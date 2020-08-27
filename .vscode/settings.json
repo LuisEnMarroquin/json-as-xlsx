@@ -5,9 +5,7 @@
   "editor.detectIndentation": false,
   "files.trimTrailingWhitespace": true,
   "search.exclude": {
-    "**/yarn.lock": true,
-    "**/package-lock.json": true,
-    "**/npm-shrinkwrap.json": true
+    "**/yarn.lock": true
   },
   "files.exclude": {
     "dist/": true,

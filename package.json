@@ -20,6 +20,8 @@
     "json",
     "xlsx",
     "excel",
+    "create-xlsx",
+    "create-excel",
     "json-as-xlsx",
     "json-to-xlsx",
     "json-as-excel",

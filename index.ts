@@ -43,7 +43,6 @@ module.exports = (columns, content, settings:ISettings = {}, download:boolean = 
     newSheet['!cols'].push(size)
     whileLoop++
   }
-  console.log(excelContent, excelIndexes)
   let wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   utils.book_append_sheet(wb, newSheet, `${settings.sheetName || 'Sheet 1'}`) // add Worksheet to Workbook // Workbook contains one or more worksheets
   return (download ? writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`) : write(wb, { type: 'buffer', bookType: 'xlsx' }))

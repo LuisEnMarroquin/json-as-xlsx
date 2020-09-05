@@ -44,7 +44,7 @@ This are my files used for development, remember to change:
 
 <!--
 
-## Publish to NPM
+## Publish to NPM and create tag
 
 Will publish the following files:
 * LICENSE
@@ -53,16 +53,11 @@ Will publish the following files:
 * package.json
 
 ```shell
+gac New commit # Git add and commit + message
 npm login # Login to npm registry
 yarn compile # TypeScript compile and uglify code
 npm publish # Publish package to NPM
-```
-
-## Create and publish Tag
-
-```shell
-gac New commit # Git add and commit + message
-git tag -a -m "Published v1.1.3" v1.1.3 # Tag your release
+git tag -a -m "Published v1.1.4" v1.1.4 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

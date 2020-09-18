@@ -18,7 +18,6 @@ app.get('/', (req, res) => {
     fileName: 'Users'
   }
   var buffer = xlsx(columns, content, settings, false)
-
   res.writeHead(200, {
     'Content-Type': 'application/octet-stream',
     'Content-disposition': `attachment; filename=${settings.fileName}.xlsx`

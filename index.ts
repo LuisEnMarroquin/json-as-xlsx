@@ -29,7 +29,7 @@ module.exports = (columns, content, settings:ISettings = {}, download:boolean = 
     }
   }
   newSheet['!cols'] = [] // Cols width array
-  let whileLoop = 0 // Setting cols width
+  let whileLoop:number = 0 // Setting cols width
   while (whileLoop < excelColumns) {
     let xx = excelIndexes[whileLoop]
     let size = { width: newSheet[xx].v.length + extraLength } // Default width is the header width

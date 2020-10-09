@@ -46,18 +46,14 @@ This are my files used for development, remember to change:
 
 ## Publish to NPM and create tag
 
-Will publish the following files:
-* LICENSE
-* index.js
-* README.md
-* package.json
+Remember to change version number first
 
 ```shell
 gac New commit # Git add and commit + message
 npm login # Login to npm registry
 yarn compile # TypeScript compile and uglify code
 npm publish # Publish package to NPM
-git tag -a -m "Published v1.1.5" v1.1.5 # Tag your release
+git tag -a -m "Published v1.1.6" v1.1.6 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

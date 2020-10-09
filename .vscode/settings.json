@@ -8,8 +8,6 @@
     "**/yarn.lock": true
   },
   "files.exclude": {
-    "dist/": true,
-    "index.js": true,
     "**/.DS_Store": true,
     "**/.directory": true,
     "**/desktop.ini": true,

@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 app.get('/local', (req, res) => {
   var buffer = xlsx(columns, content, settings, false)
   const homedir = require('os').homedir()
-  writeFileSync(`${homedir}/Postman/mySheet.xlsx`, buffer)
+  writeFileSync(`${homedir}/mySheet.xlsx`, buffer)
   res.status(200).send('xd')
 })
 

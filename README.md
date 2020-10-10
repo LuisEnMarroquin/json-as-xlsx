@@ -25,7 +25,8 @@ var content = [
 var settings = {
   sheetName: 'First sheet', // The name of the sheet
   fileName: 'Users', // The name of the spreadsheet
-  extraLength: 3 // A bigger number means that columns should be wider
+  extraLength: 3, // A bigger number means that columns should be wider
+  writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
 }
 
 var download = true // If true will download the xlsx file, otherwise will return a buffer
@@ -53,7 +54,7 @@ gac New commit # Git add and commit + message
 npm login # Login to npm registry
 yarn compile # TypeScript compile and uglify code
 npm publish # Publish package to NPM
-git tag -a -m "Published v1.1.6" v1.1.6 # Tag your release
+git tag -a -m "Published v1.1.7" v1.1.7 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

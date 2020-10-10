@@ -4,10 +4,12 @@ interface ISettings {
   extraLength?: number;
   sheetName?: string;
   fileName?: string;
+  writeOptions?: any;
 }
 
 module.exports = (columns, content, settings:ISettings = {}, download:boolean = true) => {
   let extraLength = settings.extraLength || 1
+  let writeOptions = settings.writeOptions || {}
   let excelColumns:number = 0
   let excelContent:Array<any> = []
   let excelIndexes:Array<string> = []
@@ -45,5 +47,5 @@ module.exports = (columns, content, settings:ISettings = {}, download:boolean = 
   }
   let wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   utils.book_append_sheet(wb, newSheet, `${settings.sheetName || 'Sheet 1'}`) // add Worksheet to Workbook // Workbook contains one or more worksheets
-  return (download ? writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`) : write(wb, { type: 'buffer', bookType: 'xlsx' }))
+  return (download ? writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`, writeOptions) : write(wb, { type: 'buffer', bookType: 'xlsx', ...writeOptions }))
 }

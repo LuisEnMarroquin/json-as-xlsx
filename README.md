@@ -54,7 +54,7 @@ gac New commit # Git add and commit + message
 npm login # Login to npm registry
 yarn compile # TypeScript compile and uglify code
 npm publish # Publish package to NPM
-git tag -a -m "Published v1.1.7" v1.1.7 # Tag your release
+git tag -a -m "Published v1.1.8" v1.1.8 # Tag your release
 git push --follow-tags # Push commit and tags
 ```
 

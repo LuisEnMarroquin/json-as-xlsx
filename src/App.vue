@@ -16,18 +16,18 @@ export default {
   methods: {
     downloadFile: function (event) {
       var columns = [
-        { label: 'Email', value: 'email' },
+        { label: 'User', value: 'user' },
         { label: 'Age', value: function x(row) { return (row.age + ' years') } },
         { label: 'Phone', value: function x(row) { return (row.more ? row.more.phone || '' : '') } }
       ]
       var content = [
-        { email: 'Ana', age: 16, more: { phone: '11111111' } },
-        { email: 'Luis', age: 19, more: { phone: '12345678' } },
-        { email: null, age: 21, more: { phone: '87654321' } }
+        { user: 'Ana', age: 16, more: { phone: '11111111' } },
+        { user: 'Luis', age: 19, more: { phone: '12345678' } },
+        { user: null, age: 21, more: { phone: '87654321' } }
       ]
       var settings = {
-        sheetName: 'First sheet',
-        fileName: 'Users'
+        sheetName: 'FirstSheet',
+        fileName: 'MySpreadsheet'
       }
       xlsx(columns, content, settings)
     }

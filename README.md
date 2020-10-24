@@ -12,19 +12,19 @@ Just import and use it
 var xlsx = require('json-as-xlsx')
 
 var columns = [
-  { label: 'Email', value: 'email' }, // Top level data
+  { label: 'User', value: 'user' }, // Top level data
   { label: 'Age', value: row => (row.age + ' years') }, // Run functions
   { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
 ]
 
 var content = [
-  { email: 'Ana', age: 16, more: { phone: '11111111' } },
-  { email: 'Luis', age: 19, more: { phone: '12345678' } }
+  { user: 'Ana', age: 16, more: { phone: '11111111' } },
+  { user: 'Luis', age: 19, more: { phone: '12345678' } }
 ]
 
 var settings = {
-  sheetName: 'First sheet', // The name of the sheet
-  fileName: 'Users', // The name of the spreadsheet
+  sheetName: 'FirstSheet', // The name of the sheet
+  fileName: 'MySpreadsheet', // The name of the spreadsheet
   extraLength: 3, // A bigger number means that columns should be wider
   writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
 }

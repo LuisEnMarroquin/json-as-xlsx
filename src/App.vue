@@ -18,12 +18,12 @@ export default {
       var columns = [
         { label: 'Email', value: 'email' },
         { label: 'Age', value: function x(row) { return (row.age + ' years') } },
-        { label: 'Password', value: function x(row) { return (row.hidden ? row.hidden.password : '') } }
+        { label: 'Phone', value: function x(row) { return (row.more ? row.more.phone || '' : '') } }
       ]
       var content = [
-        { email: 'Ana', age: 16, hidden: { password: '11111111' } },
-        { email: 'Luis', age: 19, hidden: { password: '12345678' } },
-        { email: null, age: 21, hidden: { password: '87654321' } }
+        { email: 'Ana', age: 16, more: { phone: '11111111' } },
+        { email: 'Luis', age: 19, more: { phone: '12345678' } },
+        { email: null, age: 21, more: { phone: '87654321' } }
       ]
       var settings = {
         sheetName: 'First sheet',

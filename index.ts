@@ -7,7 +7,7 @@ interface ISettings {
   writeOptions?: any;
 }
 
-module.exports = (columns, content, settings:ISettings = {}, download:boolean = true) => {
+module.exports = (columns:any, content:any, settings:ISettings = {}, download:boolean = true) => {
   let extraLength = settings.extraLength || 1
   let writeOptions = settings.writeOptions || {}
   let excelColumns:number = 0
@@ -46,6 +46,6 @@ module.exports = (columns, content, settings:ISettings = {}, download:boolean = 
     whileLoop++
   }
   let wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
-  utils.book_append_sheet(wb, newSheet, `${settings.sheetName || 'Sheet 1'}`) // add Worksheet to Workbook // Workbook contains one or more worksheets
+  utils.book_append_sheet(wb, newSheet, `${settings.sheetName || 'Sheet 1'}`) // Add Worksheet to Workbook
   return (download ? writeFile(wb, `${settings.fileName || 'Spreadsheet'}.xlsx`, writeOptions) : write(wb, { type: 'buffer', bookType: 'xlsx', ...writeOptions }))
 }

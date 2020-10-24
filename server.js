@@ -7,12 +7,12 @@ const port = 7070
 var columns = [
   { label: 'Email', value: 'email' },
   { label: 'Age', value: row => (row.age + ' years') },
-  { label: 'Password', value: row => (row.hidden ? row.hidden.password : '') }
+  { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }
 ]
 
 var content = [
-  { email: 'Ana', age: 16, hidden: { password: '11111111' } },
-  { email: 'Luis', age: 19, hidden: { password: '12345678' } }
+  { email: 'Ana', age: 16, more: { phone: '11111111' } },
+  { email: 'Luis', age: 19, more: { phone: '12345678' } }
 ]
 
 var settings = {

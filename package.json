@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "index.js",
   "files": [
@@ -21,13 +21,16 @@
     "xlsx",
     "excel",
     "jsonc",
+    "json-xlsx",
     "microsoft",
+    "xlsx-json",
     "create-xlsx",
     "create-excel",
     "json-as-xlsx",
     "json-to-xlsx",
     "json-as-excel",
     "json-to-excel",
+    "microsoft-xlsx",
     "xlsx-from-json",
     "microsoft-excel"
   ],

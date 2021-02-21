@@ -13,7 +13,7 @@ jobs:
     - run: npm ci
     - run: npm run compile
     - run: npm run build
-    - uses: LuisEnMarroquin/gh-pages-publish@v2.3.2
+    - uses: LuisEnMarroquin/gh-pages-publish@v2.3.4
       with:
         FOLDER: dist
         SSHKEY: ${{ secrets.SSH }}

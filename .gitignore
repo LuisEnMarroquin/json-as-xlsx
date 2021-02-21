@@ -8,13 +8,11 @@ node_modules/
 desktop.ini
 
 # Other lockfiles
-package-lock.json
+yarn.lock
 npm-shrinkwrap.json
 
 # Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+*.log*
 
 # Excel files
 *.xlsx

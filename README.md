@@ -42,20 +42,3 @@ This are my files used for development, remember to change:
 
 * Frontend with [Vue here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/src/App.vue)
 * Backend with [Express here](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/server.js)
-
-<!--
-
-## Publish to NPM and create tag
-
-Remember to change version number first
-
-```shell
-gac New commit # Git add and commit + message
-npm login # Login to npm registry
-yarn compile # TypeScript compile and uglify code
-npm publish # Publish package to NPM
-git tag -a -m "Published v1.1.8" v1.1.8 # Tag your release
-git push --follow-tags # Push commit and tags
-```
-
--->

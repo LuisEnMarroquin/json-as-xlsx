@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: yarn install --ignore-optional --pure-lockfile --non-interactive
-    - run: yarn compile
-    - run: yarn build
+    - run: npm ci
+    - run: npm run compile
+    - run: npm run build
     - uses: LuisEnMarroquin/gh-pages-publish@v2.3.2
       with:
         FOLDER: dist

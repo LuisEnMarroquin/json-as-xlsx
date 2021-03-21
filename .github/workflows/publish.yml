@@ -1,4 +1,4 @@
-name: Publish project
+name: Publish
 
 on:
   push:
@@ -44,8 +44,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: npm ci
-    - run: npm run compile
     - run: npm run build
+    - run: npm run vue-build
     - uses: LuisEnMarroquin/gh-pages-publish@v2.4.4
       with:
         FOLDER: dist

@@ -1,11 +1,8 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.2.0",
-  "license": "MIT",
+  "version": "1.2.1",
   "main": "index.js",
-  "files": [
-    "index.js"
-  ],
+  "license": "MIT",
   "description": "Create excel from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "homepage": "https://luisenmarroquin.github.io/json-as-xlsx",
@@ -15,6 +12,28 @@
     "serve": "nodemon server.js",
     "watch": "tsc --watch index.ts",
     "compile": "tsc index.ts && uglifyjs index.js --output index.js"
+  },
+  "dependencies": {
+    "xlsx": "^0.16.8"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.2",
+    "@vue/cli-service": "^4.5.8",
+    "express": "^4.17.1",
+    "typescript": "^4.0.2",
+    "uglify-js": "^3.11.3",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx/issues"
   },
   "keywords": [
     "json",
@@ -34,22 +53,6 @@
     "xlsx-from-json",
     "microsoft-excel"
   ],
-  "dependencies": {
-    "xlsx": "^0.16.8"
-  },
-  "devDependencies": {
-    "@types/node": "^14.14.2",
-    "@vue/cli-service": "^4.5.8",
-    "express": "^4.17.1",
-    "typescript": "^4.0.2",
-    "uglify-js": "^3.11.3",
-    "vue": "^2.6.11",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx.git"
-  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

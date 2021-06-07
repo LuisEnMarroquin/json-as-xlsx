@@ -14,22 +14,36 @@ const xlsx = require('../index.js')
 export default {
   name: 'App',
   methods: {
-    downloadFile: function (event) {
-      var columns = [
-        { label: 'User', value: 'user' },
-        { label: 'Age', value: function x(row) { return (row.age + ' years') } },
-        { label: 'Phone', value: function x(row) { return (row.more ? row.more.phone || '' : '') } }
+    downloadFile: () => {
+      let data = [
+        {
+          sheet: 'Adults',
+          columns: [
+            { label: 'User', value: 'user' }, // Top level data
+            { label: 'Age', value: row => (row.age + ' years') }, // Run functions
+            { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+          ],
+          content: [
+            { user: 'Andrea', age: 20, more: { phone: '11111111' } },
+            { user: 'Luis', age: 21, more: { phone: '12345678' } }
+          ]
+        }, {
+          sheet: 'Children',
+          columns: [
+            { label: 'User', value: 'user' }, // Top level data
+            { label: 'Age', value: row => (row.age + ' years') }, // Run functions
+            { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+          ],
+          content: [
+            { user: 'Manuel', age: 16, more: { phone: '99999999' } },
+            { user: 'Ana', age: 17, more: { phone: '87654321' } }
+          ]
+        }
       ]
-      var content = [
-        { user: 'Ana', age: 16, more: { phone: '11111111' } },
-        { user: 'Luis', age: 19, more: { phone: '12345678' } },
-        { user: null, age: 21, more: { phone: '87654321' } }
-      ]
-      var settings = {
-        sheetName: 'FirstSheet',
+      let settings = {
         fileName: 'MySpreadsheet'
       }
-      xlsx(columns, content, settings)
+      xlsx(data, settings)
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "main": "index.js",
   "license": "MIT",
   "description": "Create excel from json",
@@ -8,22 +8,22 @@
   "homepage": "https://luisenmarroquin.github.io/json-as-xlsx",
   "scripts": {
     "start": "tsc --watch index.ts",
-    "serve": "nodemon server.js",
     "build": "tsc index.ts && uglifyjs index.js --output index.js",
-    "vue-start": "vue-cli-service serve",
-    "vue-build": "vue-cli-service build"
+    "start-vue": "vue-cli-service serve",
+    "build-vue": "vue-cli-service build",
+    "start-server": "nodemon server.js"
   },
   "dependencies": {
-    "xlsx": "^0.16.8"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.2",
-    "@vue/cli-service": "^4.5.8",
+    "@types/node": "^15.12.1",
+    "@vue/cli-service": "^4.5.13",
     "express": "^4.17.1",
-    "typescript": "^4.0.2",
-    "uglify-js": "^3.11.3",
-    "vue": "^2.6.11",
-    "vue-template-compiler": "^2.6.11"
+    "typescript": "^4.3.2",
+    "uglify-js": "^3.13.9",
+    "vue": "^2.6.14",
+    "vue-template-compiler": "^2.6.14"
   },
   "files": [
     "index.js"

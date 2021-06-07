@@ -2,6 +2,8 @@
 
 This is a tool that helps to build an excel from a json and it depends only on `xlsx`
 
+Now with version **2.0.0** and above supports multiple sheets and custom styling
+
 You can see a live example of how it works on this site: [luisenmarroquin.github.io/json-as-xlsx](https://luisenmarroquin.github.io/json-as-xlsx)
 
 ## Usage
@@ -9,29 +11,41 @@ You can see a live example of how it works on this site: [luisenmarroquin.github
 Just import and use it
 
 ```js
-var xlsx = require('json-as-xlsx')
+let xlsx = require('json-as-xlsx')
 
-var columns = [
-  { label: 'User', value: 'user' }, // Top level data
-  { label: 'Age', value: row => (row.age + ' years') }, // Run functions
-  { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+let data = [
+  {
+    sheet: 'Adults',
+    columns: [
+      { label: 'User', value: 'user' }, // Top level data
+      { label: 'Age', value: row => (row.age + ' years') }, // Run functions
+      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+    ],
+    content: [
+      { user: 'Andrea', age: 20, more: { phone: '11111111' } },
+      { user: 'Luis', age: 21, more: { phone: '12345678' } }
+    ]
+  }, {
+    sheet: 'Children',
+    columns: [
+      { label: 'User', value: 'user' }, // Top level data
+      { label: 'Age', value: row => (row.age + ' years') }, // Run functions
+      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+    ],
+    content: [
+      { user: 'Manuel', age: 16, more: { phone: '99999999' } },
+      { user: 'Ana', age: 17, more: { phone: '87654321' } }
+    ]
+  }
 ]
 
-var content = [
-  { user: 'Ana', age: 16, more: { phone: '11111111' } },
-  { user: 'Luis', age: 19, more: { phone: '12345678' } }
-]
-
-var settings = {
-  sheetName: 'FirstSheet', // The name of the sheet
-  fileName: 'MySpreadsheet', // The name of the spreadsheet
-  extraLength: 3, // A bigger number means that columns should be wider
+let settings = {
+  fileName: 'MySpreadsheet', // Name of the spreadsheet
+  extraLength: 3, // A bigger number means that columns will be wider
   writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
 }
 
-var download = true // If true will download the xlsx file, otherwise will return a buffer
-
-xlsx(columns, content, settings, download) // Will download the excel file
+xlsx(data, settings) // Will download the excel file
 ```
 
 ## Examples

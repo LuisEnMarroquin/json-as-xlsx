@@ -22,15 +22,13 @@ module.exports = (data: IData[], settings: ISettings = {}) => {
   const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   data.forEach((actualSheet, actualIndex) => {
-    let excelColumns: number = 0
     const excelContent: any[] = []
     const excelIndexes: string[] = []
     actualSheet.content.forEach((el1: any) => { // creating new excel data array
       const obj: any = {}
-      actualSheet.columns.forEach((el2: IColumns, in2: number) => {
+      actualSheet.columns.forEach((el2: IColumns) => {
         const val = (typeof el2.value === 'function' ? el2.value(el1) : el1[el2.value]) // If is a function execute it, if not just enter the value
         obj[el2.label] = val
-        excelColumns = in2 + 1
       })
       excelContent.push(obj)
     })
@@ -43,9 +41,7 @@ module.exports = (data: IData[], settings: ISettings = {}) => {
       }
     }
     newSheet['!cols'] = [] // Cols width array
-    let whileLoop: number = 0 // Setting cols width
-    while (whileLoop < excelColumns) {
-      const xx = excelIndexes[whileLoop]
+    excelIndexes.forEach((xx: string) => {
       const size = { width: newSheet[xx].v.length as number + extraLength } // Default width is the header width
       for (const keyIndex in newSheet) { // Setting each col width based on max width element
         if (Object.prototype.hasOwnProperty.call(newSheet, keyIndex) && (xx.charAt(0) === keyIndex.charAt(0)) && keyIndex.length === xx.length) {
@@ -54,9 +50,8 @@ module.exports = (data: IData[], settings: ISettings = {}) => {
           if (typeof consideredElement === 'string' && consideredElement.length >= size.width) size.width = consideredElement.length + extraLength
         }
       }
-      newSheet['!cols'].push(size)
-      whileLoop++
-    }
+      newSheet['!cols']?.push(size)
+    })
     utils.book_append_sheet(wb, newSheet, `${actualSheet.sheet ?? `Sheet ${actualIndex + 1}`}`) // Add Worksheet to Workbook
   })
   return writeOptions.type === 'buffer' ? write(wb, writeOptions) : writeFile(wb, `${settings.fileName ?? 'Spreadsheet'}.xlsx`, writeOptions)

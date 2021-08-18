@@ -4,13 +4,13 @@ const express = require('express')
 const app = express()
 const port = 7070
 
-let data = [
+const data = [
   {
     sheet: 'Adults',
     columns: [
       { label: 'User', value: 'user' }, // Top level data
       { label: 'Age', value: row => (row.age + ' years') }, // Run functions
-      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') } // Deep props
     ],
     content: [
       { user: 'Andrea', age: 20, more: { phone: '11111111' } },
@@ -21,7 +21,7 @@ let data = [
     columns: [
       { label: 'User', value: 'user' }, // Top level data
       { label: 'Age', value: row => (row.age + ' years') }, // Run functions
-      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') } // Deep props
     ],
     content: [
       { user: 'Manuel', age: 16, more: { phone: '99999999' } },
@@ -30,7 +30,7 @@ let data = [
   }
 ]
 
-let settings = {
+const settings = {
   writeOptions: {
     type: 'buffer',
     bookType: 'xlsx'
@@ -38,16 +38,16 @@ let settings = {
 }
 
 app.get('/', (_, res) => {
-  let buffer = xlsx(data, settings)
+  const buffer = xlsx(data, settings)
   res.writeHead(200, {
     'Content-Type': 'application/octet-stream',
-    'Content-disposition': `attachment; filename=MySheet.xlsx`
+    'Content-disposition': 'attachment; filename=MySheet.xlsx'
   })
   res.end(buffer)
 })
 
 app.get('/local', (_, res) => {
-  let buffer = xlsx(data, settings)
+  const buffer = xlsx(data, settings)
   const homedir = require('os').homedir()
   writeFileSync(`${homedir}/MySheet.xlsx`, buffer)
   res.status(200).send('xd')

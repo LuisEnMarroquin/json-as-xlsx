@@ -1,21 +1,5 @@
 import { utils, write, writeFile } from 'xlsx'
-
-interface IColumns {
-  label: string
-  value: string | Function
-}
-
-interface IData {
-  sheet: string
-  columns: IColumns[]
-  content: any[]
-}
-
-interface ISettings {
-  extraLength?: number
-  fileName?: string
-  writeOptions?: any
-}
+import { IColumns, IData, ISettings } from './types/index'
 
 module.exports = (data: IData[], settings: ISettings = {}) => {
   const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength

@@ -15,14 +15,14 @@
     "lint": "ts-standard --fix"
   },
   "dependencies": {
-    "xlsx": "^0.17.0"
+    "xlsx": "^0.17.2"
   },
   "devDependencies": {
-    "@types/node": "^16.6.1",
+    "@types/node": "^16.10.2",
     "@vue/cli-service": "^4.5.13",
     "express": "^4.17.1",
-    "typescript": "^4.3.5",
-    "uglify-js": "^3.14.1",
+    "typescript": "^4.4.3",
+    "uglify-js": "^3.14.2",
     "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.14"
   },
@@ -62,5 +62,6 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "types": "types"
 }

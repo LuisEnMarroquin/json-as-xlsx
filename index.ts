@@ -63,6 +63,11 @@ function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | u
 }
 
 function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
+
+  if (!data.length) {
+    return
+  }
+
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   data.forEach((actualSheet, actualIndex) => {
     const newSheet = getWorksheet(actualSheet, settings)

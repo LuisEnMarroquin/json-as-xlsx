@@ -21,6 +21,10 @@ export interface ISettings {
   writeOptions?: WritingOptions
 }
 
+export interface IJsonSheetRow {
+  [key: string]: string | number | boolean | object
+}
+
 export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings): Buffer | undefined
 
 export default xlsx

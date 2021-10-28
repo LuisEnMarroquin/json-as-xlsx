@@ -1,4 +1,4 @@
-import {utils, WorkSheet, write, writeFile} from 'xlsx'
+import {utils, WorkBook, WorkSheet, write, writeFile} from 'xlsx'
 import {IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth} from './types'
 
 function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
@@ -53,14 +53,22 @@ function getWorksheet(jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
   return worksheet
 }
 
+function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | undefined {
+
+  const filename = `${settings.fileName ?? 'Spreadsheet'}.xlsx`
+  const writeOptions = settings.writeOptions ?? {}
+
+  return writeOptions.type === 'buffer' ? write(workbook, writeOptions)
+    : writeFile(workbook, filename, writeOptions)
+}
+
 function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
-  const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   data.forEach((actualSheet, actualIndex) => {
     const newSheet = getWorksheet(actualSheet, settings)
     utils.book_append_sheet(wb, newSheet, `${actualSheet.sheet ?? `Sheet ${actualIndex + 1}`}`) // Add Worksheet to Workbook
   })
-  return writeOptions.type === 'buffer' ? write(wb, writeOptions) : writeFile(wb, `${settings.fileName ?? 'Spreadsheet'}.xlsx`, writeOptions)
+  return writeWorkbook(wb, settings)
 }
 
 export default xlsx

@@ -3,10 +3,14 @@ export interface IColumn {
   value: string | Function
 }
 
+export interface IContent {
+  [key: string]: string | number | boolean | object
+}
+
 export interface IData {
   sheet: string
   columns: IColumn[]
-  content: any[]
+  content: IContent[]
 }
 
 export interface ISettings {

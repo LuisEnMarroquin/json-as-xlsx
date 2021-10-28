@@ -10,7 +10,7 @@ export interface IContent {
 }
 
 export interface IJsonSheet {
-  sheet: string
+  sheet?: string
   columns: [IColumn, ...IColumn[]]
   content: [IContent, ...IContent[]]
 }

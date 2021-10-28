@@ -1,6 +1,6 @@
 export interface IColumn {
   label: string
-  value: string | Function
+  value: string | ((value: IContent) => string | number | boolean | object)
 }
 
 export interface IContent {

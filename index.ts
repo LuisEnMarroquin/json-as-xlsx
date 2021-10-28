@@ -1,7 +1,7 @@
 import { utils, write, writeFile } from 'xlsx'
 import { IColumn, IJsonSheet, ISettings } from './types/index'
 
-module.exports = (data: IJsonSheet[], settings: ISettings = {}) => {
+function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
   const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
   const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
@@ -40,3 +40,6 @@ module.exports = (data: IJsonSheet[], settings: ISettings = {}) => {
   })
   return writeOptions.type === 'buffer' ? write(wb, writeOptions) : writeFile(wb, `${settings.fileName ?? 'Spreadsheet'}.xlsx`, writeOptions)
 }
+
+export default xlsx
+module.exports = xlsx

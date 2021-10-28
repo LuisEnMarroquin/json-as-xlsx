@@ -20,3 +20,7 @@ export interface ISettings {
   fileName?: string
   writeOptions?: WritingOptions
 }
+
+export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings): Buffer | undefined
+
+export default xlsx

@@ -41,16 +41,23 @@ function getWorksheetColumnWidths(worksheet: WorkSheet, extraLength: number = 1)
   })
 }
 
+function getWorksheet(jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
+
+  const jsonSheetRows = jsonSheet.content.map((contentItem) => {
+    return getJsonSheetRow(contentItem, jsonSheet.columns)
+  })
+
+  const worksheet = utils.json_to_sheet(jsonSheetRows)
+  worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)
+
+  return worksheet
+}
+
 function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
-  const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
   const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   data.forEach((actualSheet, actualIndex) => {
-    const excelContent = actualSheet.content.map((contentItem) => {
-      return getJsonSheetRow(contentItem, actualSheet.columns)
-    })
-    const newSheet = utils.json_to_sheet(excelContent) // export json to Worksheet of Excel // only array possible
-    newSheet['!cols'] = getWorksheetColumnWidths(newSheet, extraLength)
+    const newSheet = getWorksheet(actualSheet, settings)
     utils.book_append_sheet(wb, newSheet, `${actualSheet.sheet ?? `Sheet ${actualIndex + 1}`}`) // Add Worksheet to Workbook
   })
   return writeOptions.type === 'buffer' ? write(wb, writeOptions) : writeFile(wb, `${settings.fileName ?? 'Spreadsheet'}.xlsx`, writeOptions)

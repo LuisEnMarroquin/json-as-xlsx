@@ -1,21 +1,28 @@
 import { utils, write, writeFile } from 'xlsx'
-import { IColumn, IJsonSheet, ISettings } from './types/index'
+import {IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings} from './types'
+
+function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
+
+  let jsonSheetRow: IJsonSheetRow = {}
+  columns.forEach((column) => {
+    if (typeof column.value === "function") {
+      jsonSheetRow[column.label] = column.value(content)
+    } else {
+      jsonSheetRow[column.label] = content[column.value]
+    }
+  })
+  return jsonSheetRow
+}
 
 function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
   const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
   const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   data.forEach((actualSheet, actualIndex) => {
-    const excelContent: any[] = []
-    const excelIndexes: string[] = []
-    actualSheet.content.forEach((el1: any) => { // creating new excel data array
-      const obj: any = {}
-      actualSheet.columns.forEach((el2: IColumn) => {
-        const val = (typeof el2.value === 'function' ? el2.value(el1) : el1[el2.value]) // If is a function execute it, if not just enter the value
-        obj[el2.label] = val
-      })
-      excelContent.push(obj)
+    const excelContent = actualSheet.content.map((contentItem) => {
+      return getJsonSheetRow(contentItem, actualSheet.columns)
     })
+    const excelIndexes: string[] = []
     const newSheet = utils.json_to_sheet(excelContent) // export json to Worksheet of Excel // only array possible
     { // variable filling based on the columns present into the workbook
       const rangeOfColumns = utils.decode_range(newSheet['!ref'] ?? '')

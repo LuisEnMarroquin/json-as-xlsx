@@ -62,18 +62,21 @@ function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | u
     : writeFile(workbook, filename, writeOptions)
 }
 
-function xlsx(data: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
+function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
 
-  if (!data.length) {
+  if (!jsonSheets.length) {
     return
   }
 
-  const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
-  data.forEach((actualSheet, actualIndex) => {
-    const newSheet = getWorksheet(actualSheet, settings)
-    utils.book_append_sheet(wb, newSheet, `${actualSheet.sheet ?? `Sheet ${actualIndex + 1}`}`) // Add Worksheet to Workbook
+  const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file
+  jsonSheets.forEach((actualSheet, actualIndex) => {
+    const worksheet = getWorksheet(actualSheet, settings)
+    const worksheetName = actualSheet.sheet ?? `Sheet ${actualIndex + 1}`
+
+    utils.book_append_sheet(workbook, worksheet, worksheetName) // Add Worksheet to Workbook
   })
-  return writeWorkbook(wb, settings)
+
+  return writeWorkbook(workbook, settings)
 }
 
 export default xlsx

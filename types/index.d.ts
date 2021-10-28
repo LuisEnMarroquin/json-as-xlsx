@@ -9,7 +9,7 @@ export interface IContent {
   [key: string]: string | number | boolean | object
 }
 
-export interface IData {
+export interface IJsonSheet {
   sheet: string
   columns: IColumn[]
   content: IContent[]

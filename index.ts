@@ -1,7 +1,7 @@
 import { utils, write, writeFile } from 'xlsx'
-import { IColumn, IData, ISettings } from './types/index'
+import { IColumn, IJsonSheet, ISettings } from './types/index'
 
-module.exports = (data: IData[], settings: ISettings = {}) => {
+module.exports = (data: IJsonSheet[], settings: ISettings = {}) => {
   const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
   const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
   const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file

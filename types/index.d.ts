@@ -25,6 +25,10 @@ export interface IJsonSheetRow {
   [key: string]: string | number | boolean | object
 }
 
+export interface IWorksheetColumnWidth {
+  width: number
+}
+
 export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings): Buffer | undefined
 
 export default xlsx

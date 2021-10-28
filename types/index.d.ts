@@ -1,11 +1,11 @@
-export interface IColumns {
+export interface IColumn {
   label: string
   value: string | Function
 }
 
 export interface IData {
   sheet: string
-  columns: IColumns[]
+  columns: IColumn[]
   content: any[]
 }
 

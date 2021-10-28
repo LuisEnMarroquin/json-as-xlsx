@@ -1,5 +1,5 @@
 import { utils, write, writeFile } from 'xlsx'
-import { IColumns, IData, ISettings } from './types/index'
+import { IColumn, IData, ISettings } from './types/index'
 
 module.exports = (data: IData[], settings: ISettings = {}) => {
   const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
@@ -10,7 +10,7 @@ module.exports = (data: IData[], settings: ISettings = {}) => {
     const excelIndexes: string[] = []
     actualSheet.content.forEach((el1: any) => { // creating new excel data array
       const obj: any = {}
-      actualSheet.columns.forEach((el2: IColumns) => {
+      actualSheet.columns.forEach((el2: IColumn) => {
         const val = (typeof el2.value === 'function' ? el2.value(el1) : el1[el2.value]) // If is a function execute it, if not just enter the value
         obj[el2.label] = val
       })

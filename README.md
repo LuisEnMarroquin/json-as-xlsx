@@ -30,7 +30,7 @@ let data = [
     columns: [
       { label: 'User', value: 'user' }, // Top level data
       { label: 'Age', value: row => (row.age + ' years') }, // Run functions
-      { label: 'Phone', value: row => (row.more ? row.more.phone || '' : '') }, // Deep props
+      { label: 'Phone', value: 'user.more.phone' }, // Deep props
     ],
     content: [
       { user: 'Manuel', age: 16, more: { phone: '99999999' } },

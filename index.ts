@@ -1,6 +1,28 @@
 import {utils, WorkBook, WorkSheet, write, writeFile} from 'xlsx'
 import {IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth} from './types'
 
+function getContentProperty(content: IContent, property: string): string | number | boolean | Date | IContent {
+
+  function accessContentProperties(content: IContent, properties: string[]): string | number | boolean | Date | IContent  {
+
+    const value = content[properties[0]]
+
+    if (properties.length === 1) {
+      return value ?? ""
+    }
+
+    if (value === undefined || typeof value === 'string' || typeof value === 'boolean' ||
+      typeof value === 'number'|| value instanceof Date) {
+      return ""
+    }
+
+    return accessContentProperties(value, properties.slice(1))
+  }
+
+  const properties = property.split(".")
+  return accessContentProperties(content, properties)
+}
+
 function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
 
   let jsonSheetRow: IJsonSheetRow = {}
@@ -8,7 +30,7 @@ function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
     if (typeof column.value === "function") {
       jsonSheetRow[column.label] = column.value(content)
     } else {
-      jsonSheetRow[column.label] = content[column.value]
+      jsonSheetRow[column.label] = getContentProperty(content, column.value)
     }
   })
   return jsonSheetRow

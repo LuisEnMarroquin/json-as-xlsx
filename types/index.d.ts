@@ -2,11 +2,11 @@ import {WritingOptions} from 'xlsx'
 
 export interface IColumn {
   label: string
-  value: string | ((value: IContent) => string | number | boolean | object)
+  value: string | ((value: IContent) => string | number | boolean | Date | IContent)
 }
 
 export interface IContent {
-  [key: string]: string | number | boolean | object
+  [key: string]: string | number | boolean | Date | IContent
 }
 
 export interface IJsonSheet {
@@ -22,7 +22,7 @@ export interface ISettings {
 }
 
 export interface IJsonSheetRow {
-  [key: string]: string | number | boolean | object
+  [key: string]: string | number | boolean | Date | IContent
 }
 
 export interface IWorksheetColumnWidth {

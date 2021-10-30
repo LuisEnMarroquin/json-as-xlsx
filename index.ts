@@ -102,6 +102,7 @@ function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | unde
 }
 
 export default xlsx
-export {getContentProperty}
+export {getContentProperty, getJsonSheetRow}
 module.exports = xlsx
 module.exports.getContentProperty = getContentProperty
+module.exports.getJsonSheetRow = getJsonSheetRow

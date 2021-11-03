@@ -12,15 +12,19 @@
     "start-client": "vue-cli-service serve",
     "build-client": "vue-cli-service build",
     "start-server": "nodemon server.js",
-    "lint": "ts-standard --fix"
+    "lint": "ts-standard --fix",
+    "test": "jest"
   },
   "dependencies": {
     "xlsx": "^0.17.2"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.2",
     "@types/node": "^16.10.2",
     "@vue/cli-service": "^4.5.13",
     "express": "^4.17.1",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
     "typescript": "^4.4.3",
     "uglify-js": "^3.14.2",
     "vue": "^2.6.14",

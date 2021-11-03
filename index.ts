@@ -1,42 +1,109 @@
-import { utils, write, writeFile } from 'xlsx'
-import { IColumns, IData, ISettings } from './types/index'
+import {utils, WorkBook, WorkSheet, write, writeFile} from 'xlsx'
+import {IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth} from './types'
 
-module.exports = (data: IData[], settings: ISettings = {}) => {
-  const extraLength = settings.extraLength === undefined ? 1 : settings.extraLength
-  const writeOptions = settings.writeOptions === undefined ? {} : settings.writeOptions
-  const wb = utils.book_new() // Creating a workbook, this is the name given to an Excel file
-  data.forEach((actualSheet, actualIndex) => {
-    const excelContent: any[] = []
-    const excelIndexes: string[] = []
-    actualSheet.content.forEach((el1: any) => { // creating new excel data array
-      const obj: any = {}
-      actualSheet.columns.forEach((el2: IColumns) => {
-        const val = (typeof el2.value === 'function' ? el2.value(el1) : el1[el2.value]) // If is a function execute it, if not just enter the value
-        obj[el2.label] = val
-      })
-      excelContent.push(obj)
-    })
-    const newSheet = utils.json_to_sheet(excelContent) // export json to Worksheet of Excel // only array possible
-    { // variable filling based on the columns present into the workbook
-      const rangeOfColumns = utils.decode_range(newSheet['!ref'] ?? '')
-      for (let C = rangeOfColumns.s.c; C <= rangeOfColumns.e.c; C++) {
-        const address = utils.encode_col(C) + '1' // first row, column character C
-        excelIndexes.push(address)
-      }
+function getContentProperty(content: IContent, property: string): string | number | boolean | Date | IContent {
+
+  function accessContentProperties(content: IContent, properties: string[]): string | number | boolean | Date | IContent  {
+
+    const value = content[properties[0]]
+
+    if (properties.length === 1) {
+      return value ?? ""
     }
-    newSheet['!cols'] = [] // Cols width array
-    excelIndexes.forEach((xx: string) => {
-      const size = { width: newSheet[xx].v.length as number + extraLength } // Default width is the header width
-      for (const keyIndex in newSheet) { // Setting each col width based on max width element
-        if (Object.prototype.hasOwnProperty.call(newSheet, keyIndex) && (xx.charAt(0) === keyIndex.charAt(0)) && keyIndex.length === xx.length) {
-          let consideredElement = newSheet[keyIndex].v
-          if (typeof consideredElement === 'number') consideredElement = `${consideredElement}`
-          if (typeof consideredElement === 'string' && consideredElement.length >= size.width) size.width = consideredElement.length + extraLength
-        }
-      }
-      newSheet['!cols']?.push(size)
-    })
-    utils.book_append_sheet(wb, newSheet, `${actualSheet.sheet ?? `Sheet ${actualIndex + 1}`}`) // Add Worksheet to Workbook
-  })
-  return writeOptions.type === 'buffer' ? write(wb, writeOptions) : writeFile(wb, `${settings.fileName ?? 'Spreadsheet'}.xlsx`, writeOptions)
+
+    if (value === undefined || typeof value === 'string' || typeof value === 'boolean' ||
+      typeof value === 'number'|| value instanceof Date) {
+      return ""
+    }
+
+    return accessContentProperties(value, properties.slice(1))
+  }
+
+  const properties = property.split(".")
+  return accessContentProperties(content, properties)
 }
+
+function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
+
+  let jsonSheetRow: IJsonSheetRow = {}
+  columns.forEach((column) => {
+    if (typeof column.value === "function") {
+      jsonSheetRow[column.label] = column.value(content)
+    } else {
+      jsonSheetRow[column.label] = getContentProperty(content, column.value)
+    }
+  })
+  return jsonSheetRow
+}
+
+function getWorksheetColumnWidths(worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] {
+
+  const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
+
+  // Column letters present in the workbook, e.g. A, B, C
+  let columnLetters: string[] = []
+  for (let C = columnRange.s.c; C <= columnRange.e.c; C++) {
+    const address = utils.encode_col(C)
+    columnLetters.push(address)
+  }
+
+  return columnLetters.map((column) => {
+
+    // Cells that belong to this column
+    let columnCells: string[] = Object.keys(worksheet).filter((cell) => {
+      return cell.charAt(0) === column
+    })
+
+    const maxWidthCell = columnCells.reduce((previousCell, currentCell) => {
+      return worksheet[previousCell].v.length > worksheet[currentCell].v.length
+        ? previousCell : currentCell
+    })
+
+    return {width: worksheet[maxWidthCell].v.length + extraLength}
+  })
+}
+
+function getWorksheet(jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
+
+  const jsonSheetRows = jsonSheet.content.map((contentItem) => {
+    return getJsonSheetRow(contentItem, jsonSheet.columns)
+  })
+
+  const worksheet = utils.json_to_sheet(jsonSheetRows)
+  worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)
+
+  return worksheet
+}
+
+function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | undefined {
+
+  const filename = `${settings.fileName ?? 'Spreadsheet'}.xlsx`
+  const writeOptions = settings.writeOptions ?? {}
+
+  return writeOptions.type === 'buffer' ? write(workbook, writeOptions)
+    : writeFile(workbook, filename, writeOptions)
+}
+
+function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
+
+  if (!jsonSheets.length) {
+    return
+  }
+
+  const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file
+  jsonSheets.forEach((actualSheet, actualIndex) => {
+    const worksheet = getWorksheet(actualSheet, settings)
+    const worksheetName = actualSheet.sheet ?? `Sheet ${actualIndex + 1}`
+
+    utils.book_append_sheet(workbook, worksheet, worksheetName) // Add Worksheet to Workbook
+  })
+
+  return writeWorkbook(workbook, settings)
+}
+
+export default xlsx
+export {getContentProperty, getJsonSheetRow, getWorksheetColumnWidths}
+module.exports = xlsx
+module.exports.getContentProperty = getContentProperty
+module.exports.getJsonSheetRow = getJsonSheetRow
+module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths

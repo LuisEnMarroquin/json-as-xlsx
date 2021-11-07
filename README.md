@@ -50,19 +50,61 @@ xlsx(data, settings) // Will download the excel file
 
 ### TypeScript
 
-```ts
-const jsonSheets: IJsonSheet[] = [{
-  sheet: "Friends",
-  columns: [
-    { label: "Name", value: "name" },
-    { label: "Username", value: "username" }
-  ],
-  content: [
-    { name: "Andreas", username: "andr34s" }
-  ]
-}]
+Here is an example of a server setup using TS, thanks to @elyse0 for the contribution
 
-xlsx(jsonSheets)
+```ts
+import xlsx, { IJsonSheet, ISettings } from 'json-as-xlsx'
+import express from 'express'
+
+const app = express()
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+const data: IJsonSheet[] = [
+  {
+    sheet: 'Adults',
+    columns: [
+      { label: 'User', value: 'user' },
+      { label: 'Age', value: 'age' }
+    ],
+    content: [
+      { user: 'Andrea', age: 20, more: { phone: '11111111' } },
+      { user: 'Luis', age: 21, more: { phone: '12345678' } }
+    ]
+  }, {
+    sheet: 'Children',
+    columns: [
+      { label: 'User', value: 'user' },
+      { label: 'Age', value: 'age' }
+    ],
+    content: [
+      { user: 'Manuel', age: 16, more: { phone: '99999999' } },
+      { user: 'Ana', age: 17, more: { phone: '87654321' } }
+    ]
+  }
+]
+
+const settings: ISettings = {
+  writeOptions: {
+    type: 'buffer',
+    bookType: 'xlsx'
+  }
+}
+
+app.get('/', (_, res) => {
+  const buffer = xlsx(data, settings)
+  res.writeHead(200, {
+    'Content-Type': 'application/octet-stream',
+    'Content-disposition': 'attachment; filename=MySheet.xlsx'
+  })
+  res.end(buffer)
+})
+
+const port = process.env.PORT ?? 3000
+
+app.listen(port, () => {
+  console.log(`Your app is listening on port ${port}`)
+})
 ```
 
 ## Examples

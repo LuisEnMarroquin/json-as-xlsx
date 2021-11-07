@@ -48,6 +48,23 @@ let settings = {
 xlsx(data, settings) // Will download the excel file
 ```
 
+### TypeScript
+
+```ts
+const jsonSheets: IJsonSheet[] = [{
+  sheet: "Friends",
+  columns: [
+    { label: "Name", value: "name" },
+    { label: "Username", value: "username" }
+  ],
+  content: [
+    { name: "Andreas", username: "andr34s" }
+  ]
+}]
+
+xlsx(jsonSheets)
+```
+
 ## Examples
 
 This are my files used for development, remember to change:

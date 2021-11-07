@@ -1,18 +1,17 @@
-import {IContent} from '../types'
-import {getJsonSheetRow} from '../index'
+import { IContent } from '../types'
+import { getJsonSheetRow } from '../index'
 
-test("", () => {
-
+test('', () => {
   const track = {
-    id: "4ase432i",
-    name: "Help",
-    artist: "Galantis",
+    id: '4ase432i',
+    name: 'Help',
+    artist: 'Galantis',
     album: {
-      id: "532o48sn3",
-      name: "Help",
-      albumType: "single",
+      id: '532o48sn3',
+      name: 'Help',
+      albumType: 'single',
       totalTracks: 1,
-      releaseDate: "2014-03-11"
+      releaseDate: '2014-03-11'
     },
     explicit: false,
     popularity: 21,
@@ -20,53 +19,55 @@ test("", () => {
   }
 
   expect(getJsonSheetRow(track, [
-    {label: "ID", value: "id"}
+    { label: 'ID', value: 'id' }
   ]))
-    .toEqual({"ID": "4ase432i"})
+    .toEqual({ ID: '4ase432i' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Name", value: "name"}
+    { label: 'Name', value: 'name' }
   ]))
-    .toEqual({"Name": "Help"})
+    .toEqual({ Name: 'Help' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Artist", value: "artist"}
+    { label: 'Artist', value: 'artist' }
   ]))
-    .toEqual({"Artist": "Galantis"})
+    .toEqual({ Artist: 'Galantis' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Album", value: "album.name"}
+    { label: 'Album', value: 'album.name' }
   ]))
-    .toEqual({"Album": "Help"})
+    .toEqual({ Album: 'Help' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Explicit content", value: (content: IContent) => {return content.explicit ? "Yes" : "No"}}
+    { label: 'Explicit content', value: (content: IContent) => { return content.explicit ? 'Yes' : 'No' } }
   ]))
-    .toEqual({"Explicit content": "No"})
+    .toEqual({ 'Explicit content': 'No' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Popularity", value: "popularity"}
+    { label: 'Popularity', value: 'popularity' }
   ]))
-    .toEqual({"Popularity": 21})
+    .toEqual({ Popularity: 21 })
 
   expect(getJsonSheetRow(track, [
-    {label: "Duration", value: (content: IContent) => {return (content.durationMs as number)/1000 + "s"}}
+    { label: 'Duration', value: (content: IContent) => { return (content.durationMs as number) / 1000 + 's' } }
   ]))
-    .toEqual({"Duration": "4.01s"})
+    .toEqual({ Duration: '4.01s' })
 
   expect(getJsonSheetRow(track, [
-    {label: "URI", value: "uri"}
+    { label: 'URI', value: 'uri' }
   ]))
-    .toEqual({"URI": ""})
+    .toEqual({ URI: '' })
 
   expect(getJsonSheetRow(track, [
-    {label: "Album", value: "album"}
+    { label: 'Album', value: 'album' }
   ]))
-    .toEqual({"Album": {
-        id: "532o48sn3",
-        name: "Help",
-        albumType: "single",
+    .toEqual({
+      Album: {
+        id: '532o48sn3',
+        name: 'Help',
+        albumType: 'single',
         totalTracks: 1,
-        releaseDate: "2014-03-11"
-      }})
+        releaseDate: '2014-03-11'
+      }
+    })
 })

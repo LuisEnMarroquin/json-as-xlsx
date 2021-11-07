@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.repository == 'LuisEnMarroquin/json-as-xlsx'
     steps:
     - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
       with:

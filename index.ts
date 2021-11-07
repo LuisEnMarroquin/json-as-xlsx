@@ -1,33 +1,30 @@
-import {utils, WorkBook, WorkSheet, write, writeFile} from 'xlsx'
-import {IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth} from './types'
+import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx'
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types'
 
-function getContentProperty(content: IContent, property: string): string | number | boolean | Date | IContent {
-
-  function accessContentProperties(content: IContent, properties: string[]): string | number | boolean | Date | IContent  {
-
+function getContentProperty (content: IContent, property: string): string | number | boolean | Date | IContent {
+  function accessContentProperties (content: IContent, properties: string[]): string | number | boolean | Date | IContent {
     const value = content[properties[0]]
 
     if (properties.length === 1) {
-      return value ?? ""
+      return value ?? ''
     }
 
     if (value === undefined || typeof value === 'string' || typeof value === 'boolean' ||
-      typeof value === 'number'|| value instanceof Date) {
-      return ""
+      typeof value === 'number' || value instanceof Date) {
+      return ''
     }
 
     return accessContentProperties(value, properties.slice(1))
   }
 
-  const properties = property.split(".")
+  const properties = property.split('.')
   return accessContentProperties(content, properties)
 }
 
-function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
-
-  let jsonSheetRow: IJsonSheetRow = {}
+function getJsonSheetRow (content: IContent, columns: IColumn[]): IJsonSheetRow {
+  const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
-    if (typeof column.value === "function") {
+    if (typeof column.value === 'function') {
       jsonSheetRow[column.label] = column.value(content)
     } else {
       jsonSheetRow[column.label] = getContentProperty(content, column.value)
@@ -36,21 +33,19 @@ function getJsonSheetRow(content: IContent, columns: IColumn[]): IJsonSheetRow {
   return jsonSheetRow
 }
 
-function getWorksheetColumnWidths(worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] {
-
+function getWorksheetColumnWidths (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] {
   const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
 
   // Column letters present in the workbook, e.g. A, B, C
-  let columnLetters: string[] = []
+  const columnLetters: string[] = []
   for (let C = columnRange.s.c; C <= columnRange.e.c; C++) {
     const address = utils.encode_col(C)
     columnLetters.push(address)
   }
 
   return columnLetters.map((column) => {
-
     // Cells that belong to this column
-    let columnCells: string[] = Object.keys(worksheet).filter((cell) => {
+    const columnCells: string[] = Object.keys(worksheet).filter((cell) => {
       return cell.charAt(0) === column
     })
 
@@ -59,12 +54,11 @@ function getWorksheetColumnWidths(worksheet: WorkSheet, extraLength: number = 1)
         ? previousCell : currentCell
     })
 
-    return {width: worksheet[maxWidthCell].v.length + extraLength}
+    return { width: worksheet[maxWidthCell].v.length + extraLength }
   })
 }
 
-function getWorksheet(jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
-
+function getWorksheet (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
   const jsonSheetRows = jsonSheet.content.map((contentItem) => {
     return getJsonSheetRow(contentItem, jsonSheet.columns)
   })
@@ -75,8 +69,7 @@ function getWorksheet(jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
   return worksheet
 }
 
-function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | undefined {
-
+function writeWorkbook (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined {
   const filename = `${settings.fileName ?? 'Spreadsheet'}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
 
@@ -84,9 +77,8 @@ function writeWorkbook(workbook: WorkBook, settings: ISettings = {}): Buffer | u
     : writeFile(workbook, filename, writeOptions)
 }
 
-function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
-
-  if (!jsonSheets.length) {
+function xlsx (jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
+  if (jsonSheets.length === 0) {
     return
   }
 
@@ -102,7 +94,7 @@ function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | unde
 }
 
 export default xlsx
-export {getContentProperty, getJsonSheetRow, getWorksheetColumnWidths}
+export { getContentProperty, getJsonSheetRow, getWorksheetColumnWidths }
 module.exports = xlsx
 module.exports.getContentProperty = getContentProperty
 module.exports.getJsonSheetRow = getJsonSheetRow

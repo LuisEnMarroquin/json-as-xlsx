@@ -4,8 +4,8 @@ Here are the **node** and **npm** versions that we use to develop this project
 
 ```shell
 $ node --version && npm --version
-v14.17.4
-6.14.14
+v16.13.0
+8.1.0
 ```
 
 After cloning the repository, run `npm install` to install the dependencies

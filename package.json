@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "main": "index.js",
   "license": "MIT",
   "description": "Create excel from json",
@@ -35,7 +35,8 @@
     "ts-standard": "^10.0.0"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "types/index.d.ts"
   ],
   "repository": {
     "type": "git",

@@ -46,7 +46,7 @@ function getWorksheetColumnWidths (worksheet: WorkSheet, extraLength: number = 1
   return columnLetters.map((column) => {
     // Cells that belong to this column
     const columnCells: string[] = Object.keys(worksheet).filter((cell) => {
-      return cell.charAt(0) === column
+      return cell.charAt(0) === column || cell.slice(0, 2) === column
     })
 
     const maxWidthCell = columnCells.reduce((previousCell, currentCell) => {

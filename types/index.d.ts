@@ -11,8 +11,8 @@ export interface IContent {
 
 export interface IJsonSheet {
   sheet?: string
-  columns: [IColumn, ...IColumn[]]
-  content: [IContent, ...IContent[]]
+  columns: IColumn[]
+  content: IContent[]
 }
 
 export interface ISettings {

@@ -59,9 +59,16 @@ function getWorksheetColumnWidths (worksheet: WorkSheet, extraLength: number = 1
 }
 
 function getWorksheet (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
-  const jsonSheetRows = jsonSheet.content.map((contentItem) => {
-    return getJsonSheetRow(contentItem, jsonSheet.columns)
-  })
+  let jsonSheetRows: IJsonSheetRow[]
+
+  if (jsonSheet.content.length > 0) {
+    jsonSheetRows = jsonSheet.content.map((contentItem) => {
+      return getJsonSheetRow(contentItem, jsonSheet.columns)
+    })
+  } else {
+    // If there's no content, show only column labels
+    jsonSheetRows = jsonSheet.columns.map((column) => ({ [column.label]: '' }))
+  }
 
   const worksheet = utils.json_to_sheet(jsonSheetRows)
   worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)

@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "main": "index.js",
   "license": "MIT",
   "description": "Create excel from json",

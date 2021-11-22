@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx'
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types'
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types/index'
 
 function getContentProperty (content: IContent, property: string): string | number | boolean | Date | IContent {
   function accessContentProperties (content: IContent, properties: string[]): string | number | boolean | Date | IContent {

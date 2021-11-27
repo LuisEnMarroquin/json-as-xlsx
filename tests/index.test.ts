@@ -6,6 +6,16 @@ test('JsonAsXlsx should return undefined on empty data array', () => {
     .toBeUndefined()
 })
 
+test('JsonAsXlsx should return xlsx with only column labels on empty content array', () => {
+  const jsonSheet: IJsonSheet = {
+    columns: [{ label: 'Username', value: 'username' }, { label: 'Playing', value: 'activity.game' }],
+    content: []
+  }
+
+  expect(jsonAsXlsx([jsonSheet], { writeOptions: { type: 'buffer' } }))
+    .toBeInstanceOf(Buffer)
+})
+
 test('JsonAsXlsx should return xlsx buffer even without worksheet name', () => {
   const worksheet: IJsonSheet = {
     columns: [{ label: 'Name', value: 'name' }],

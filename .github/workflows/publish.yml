@@ -3,49 +3,49 @@ name: Publish
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
-      with:
-        SSHKEY: ${{ secrets.SSH }}
-    - run: git clone git@github.com:LuisEnMarroquin/json-as-xlsx.git .
-    - name: Build JavaScript file
-      run: |
-        npm ci --no-optional
-        npm run build
-    - name: Set environment variables
-      run: |
-        echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
-        echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
-        echo Environment has TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
-    - name: Create tag with Git
-      if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-      run: |
-        git tag -a -m "Published ${{ env.CURRENT_VERSION }}" ${{ env.CURRENT_VERSION }}
-        git push --follow-tags
-    - name: Publish package to NPM
-      if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-      run: |
-        npx npm-cli-login -u luisenmarroquin -p ${{ secrets.PASSWORD }} -e ${{ secrets.EMAIL }}
-        npm publish
-    - name: Create GitHub release
-      if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-      run: |
-        echo ${{ secrets.TOKEN }} > nothing.md
-        gh auth login --with-token < nothing.md
-        gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
+      - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+        with:
+          SSHKEY: ${{ secrets.SSH }}
+      - run: git clone git@github.com:LuisEnMarroquin/json-as-xlsx.git .
+      - name: Build JavaScript file
+        run: |
+          npm ci --no-optional
+          npm run build
+      - name: Set environment variables
+        run: |
+          echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
+          echo Environment has TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
+      - name: Create tag with Git
+        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        run: |
+          git tag -a -m "Published ${{ env.CURRENT_VERSION }}" ${{ env.CURRENT_VERSION }}
+          git push --follow-tags
+      - name: Publish package to NPM
+        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        run: |
+          npx npm-cli-login -u luisenmarroquin -p ${{ secrets.PASSWORD }} -e ${{ secrets.EMAIL }}
+          npm publish
+      - name: Create GitHub release
+        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        run: |
+          echo ${{ secrets.TOKEN }} > nothing.md
+          gh auth login --with-token < nothing.md
+          gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
   github:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - run: npm ci
-    - run: npm run build
-    - run: npm run build-client
-    - uses: LuisEnMarroquin/gh-pages-publish@v2.4.4
-      with:
-        FOLDER: dist
-        SSHKEY: ${{ secrets.SSH }}
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - run: npm run build
+      - run: npm run build-client
+      - uses: LuisEnMarroquin/gh-pages-publish@v2.4.4
+        with:
+          FOLDER: dist
+          SSHKEY: ${{ secrets.SSH }}

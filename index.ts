@@ -1,4 +1,4 @@
-import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx'
+import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx/dist/xlsx.mini.min'
 import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types/index'
 
 function getContentProperty (content: IContent, property: string): string | number | boolean | Date | IContent {

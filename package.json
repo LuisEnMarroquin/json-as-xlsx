@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.2.5",
+  "version": "2.3.0",
   "main": "index.js",
   "license": "MIT",
   "types": "types/index.d.ts",
@@ -12,7 +12,7 @@
     "build": "tsc index.ts && uglifyjs index.js --output index.js",
     "start-client": "vue-cli-service serve",
     "build-client": "vue-cli-service build",
-    "start-server": "nodemon server.js",
+    "start-server": "npx nodemon --exec npx ts-node --skip-project server.ts",
     "lint": "ts-standard --fix",
     "test": "jest"
   },
@@ -20,6 +20,7 @@
     "xlsx": "^0.17.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.2",
     "@vue/cli-service": "^3.12.1",
@@ -32,7 +33,6 @@
     "vue-template-compiler": "^2.6.14"
   },
   "optionalDependencies": {
-    "nodemon": "^2.0.12",
     "ts-standard": "^10.0.0"
   },
   "files": [

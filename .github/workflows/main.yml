@@ -1,4 +1,4 @@
-name: Publish
+name: PRD
 
 on:
   push:

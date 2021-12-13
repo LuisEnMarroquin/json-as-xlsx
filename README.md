@@ -2,7 +2,10 @@
 
 This is a tool that helps to build an excel from a json and it depends only on `xlsx`
 
-You can see a live example of it working on this site: [luisenmarroquin.github.io/json-as-xlsx](https://luisenmarroquin.github.io/json-as-xlsx)
+You can see a live example of it working on any of this sites:
+
+* [xlsx.marroquin.dev](https://xlsx.marroquin.dev)
+* [xlsx.pages.dev](https://xlsx.pages.dev)
 
 ## Usage
 

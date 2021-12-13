@@ -6,7 +6,7 @@
   "types": "types/index.d.ts",
   "description": "Create excel xlsx file from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
-  "homepage": "https://luisenmarroquin.github.io/json-as-xlsx",
+  "homepage": "https://xlsx.marroquin.dev",
   "scripts": {
     "start": "tsc --watch index.ts",
     "build": "tsc index.ts && uglifyjs index.js --output index.js",

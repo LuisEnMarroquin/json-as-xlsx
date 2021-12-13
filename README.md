@@ -1,11 +1,12 @@
 # json-as-xlsx
 
-This is a tool that helps to build an excel from a json and it depends only on `xlsx`
+This is a tool that helps to build an excel from a json and it depends only on `xlsx` library
 
-You can see a live example of it working on any of this sites:
+You can see a live example of it working on any of this sites (there are many just in case):
 
-* [xlsx.marroquin.dev](https://xlsx.marroquin.dev)
 * [xlsx.pages.dev](https://xlsx.pages.dev)
+* [xlsx.marroquin.dev](https://xlsx.marroquin.dev)
+* [xlsx.luismarroquin.com](https://xlsx.luismarroquin.com)
 
 ## Usage
 

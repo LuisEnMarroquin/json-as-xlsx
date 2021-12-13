@@ -32,7 +32,7 @@ $ npm run start-server
 
 ## Linting code
 
-This project uses `ts-standard` for linting, included in optional dependencies
+This project uses `ts-standard` for linting
 
 ```shell
 $ npm run lint

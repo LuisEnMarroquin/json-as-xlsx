@@ -55,7 +55,7 @@ const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1)
         : currentCell
     })
 
-    return { width: worksheet[maxWidthCell].v.length + extraLength }
+    return { width: worksheet[maxWidthCell].v.length as number + extraLength }
   })
 }
 

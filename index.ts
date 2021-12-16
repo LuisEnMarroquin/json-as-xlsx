@@ -1,8 +1,8 @@
 import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx/dist/xlsx.mini.min'
 import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types/index'
 
-function getContentProperty (content: IContent, property: string): string | number | boolean | Date | IContent {
-  function accessContentProperties (content: IContent, properties: string[]): string | number | boolean | Date | IContent {
+const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
+  const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
     const value = content[properties[0]]
 
     if (properties.length === 1) {
@@ -21,7 +21,7 @@ function getContentProperty (content: IContent, property: string): string | numb
   return accessContentProperties(content, properties)
 }
 
-function getJsonSheetRow (content: IContent, columns: IColumn[]): IJsonSheetRow {
+const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow => {
   const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
     if (typeof column.value === 'function') {
@@ -33,7 +33,7 @@ function getJsonSheetRow (content: IContent, columns: IColumn[]): IJsonSheetRow 
   return jsonSheetRow
 }
 
-function getWorksheetColumnWidths (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] {
+const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
   const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
 
   // Column letters present in the workbook, e.g. A, B, C
@@ -51,14 +51,15 @@ function getWorksheetColumnWidths (worksheet: WorkSheet, extraLength: number = 1
 
     const maxWidthCell = columnCells.reduce((previousCell, currentCell) => {
       return worksheet[previousCell].v.length > worksheet[currentCell].v.length
-        ? previousCell : currentCell
+        ? previousCell
+        : currentCell
     })
 
     return { width: worksheet[maxWidthCell].v.length + extraLength }
   })
 }
 
-function getWorksheet (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
+const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => {
   let jsonSheetRows: IJsonSheetRow[]
 
   if (jsonSheet.content.length > 0) {
@@ -76,27 +77,26 @@ function getWorksheet (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet {
   return worksheet
 }
 
-function writeWorkbook (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined {
+const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
   const filename = `${settings.fileName ?? 'Spreadsheet'}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
 
-  return writeOptions.type === 'buffer' ? write(workbook, writeOptions)
+  return writeOptions.type === 'buffer'
+    ? write(workbook, writeOptions)
     : writeFile(workbook, filename, writeOptions)
 }
 
-function xlsx (jsonSheets: IJsonSheet[], settings: ISettings = {}): Buffer | undefined {
-  if (jsonSheets.length === 0) {
-    return
-  }
+const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, callback: any = false): Buffer | undefined => {
+  if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file
   jsonSheets.forEach((actualSheet, actualIndex) => {
     const worksheet = getWorksheet(actualSheet, settings)
     const worksheetName = actualSheet.sheet ?? `Sheet ${actualIndex + 1}`
-
     utils.book_append_sheet(workbook, worksheet, worksheetName) // Add Worksheet to Workbook
   })
 
+  if (callback !== false) return callback(workbook)
   return writeWorkbook(workbook, settings)
 }
 

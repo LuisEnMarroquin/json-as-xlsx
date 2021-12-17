@@ -96,8 +96,8 @@ const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, callback: any 
     utils.book_append_sheet(workbook, worksheet, worksheetName) // Add Worksheet to Workbook
   })
 
-  if (callback !== false) return callback(workbook)
-  return writeWorkbook(workbook, settings)
+  if (callback !== false) callback(workbook)
+  else writeWorkbook(workbook, settings)
 }
 
 export default xlsx

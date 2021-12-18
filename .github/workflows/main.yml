@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
         with:
-          SSHKEY: ${{ secrets.SSH }}
+          SSHKEY: ${{ secrets.SSH_GITHUB }}
       - run: git clone git@github.com:LuisEnMarroquin/json-as-xlsx.git .
       - name: Build JavaScript file
         run: |
@@ -29,13 +29,13 @@ jobs:
           git push --follow-tags
       - name: Publish package to NPM
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-        run: |
-          npx npm-cli-login -u luisenmarroquin -p ${{ secrets.PASSWORD }} -e ${{ secrets.EMAIL }}
-          npm publish
+        run: npm publish
+        env:
+          NPM_TOKEN: ${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |
-          echo ${{ secrets.TOKEN }} > nothing.md
+          echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
           gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
   github:
@@ -49,4 +49,4 @@ jobs:
       - uses: LuisEnMarroquin/gh-pages-publish@v2.4.4
         with:
           FOLDER: dist
-          SSHKEY: ${{ secrets.SSH }}
+          SSHKEY: ${{ secrets.SSH_GITHUB }}

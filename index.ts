@@ -86,7 +86,9 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
     : writeFile(workbook, filename, writeOptions)
 }
 
-const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, callback: any = false): Buffer | undefined => {
+type IWorkbookCallback = (workbook: WorkBook) => void
+
+const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => { }): Buffer | undefined => {
   if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file
@@ -96,8 +98,8 @@ const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, callback: any 
     utils.book_append_sheet(workbook, worksheet, worksheetName) // Add Worksheet to Workbook
   })
 
-  if (callback !== false) callback(workbook)
-  else writeWorkbook(workbook, settings)
+  workbookCallback(workbook)
+  return writeWorkbook(workbook, settings)
 }
 
 export default xlsx

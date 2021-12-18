@@ -11,7 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build JavaScript file
-        run: npm ci && npm run build
+        run: |
+          npm ci
+          npm run build
       - name: Set environment variables
         run: |
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
@@ -19,7 +21,9 @@ jobs:
           echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
       - name: Publish package to NPM
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-        run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc && npm publish --access public
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+          npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
@@ -28,14 +32,10 @@ jobs:
           echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
           gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
-  github:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: npm ci
-      - run: npm run build
-      - run: npm run build-client
-      - run: cp CNAME dist/CNAME
+      - name: Build VueJS project
+        run: |
+          npm run build-client
+          cp CNAME dist/CNAME
       - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           folder: dist

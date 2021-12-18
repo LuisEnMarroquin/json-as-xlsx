@@ -27,7 +27,9 @@ jobs:
           git push --follow-tags
       - name: Publish package to NPM
         # if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-        run: npm publish --otp ${{ secrets.TOKEN_NPM }}
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc && npm publish --access public
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |

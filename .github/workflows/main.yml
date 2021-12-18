@@ -26,7 +26,7 @@ jobs:
           git tag -a -m "Published ${{ env.CURRENT_VERSION }}" ${{ env.CURRENT_VERSION }}
           git push --follow-tags
       - name: Publish package to NPM
-        # if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc && npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}

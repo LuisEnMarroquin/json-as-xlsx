@@ -29,9 +29,7 @@ jobs:
           git push --follow-tags
       - name: Publish package to NPM
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-        run: npm publish
-        env:
-          NPM_TOKEN: ${{ secrets.TOKEN_NPM }}
+        run: npm publish --otp=${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |
@@ -46,7 +44,9 @@ jobs:
       - run: npm run build
       - run: npm run build-client
       - run: cp CNAME dist/CNAME
-      - uses: LuisEnMarroquin/gh-pages-publish@v2.4.4
+      - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          FOLDER: dist
-          SSHKEY: ${{ secrets.SSH_GITHUB }}
+          folder: dist
+          branch: gh-pages
+          git-config-name: LuisEnMarroquin
+          git-config-email: mluis651@gmail.com

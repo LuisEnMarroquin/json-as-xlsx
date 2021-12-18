@@ -9,27 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
-        with:
-          SSHKEY: ${{ secrets.SSH_GITHUB }}
-      - run: git clone git@github.com:LuisEnMarroquin/json-as-xlsx.git .
+      - uses: actions/checkout@v2
       - name: Build JavaScript file
         run: npm ci && npm run build
       - name: Set environment variables
         run: |
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
-          echo Environment has TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
-      # - name: Create tag with Git
-      #   if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-      #   run: |
-      #     git tag -a -m "Published ${{ env.CURRENT_VERSION }}" ${{ env.CURRENT_VERSION }}
-      #     git push --follow-tags
-      # - name: Publish package to NPM
-      #   if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-      #   run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc && npm publish --access public
-      #   env:
-      #     NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+          echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
+      - name: Publish package to NPM
+        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc && npm publish --access public
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |

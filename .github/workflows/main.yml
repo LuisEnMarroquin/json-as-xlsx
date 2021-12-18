@@ -14,9 +14,7 @@ jobs:
           SSHKEY: ${{ secrets.SSH_GITHUB }}
       - run: git clone git@github.com:LuisEnMarroquin/json-as-xlsx.git .
       - name: Build JavaScript file
-        run: |
-          npm ci --no-optional
-          npm run build
+        run: npm ci && npm run build
       - name: Set environment variables
         run: |
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
@@ -28,8 +26,8 @@ jobs:
           git tag -a -m "Published ${{ env.CURRENT_VERSION }}" ${{ env.CURRENT_VERSION }}
           git push --follow-tags
       - name: Publish package to NPM
-        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
-        run: npm publish --otp=${{ secrets.TOKEN_NPM }}
+        # if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+        run: npm publish --otp ${{ secrets.TOKEN_NPM }}
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |

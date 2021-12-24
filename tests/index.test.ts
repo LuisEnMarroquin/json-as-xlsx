@@ -1,6 +1,6 @@
 import { read as readBufferWorkBook } from 'xlsx';
 import jsonxlsx from '../index';
-import { IJsonSheet, ISettings } from '../types';
+import { IContent, IJsonSheet, ISettings } from '../types';
 
 describe('json-as-xlsx', () => {
   it('should return undefined if sheets array is empty', () => {
@@ -96,6 +96,29 @@ describe('json-as-xlsx', () => {
       expect(workSheet['A1'].v).toBe('IP');
       expect(workSheet['A2'].v).toBe('0.0.0.0');
       expect(workSheet['A3'].v).toBe('0.0.0.1');
+    });
+
+    it('should handle function column value', () => {
+      const maskPhoneNumber = (cell: IContent) =>
+        new String(cell.phone).replace(/^(\d{3})(\d{4}).*/, '$1-$2');
+
+      const sheets = [
+        {
+          sheet: 'Users',
+          columns: [{ label: 'Phone', value: maskPhoneNumber }],
+          content: [
+            { name: 'Martin', phone: '1234567' },
+            { name: 'Robert', phone: '1234568' },
+          ],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
+      const workSheet = workBook.Sheets['Users'];
+
+      expect(workSheet['A1'].v).toBe('Phone');
+      expect(workSheet['A2'].v).toBe('123-4567');
+      expect(workSheet['A3'].v).toBe('123-4568');
     });
 
     it('should handle multiple sheets', () => {

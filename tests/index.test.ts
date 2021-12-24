@@ -1,62 +1,152 @@
-import jsonAsXlsx from '../index'
-import { IJsonSheet } from '../types'
+import { read as readBufferWorkBook } from 'xlsx';
+import jsonxlsx from '../index';
+import { IJsonSheet, ISettings } from '../types';
 
-test('JsonAsXlsx should return undefined on empty data array', () => {
-  expect(jsonAsXlsx([], { writeOptions: { type: 'buffer' } }))
-    .toBeUndefined()
-})
+describe('json-as-xlsx', () => {
+  it('should return undefined if sheets array is empty', () => {
+    const sheets: IJsonSheet[] = [];
+    const result = jsonxlsx(sheets);
+    expect(result).toBeUndefined();
+  });
 
-test('JsonAsXlsx should return xlsx with only column labels on empty content array', () => {
-  const jsonSheet: IJsonSheet = {
-    columns: [{ label: 'Username', value: 'username' }, { label: 'Playing', value: 'activity.game' }],
-    content: []
-  }
+  describe('writeOptions.type is set to buffer', () => {
+    const settings: ISettings = {
+      writeOptions: {
+        type: 'buffer',
+      },
+    };
 
-  expect(jsonAsXlsx([jsonSheet], { writeOptions: { type: 'buffer' } }))
-    .toBeInstanceOf(Buffer)
-})
+    it('should return buffer', () => {
+      const sheets = [
+        {
+          columns: [{ label: 'Name', value: 'name' }],
+          content: [{ name: 'Martin' }],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      expect(buffer).toBeInstanceOf(Buffer);
+    });
 
-test('JsonAsXlsx should return xlsx buffer even without worksheet name', () => {
-  const worksheet: IJsonSheet = {
-    columns: [{ label: 'Name', value: 'name' }],
-    content: [{ name: 'Joseph' }]
-  }
+    it('should return parsable xlsx buffer', () => {
+      const sheets = [
+        {
+          columns: [{ label: 'Name', value: 'name' }],
+          content: [{ name: 'Martin' }],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
 
-  // TODO: Verify buffer content
-  expect(jsonAsXlsx([worksheet], { writeOptions: { type: 'buffer' } }))
-    .toBeInstanceOf(Buffer)
-})
+      expect(workBook).toBeDefined();
+    });
 
-test('JsonAsXlsx should return undefined on xlsx file creation', () => {
-  const worksheet: IJsonSheet = {
-    sheet: 'Friends',
-    columns: [
-      { label: 'Name', value: 'name' }
-    ],
-    content: [
-      { name: 'Andreas', username: 'andr34s' }
-    ]
-  }
+    it('should return one column filled cells', () => {
+      const sheets = [
+        {
+          sheet: 'Authors',
+          columns: [{ label: 'Name', value: 'name' }],
+          content: [{ name: 'Martin' }, { name: 'Kent' }],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
+      const workSheet = workBook.Sheets['Authors'];
 
-  // TODO: Verify that file was written
-  expect(jsonAsXlsx([worksheet])).toBeUndefined()
-})
+      expect(workSheet['!ref']).toBe('A1:A3');
+      expect(workSheet['A1'].v).toBe('Name');
+      expect(workSheet['A2'].v).toBe('Martin');
+      expect(workSheet['A3'].v).toBe('Kent');
+    });
 
-test('JsonAsXlsx should return xlsx buffer for worksheet with name', () => {
-  const data: IJsonSheet[] = [{
-    sheet: 'Adults',
-    columns: [
-      { label: 'User', value: 'user' }, // Top level data
-      { label: 'Age', value: (row: any) => (row.age + ' years') }, // Run functions
-      { label: 'Phone', value: (row: any) => (row.more ? row.more.phone || '' : '') } // Deep props
-    ],
-    content: [
-      { user: 'Andrea', age: 20, more: { phone: '11111111' } },
-      { user: 'Luis', age: 21, more: { phone: '12345678' } }
-    ]
-  }]
+    it('should return only the column headers if there is no content', () => {
+      const sheetName = 'Authors';
+      const sheets = [
+        {
+          sheet: sheetName,
+          columns: [
+            { label: 'Name', value: 'name' },
+            { label: 'Age', value: 'age' },
+          ],
+          content: [],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
+      const workSheet = workBook.Sheets[sheetName];
 
-  // TODO: Verify buffer content
-  expect(jsonAsXlsx(data, { writeOptions: { type: 'buffer' } }))
-    .toBeInstanceOf(Buffer)
-})
+      expect(workSheet['A1'].v).toBe('Name');
+      expect(workSheet['B1'].v).toBe('Age');
+    });
+
+    it('should handle deep props', () => {
+      const sheets = [
+        {
+          sheet: 'Users',
+          columns: [{ label: 'IP', value: 'metadata.ip' }],
+          content: [
+            { name: 'Martin', metadata: { ip: '0.0.0.0' } },
+            { name: 'Robert', metadata: { ip: '0.0.0.1' } },
+          ],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
+      const workSheet = workBook.Sheets['Users'];
+
+      expect(workSheet['A1'].v).toBe('IP');
+      expect(workSheet['A2'].v).toBe('0.0.0.0');
+      expect(workSheet['A3'].v).toBe('0.0.0.1');
+    });
+
+    it('should handle multiple sheets', () => {
+      const sheets = [
+        {
+          sheet: 'Authors',
+          columns: [
+            { label: 'Name', value: 'name' },
+            { label: 'Age', value: 'age' },
+          ],
+          content: [
+            { name: 'Martin', age: 50 },
+            { name: 'Robert', age: 20 },
+            { name: 'Andrea', age: 35 },
+          ],
+        },
+        {
+          sheet: 'Books',
+          columns: [
+            { label: 'Title', value: 'title' },
+            { label: 'Author', value: 'author' },
+          ],
+          content: [
+            { title: 'TDD', author: 'Martin' },
+            { title: 'Git', author: 'Robert' },
+          ],
+        },
+      ];
+      const buffer = jsonxlsx(sheets, settings);
+      const workBook = readBufferWorkBook(buffer);
+
+      const authorsSheet = workBook.Sheets['Authors'];
+      const booksSheet = workBook.Sheets['Books'];
+
+      expect(workBook.SheetNames).toEqual(['Authors', 'Books']);
+
+      expect(authorsSheet['A1'].v).toBe('Name');
+      expect(authorsSheet['B1'].v).toBe('Age');
+      expect(authorsSheet['A2'].v).toBe('Martin');
+      expect(authorsSheet['B2'].v).toBe(50);
+      expect(authorsSheet['A3'].v).toBe('Robert');
+      expect(authorsSheet['B3'].v).toBe(20);
+      expect(authorsSheet['A4'].v).toBe('Andrea');
+      expect(authorsSheet['B4'].v).toBe(35);
+
+      expect(booksSheet['A1'].v).toBe('Title');
+      expect(booksSheet['B1'].v).toBe('Author');
+      expect(booksSheet['A2'].v).toBe('TDD');
+      expect(booksSheet['B2'].v).toBe('Martin');
+      expect(booksSheet['A3'].v).toBe('Git');
+      expect(booksSheet['B3'].v).toBe('Robert');
+    });
+  });
+});

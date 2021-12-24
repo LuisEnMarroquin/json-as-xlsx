@@ -50,7 +50,7 @@ xlsx(data, settings) // Will download the excel file
 
 ## Examples
 
-This are files used for development, please change imports from `./index.js` to `json-as-xlsx`
+This are files used for development, please change imports from `../../src/index.js` to `json-as-xlsx`
 
-* [VueJS with JavaScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/src/App.vue)
-* [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/server.ts)
+* [VueJS with JavaScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/vue-app/App.vue)
+* [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/express/server.ts)

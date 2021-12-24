@@ -1,7 +1,7 @@
 {
   "name": "json-as-xlsx",
   "version": "2.3.8",
-  "main": "index.js",
+  "main": "src/index.ts",
   "license": "MIT",
   "types": "types/index.d.ts",
   "description": "Create excel xlsx file from json",
@@ -9,10 +9,10 @@
   "homepage": "https://xlsx.marroquin.dev",
   "scripts": {
     "start": "tsc --watch index.ts",
-    "build": "tsc index.ts && uglifyjs index.js --output index.js",
+    "build": "tsc src/index.ts && uglifyjs src/index.js --output src/index.js",
     "start-client": "vue-cli-service serve",
     "build-client": "vue-cli-service build",
-    "start-server": "npx nodemon --exec npx ts-node --skip-project server.ts",
+    "start-server": "npx nodemon --exec npx ts-node --skip-project examples/express/server.ts",
     "lint": "ts-standard --fix",
     "test": "jest"
   },
@@ -34,7 +34,7 @@
     "vue-template-compiler": "^2.6.14"
   },
   "files": [
-    "index.js",
+    "src/index.js",
     "types/index.d.ts"
   ],
   "repository": {

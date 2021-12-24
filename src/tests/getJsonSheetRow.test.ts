@@ -1,4 +1,4 @@
-import { IContent } from '../types'
+import { IContent } from '../../types'
 import { getJsonSheetRow } from '../index'
 
 test('', () => {

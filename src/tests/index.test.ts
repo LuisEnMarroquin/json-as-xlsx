@@ -1,5 +1,5 @@
 import jsonAsXlsx from '../index'
-import { IJsonSheet } from '../types'
+import { IJsonSheet } from '../../types'
 
 test('JsonAsXlsx should return undefined on empty data array', () => {
   expect(jsonAsXlsx([], { writeOptions: { type: 'buffer' } }))

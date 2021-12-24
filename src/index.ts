@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx/dist/xlsx.mini.min'
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from './types/index'
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from '../types/index'
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
   const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {

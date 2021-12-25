@@ -105,7 +105,7 @@ describe('json-as-xlsx', () => {
       const sheets = [
         {
           sheet: 'Users',
-          columns: [{ label: 'Phone', value: maskPhoneNumber }],
+          columns: [{ label: 'Phone number', value: maskPhoneNumber }],
           content: [
             { name: 'Martin', phone: '1234567' },
             { name: 'Robert', phone: '1234568' },
@@ -116,9 +116,22 @@ describe('json-as-xlsx', () => {
       const workBook = readBufferWorkBook(buffer);
       const workSheet = workBook.Sheets['Users'];
 
-      expect(workSheet['A1'].v).toBe('Phone');
+      expect(workSheet['A1'].v).toBe('Phone number');
       expect(workSheet['A2'].v).toBe('123-4567');
       expect(workSheet['A3'].v).toBe('123-4568');
+    });
+
+    it('should call optional callback', () => {
+      const callback = jest.fn();
+      const sheets = [
+        {
+          columns: [{ label: 'Name', value: 'name' }],
+          content: [{ name: 'Martin' }],
+        },
+      ];
+      jsonxlsx(sheets, settings, callback);
+
+      expect(callback).toBeCalledTimes(1);
     });
 
     it('should handle multiple sheets', () => {

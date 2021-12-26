@@ -1,5 +1,5 @@
 import express from 'express'
-import xlsx from './index'
+import xlsx from '../../src/index'
 
 const app = express()
 app.use(express.json())

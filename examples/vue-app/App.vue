@@ -10,7 +10,7 @@
 </template>
 
 <script>
-const xlsx = require('../index.js')
+const xlsx = require('../../src/index.js')
 export default {
   name: 'App',
   methods: {

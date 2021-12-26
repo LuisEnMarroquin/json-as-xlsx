@@ -8,7 +8,7 @@
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "homepage": "https://xlsx.marroquin.dev",
   "scripts": {
-    "start": "tsc --watch index.ts",
+    "start": "tsc --watch src/index.ts",
     "build": "tsc src/index.ts && uglifyjs src/index.js --output src/index.js",
     "start-client": "vue-cli-service serve",
     "build-client": "vue-cli-service build",
@@ -23,7 +23,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.2",
     "@types/node": "^17.0.0",
-    "@vue/cli-service": "^3.12.1",
+    "@vue/cli-service": "^4.5.15",
     "express": "^4.17.1",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
@@ -50,7 +50,6 @@
     "excel",
     "jsonc",
     "json-xlsx",
-    "microsoft",
     "xlsx-json",
     "create-xlsx",
     "create-excel",
@@ -58,8 +57,10 @@
     "json-to-xlsx",
     "json-as-excel",
     "json-to-excel",
-    "microsoft-xlsx",
+    "xlsx-as-json",
     "xlsx-from-json",
+    "microsoft",
+    "microsoft-xlsx",
     "microsoft-excel"
   ],
   "browserslist": [

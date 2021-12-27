@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.3.9",
+  "version": "2.3.10",
   "main": "src/index.js",
   "license": "MIT",
   "types": "types/index.d.ts",

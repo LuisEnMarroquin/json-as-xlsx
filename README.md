@@ -45,7 +45,11 @@ let settings = {
   writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
 }
 
-xlsx(data, settings) // Will download the excel file
+let callback = function(sheet) {
+  console.log('Download complete:', sheet)
+}
+
+xlsx(data, settings, callback) // Will download the excel file
 ```
 
 ## Examples

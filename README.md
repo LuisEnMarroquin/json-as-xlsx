@@ -45,6 +45,12 @@ let settings = {
   writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
 }
 
+xlsx(data, settings) // Will download the excel file
+```
+
+If you want to trigger something after the file is downloaded, you can use the `callback` parameter:
+
+```js
 let callback = function(sheet) {
   console.log('Download complete:', sheet)
 }

@@ -46,6 +46,22 @@ const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
   return columnIds
 }
 
+const getObjectLength = (object: unknown): number => {
+    if (typeof object === 'string') {
+        return object.length
+    }
+    if (typeof object === 'number') {
+        return object.toString().length
+    }
+    if (typeof object === 'boolean') {
+        return object ? 'true'.length : 'false'.length
+    }
+    if (object instanceof Date) {
+        return object.toString().length
+    }
+    return 0
+}
+
 const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
   const columnLetters: string[] = getWorksheetColumnIds(worksheet)
 

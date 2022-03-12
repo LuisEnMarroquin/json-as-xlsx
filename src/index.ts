@@ -33,15 +33,21 @@ const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow =
   return jsonSheetRow
 }
 
-const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
+const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
   const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
 
   // Column letters present in the workbook, e.g. A, B, C
-  const columnLetters: string[] = []
+  const columnIds: string[] = []
   for (let C = columnRange.s.c; C <= columnRange.e.c; C++) {
     const address = utils.encode_col(C)
-    columnLetters.push(address)
+    columnIds.push(address)
   }
+
+  return columnIds
+}
+
+const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
+  const columnLetters: string[] = getWorksheetColumnIds(worksheet)
 
   return columnLetters.map((column) => {
     // Cells that belong to this column

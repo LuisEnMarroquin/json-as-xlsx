@@ -33,6 +33,30 @@ const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow =
   return jsonSheetRow
 }
 
+const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnFormats: Array<string | null>) => {
+    for (let i = 0; i < columnIds.length; i += 1) {
+        const columnFormat = columnFormats[i]
+
+        // Skip column if it doesn't have a format
+        if (!columnFormat) {
+            continue
+        }
+
+        const column = utils.decode_col(columnIds[i])
+        const range = utils.decode_range(worksheet['!ref'] ?? '')
+
+        // Note: Range.s.r + 1 skips the header row
+        for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+            const ref = utils.encode_cell({ r: row, c: column })
+
+            if (worksheet[ref]) {
+                worksheet[ref].z = columnFormat
+            }
+        }
+
+    }
+}
+
 const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
   const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
 
@@ -94,6 +118,11 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
   }
 
   const worksheet = utils.json_to_sheet(jsonSheetRows)
+  const worksheetColumnIds = getWorksheetColumnIds(worksheet)
+
+  const worksheetColumnFormats = jsonSheet.columns.map(jsonSheetColumn => jsonSheetColumn.format ?? null)
+  applyColumnFormat(worksheet, worksheetColumnIds, worksheetColumnFormats)
+
   worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)
 
   return worksheet

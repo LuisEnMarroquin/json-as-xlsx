@@ -95,13 +95,23 @@ const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1)
       return cell.charAt(0) === column || cell.slice(0, 2) === column
     })
 
-    const maxWidthCell = columnCells.reduce((previousCell, currentCell) => {
-      return worksheet[previousCell].v.length > worksheet[currentCell].v.length
-        ? previousCell
-        : currentCell
-    })
+    const maxWidthCell = columnCells.reduce((maxWidth, cellId) => {
+      const cell = worksheet[cellId]
 
-    return { width: worksheet[maxWidthCell].v.length as number + extraLength }
+      const cellContentLength: number = getObjectLength(cell.v)
+
+      if (!cell.z) {
+        return Math.max(maxWidth, cellContentLength)
+      }
+
+      const cellFormatLength: number = cell.z.length
+
+      const largestWidth: number = Math.max(cellContentLength, cellFormatLength)
+
+      return Math.max(maxWidth, largestWidth)
+    }, 0)
+
+    return { width: maxWidthCell + extraLength }
   })
 }
 

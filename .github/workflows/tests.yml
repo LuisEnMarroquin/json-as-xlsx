@@ -1,4 +1,4 @@
-name: Run test suite
+name: Test suite
 
 on: [push, pull_request_target]
 

@@ -1,30 +1,29 @@
-import { utils, WorkBook, WorkSheet, write, writeFile } from 'xlsx/dist/xlsx.mini.min'
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from '../types/index'
+import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx/dist/xlsx.mini.min"
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from "../types/index"
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
   const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
     const value = content[properties[0]]
 
     if (properties.length === 1) {
-      return value ?? ''
+      return value ?? ""
     }
 
-    if (value === undefined || typeof value === 'string' || typeof value === 'boolean' ||
-      typeof value === 'number' || value instanceof Date) {
-      return ''
+    if (value === undefined || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
+      return ""
     }
 
     return accessContentProperties(value, properties.slice(1))
   }
 
-  const properties = property.split('.')
+  const properties = property.split(".")
   return accessContentProperties(content, properties)
 }
 
 const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow => {
   const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
-    if (typeof column.value === 'function') {
+    if (typeof column.value === "function") {
       jsonSheetRow[column.label] = column.value(content)
     } else {
       jsonSheetRow[column.label] = getContentProperty(content, column.value)
@@ -34,31 +33,30 @@ const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow =
 }
 
 const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnFormats: Array<string | null>) => {
-    for (let i = 0; i < columnIds.length; i += 1) {
-        const columnFormat = columnFormats[i]
+  for (let i = 0; i < columnIds.length; i += 1) {
+    const columnFormat = columnFormats[i]
 
-        // Skip column if it doesn't have a format
-        if (!columnFormat) {
-            continue
-        }
-
-        const column = utils.decode_col(columnIds[i])
-        const range = utils.decode_range(worksheet['!ref'] ?? '')
-
-        // Note: Range.s.r + 1 skips the header row
-        for (let row = range.s.r + 1; row <= range.e.r; ++row) {
-            const ref = utils.encode_cell({ r: row, c: column })
-
-            if (worksheet[ref]) {
-                worksheet[ref].z = columnFormat
-            }
-        }
-
+    // Skip column if it doesn't have a format
+    if (!columnFormat) {
+      continue
     }
+
+    const column = utils.decode_col(columnIds[i])
+    const range = utils.decode_range(worksheet["!ref"] ?? "")
+
+    // Note: Range.s.r + 1 skips the header row
+    for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+      const ref = utils.encode_cell({ r: row, c: column })
+
+      if (worksheet[ref]) {
+        worksheet[ref].z = columnFormat
+      }
+    }
+  }
 }
 
 const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
-  const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
+  const columnRange = utils.decode_range(worksheet["!ref"] ?? "")
 
   // Column letters present in the workbook, e.g. A, B, C
   const columnIds: string[] = []
@@ -71,19 +69,19 @@ const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
 }
 
 const getObjectLength = (object: unknown): number => {
-    if (typeof object === 'string') {
-        return object.length
-    }
-    if (typeof object === 'number') {
-        return object.toString().length
-    }
-    if (typeof object === 'boolean') {
-        return object ? 'true'.length : 'false'.length
-    }
-    if (object instanceof Date) {
-        return object.toString().length
-    }
-    return 0
+  if (typeof object === "string") {
+    return object.length
+  }
+  if (typeof object === "number") {
+    return object.toString().length
+  }
+  if (typeof object === "boolean") {
+    return object ? "true".length : "false".length
+  }
+  if (object instanceof Date) {
+    return object.toString().length
+  }
+  return 0
 }
 
 const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
@@ -124,32 +122,30 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
     })
   } else {
     // If there's no content, show only column labels
-    jsonSheetRows = jsonSheet.columns.map((column) => ({ [column.label]: '' }))
+    jsonSheetRows = jsonSheet.columns.map((column) => ({ [column.label]: "" }))
   }
 
   const worksheet = utils.json_to_sheet(jsonSheetRows)
   const worksheetColumnIds = getWorksheetColumnIds(worksheet)
 
-  const worksheetColumnFormats = jsonSheet.columns.map(jsonSheetColumn => jsonSheetColumn.format ?? null)
+  const worksheetColumnFormats = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.format ?? null)
   applyColumnFormat(worksheet, worksheetColumnIds, worksheetColumnFormats)
 
-  worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)
+  worksheet["!cols"] = getWorksheetColumnWidths(worksheet, settings.extraLength)
 
   return worksheet
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
-  const filename = `${settings.fileName ?? 'Spreadsheet'}.xlsx`
+  const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
 
-  return writeOptions.type === 'buffer'
-    ? write(workbook, writeOptions)
-    : writeFile(workbook, filename, writeOptions)
+  return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
 }
 
 type IWorkbookCallback = (workbook: WorkBook) => void
 
-const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => { }): Buffer | undefined => {
+const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | undefined => {
   if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file

@@ -13,7 +13,6 @@
     "start-client": "vue-cli-service serve",
     "build-client": "vue-cli-service build",
     "start-server": "npx nodemon --exec npx ts-node --skip-project examples/express/server.ts",
-    "lint": "ts-standard --fix",
     "test": "jest"
   },
   "dependencies": {
@@ -27,7 +26,6 @@
     "express": "^4.17.1",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
-    "ts-standard": "^11.0.0",
     "typescript": "^4.4.3",
     "uglify-js": "^3.14.2",
     "vue": "^2.6.14",
@@ -64,8 +62,8 @@
     "microsoft-excel"
   ],
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
   ]
 }

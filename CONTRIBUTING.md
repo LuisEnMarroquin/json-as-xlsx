@@ -32,11 +32,7 @@ $ npm run start-server
 
 ## Linting code
 
-This project uses `ts-standard` for linting
-
-```shell
-$ npm run lint
-```
+This project uses `prettier` for linting code
 
 ## Deploy to NPM
 

@@ -3,6 +3,7 @@ import { WritingOptions } from 'xlsx'
 export interface IColumn {
   label: string
   value: string | ((value: IContent) => string | number | boolean | Date | IContent)
+  format?: string
 }
 
 export interface IContent {

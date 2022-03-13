@@ -29,12 +29,12 @@ let data = [
     sheet: 'Children',
     columns: [
       { label: 'User', value: 'user' }, // Top level data
-      { label: 'Age', value: row => (row.age + ' years') }, // Run functions
-      { label: 'Phone', value: 'user.more.phone' }, // Deep props
+      { label: 'Age', value: 'age', format: '# "años"' }, // Column format
+      { label: 'Phone', value: 'user.more.phone', format: "(###) ###-####" }, // Deep props and column format
     ],
     content: [
-      { user: 'Manuel', age: 16, more: { phone: '99999999' } },
-      { user: 'Ana', age: 17, more: { phone: '87654321' } }
+      { user: 'Manuel', age: 16, more: { phone: 9999999900 } },
+      { user: 'Ana', age: 17, more: { phone: 8765432135 } }
     ]
   }
 ]
@@ -56,6 +56,42 @@ let callback = function(sheet) {
 }
 
 xlsx(data, settings, callback) // Will download the excel file
+```
+
+### Column formatting
+
+> **Note:** Cell formatting is type based, i.e. the format type and value type must match.
+>
+> If you want to use a Date format, the value must be of type Date; if you want a number format, the value must be a Number.
+
+Column formatting can be provided in the column object, i.e.
+
+```js
+columns: [
+   { label: 'Income', value: 'income', format: '\€#,##0.00' },
+]
+```
+
+- A list of SheetJS format examples can be found
+  here: [SSF library](https://github.com/SheetJS/sheetjs/blob/f443aa8475ebf051fc4e888cf0a6c3e5b751813c/bits/10_ssf.js#L42)
+- ECMA-376 number formatting
+  specification:  [Number formats](https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_numFmts_topic_ID0E6KK6.html)
+
+Examples
+
+```js
+// Number formats
+
+'$0.00'         // Basic
+'\£#,##0.00'    // Pound
+'0%'            // Percentage
+'#.# "ft"'      // Number and text
+
+// Date formats
+'d-mmm-yy'      // 12-Mar-22
+'ddd'           // (eg. Sat)
+'dddd'          // (eg. Saturday)
+'h:mm AM/PM'    // 1:10 PM
 ```
 
 ## Examples

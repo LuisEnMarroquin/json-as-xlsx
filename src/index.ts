@@ -33,15 +33,61 @@ const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow =
   return jsonSheetRow
 }
 
-const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
+const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnFormats: Array<string | null>) => {
+    for (let i = 0; i < columnIds.length; i += 1) {
+        const columnFormat = columnFormats[i]
+
+        // Skip column if it doesn't have a format
+        if (!columnFormat) {
+            continue
+        }
+
+        const column = utils.decode_col(columnIds[i])
+        const range = utils.decode_range(worksheet['!ref'] ?? '')
+
+        // Note: Range.s.r + 1 skips the header row
+        for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+            const ref = utils.encode_cell({ r: row, c: column })
+
+            if (worksheet[ref]) {
+                worksheet[ref].z = columnFormat
+            }
+        }
+
+    }
+}
+
+const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
   const columnRange = utils.decode_range(worksheet['!ref'] ?? '')
 
   // Column letters present in the workbook, e.g. A, B, C
-  const columnLetters: string[] = []
+  const columnIds: string[] = []
   for (let C = columnRange.s.c; C <= columnRange.e.c; C++) {
     const address = utils.encode_col(C)
-    columnLetters.push(address)
+    columnIds.push(address)
   }
+
+  return columnIds
+}
+
+const getObjectLength = (object: unknown): number => {
+    if (typeof object === 'string') {
+        return object.length
+    }
+    if (typeof object === 'number') {
+        return object.toString().length
+    }
+    if (typeof object === 'boolean') {
+        return object ? 'true'.length : 'false'.length
+    }
+    if (object instanceof Date) {
+        return object.toString().length
+    }
+    return 0
+}
+
+const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
+  const columnLetters: string[] = getWorksheetColumnIds(worksheet)
 
   return columnLetters.map((column) => {
     // Cells that belong to this column
@@ -49,13 +95,23 @@ const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1)
       return cell.charAt(0) === column || cell.slice(0, 2) === column
     })
 
-    const maxWidthCell = columnCells.reduce((previousCell, currentCell) => {
-      return worksheet[previousCell].v.length > worksheet[currentCell].v.length
-        ? previousCell
-        : currentCell
-    })
+    const maxWidthCell = columnCells.reduce((maxWidth, cellId) => {
+      const cell = worksheet[cellId]
 
-    return { width: worksheet[maxWidthCell].v.length as number + extraLength }
+      const cellContentLength: number = getObjectLength(cell.v)
+
+      if (!cell.z) {
+        return Math.max(maxWidth, cellContentLength)
+      }
+
+      const cellFormatLength: number = cell.z.length
+
+      const largestWidth: number = Math.max(cellContentLength, cellFormatLength)
+
+      return Math.max(maxWidth, largestWidth)
+    }, 0)
+
+    return { width: maxWidthCell + extraLength }
   })
 }
 
@@ -72,6 +128,11 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
   }
 
   const worksheet = utils.json_to_sheet(jsonSheetRows)
+  const worksheetColumnIds = getWorksheetColumnIds(worksheet)
+
+  const worksheetColumnFormats = jsonSheet.columns.map(jsonSheetColumn => jsonSheetColumn.format ?? null)
+  applyColumnFormat(worksheet, worksheetColumnIds, worksheetColumnFormats)
+
   worksheet['!cols'] = getWorksheetColumnWidths(worksheet, settings.extraLength)
 
   return worksheet

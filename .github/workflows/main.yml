@@ -19,7 +19,7 @@ jobs:
         run: npm run build
       - name: Set environment variables
         run: |
-          git fetch -t --always
+          git fetch --all --tags
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
           echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}

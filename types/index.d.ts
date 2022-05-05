@@ -1,4 +1,5 @@
 import { WritingOptions } from "xlsx"
+import { WorkBook } from 'xlsx/dist/xlsx.mini.min'
 
 export interface IColumn {
   label: string
@@ -30,6 +31,8 @@ export interface IWorksheetColumnWidth {
   width: number
 }
 
-export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings): Buffer | undefined
+export type IWorkbookCallback = (workbook: WorkBook) => void
+
+export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings, callback?: IWorkbookCallback): Buffer | undefined
 
 export default xlsx

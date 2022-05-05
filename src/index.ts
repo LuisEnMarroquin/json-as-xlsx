@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx/dist/xlsx.mini.min"
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorksheetColumnWidth } from "../types/index"
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "../types/index"
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
   const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
@@ -142,8 +142,6 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 
   return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
 }
-
-type IWorkbookCallback = (workbook: WorkBook) => void
 
 const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | undefined => {
   if (jsonSheets.length === 0) return

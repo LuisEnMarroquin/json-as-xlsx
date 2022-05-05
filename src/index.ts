@@ -159,7 +159,9 @@ const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallba
 
 export default xlsx
 export { getContentProperty, getJsonSheetRow, getWorksheetColumnWidths }
+export { utils }
 module.exports = xlsx
 module.exports.getContentProperty = getContentProperty
 module.exports.getJsonSheetRow = getJsonSheetRow
 module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths
+module.exports.utils = utils

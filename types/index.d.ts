@@ -21,6 +21,7 @@ export interface ISettings {
   extraLength?: number
   fileName?: string
   writeOptions?: WritingOptions
+  RTL?: boolean
 }
 
 export interface IJsonSheetRow {

@@ -1,4 +1,4 @@
-import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx/dist/xlsx.mini.min"
+import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx/types/index"
 import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "../types/index"
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
@@ -90,7 +90,7 @@ const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1)
   return columnLetters.map((column) => {
     // Cells that belong to this column
     const columnCells: string[] = Object.keys(worksheet).filter((cell) => {
-      return cell.replace(/[0-9]/g, '') === column
+      return cell.replace(/[0-9]/g, "") === column
     })
 
     const maxWidthCell = columnCells.reduce((maxWidth, cellId) => {
@@ -137,24 +137,23 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
-  const RTL = Boolean(settings.RTL);
-  workbook.Workbook ??= {};
-  workbook.Workbook.Views ??= [{}];
-  workbook.Workbook.Views.forEach(view => {
-    view.RTL = RTL;
-  });
+  const RTL = Boolean(settings.RTL)
+  workbook.Workbook ??= {}
+  workbook.Workbook.Views ??= [{}]
+  workbook.Workbook.Views.forEach((view) => {
+    view.RTL = RTL
+  })
 
   const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
-  
-  if(settings.writeMode === 'write') {
+
+  if (settings.writeMode === "write") {
     return write(workbook, writeOptions)
-  } else if(settings.writeMode === 'writeFile') {
+  } else if (settings.writeMode === "writeFile") {
     return writeFile(workbook, filename, writeOptions)
   } else {
     return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
   }
-
 }
 
 const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | undefined => {

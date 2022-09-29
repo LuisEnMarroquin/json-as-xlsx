@@ -1,5 +1,5 @@
 import { WritingOptions } from "xlsx"
-import { utils, WorkBook, WorkSheet } from 'xlsx/dist/xlsx.mini.min'
+import { utils, WorkBook, WorkSheet } from "xlsx/types/index"
 
 export interface IColumn {
   label: string

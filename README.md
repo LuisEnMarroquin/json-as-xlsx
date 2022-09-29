@@ -11,7 +11,7 @@ You can see a live example of it working on any of this sites (there are many ju
 ## Usage
 
 ```js
-import xlsx from "json-as-xlsx-wm"
+import xlsx from "json-as-xlsx"
 // or require
 let xlsx = require("json-as-xlsx")
 

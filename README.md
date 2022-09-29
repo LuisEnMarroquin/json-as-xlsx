@@ -44,6 +44,7 @@ let settings = {
   fileName: "MySpreadsheet", // Name of the resulting spreadsheet
   extraLength: 3, // A bigger number means that columns will be wider
   writeOptions: {}, // Style options from https://github.com/SheetJS/sheetjs#writing-options
+  RTL: true, // Display the columns from right-to-left (the default value is false)
 }
 
 xlsx(data, settings) // Will download the excel file

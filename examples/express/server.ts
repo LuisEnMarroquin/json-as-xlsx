@@ -1,11 +1,12 @@
 import express from "express"
 import xlsx from "../../src/index"
+import { IJsonSheet, ISettings } from "../../types"
 
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const data: any[] = [
+const data: IJsonSheet[] = [
   {
     sheet: "Adults",
     columns: [
@@ -30,7 +31,7 @@ const data: any[] = [
   },
 ]
 
-const settings: any = {
+const settings: ISettings = {
   writeOptions: {
     type: "buffer",
     bookType: "xlsx",
@@ -45,6 +46,18 @@ app.get("/", (_: any, res: any) => {
   })
   res.end(buffer)
 })
+
+app.get("/rtl", (_: any, res: any) => {
+    const buffer = xlsx(data, {
+        ...settings,
+        RTL: true,
+    })
+    res.writeHead(200, {
+      "Content-Type": "application/octet-stream",
+      "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
+    })
+    res.end(buffer)
+  })
 
 const port = 3000
 app.listen(port, () => {

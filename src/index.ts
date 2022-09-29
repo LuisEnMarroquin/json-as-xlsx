@@ -137,6 +137,13 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
+  const RTL = Boolean(settings.RTL);
+  workbook.Workbook ??= {};
+  workbook.Workbook.Views ??= [{}];
+  workbook.Workbook.Views.forEach(view => {
+    view.RTL = RTL;
+  });
+
   const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
 

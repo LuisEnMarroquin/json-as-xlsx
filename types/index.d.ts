@@ -22,6 +22,7 @@ export interface ISettings {
   fileName?: string
   writeOptions?: WritingOptions
   writeMode?: string
+  RTL?: boolean
 }
 
 export interface IJsonSheetRow {

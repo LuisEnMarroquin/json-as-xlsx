@@ -1,4 +1,4 @@
-import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx/types/index"
+import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx"
 import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "../types/index"
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {

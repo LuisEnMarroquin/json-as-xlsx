@@ -11,6 +11,8 @@ You can see a live example of it working on any of this sites (there are many ju
 ## Usage
 
 ```js
+import xlsx from "json-as-xlsx"
+// or require
 let xlsx = require("json-as-xlsx")
 
 let data = [
@@ -43,6 +45,7 @@ let data = [
 let settings = {
   fileName: "MySpreadsheet", // Name of the resulting spreadsheet
   extraLength: 3, // A bigger number means that columns will be wider
+  writeMode: 'writeFile', // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
   writeOptions: {}, // Style options from https://github.com/SheetJS/sheetjs#writing-options
   RTL: true, // Display the columns from right-to-left (the default value is false)
 }

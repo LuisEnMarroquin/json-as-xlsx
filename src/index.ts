@@ -146,8 +146,15 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 
   const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
+  
+  if(settings.writeMode === 'write') {
+    return write(workbook, writeOptions)
+  } else if(settings.writeMode === 'writeFile') {
+    return writeFile(workbook, filename, writeOptions)
+  } else {
+    return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
+  }
 
-  return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
 }
 
 const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | undefined => {

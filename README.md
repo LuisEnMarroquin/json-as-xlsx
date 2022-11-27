@@ -33,7 +33,7 @@ let data = [
     columns: [
       { label: "User", value: "user" }, // Top level data
       { label: "Age", value: "age", format: '# "years"' }, // Column format
-      { label: "Phone", value: "user.more.phone", format: "(###) ###-####" }, // Deep props and column format
+      { label: "Phone", value: "more.phone", format: "(###) ###-####" }, // Deep props and column format
     ],
     content: [
       { user: "Manuel", age: 16, more: { phone: 9999999900 } },

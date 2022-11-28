@@ -1,5 +1,5 @@
 import "./App.css"
-import xlsx from "../../../src/index"
+import { xlsx } from "json-as-xlsx"
 
 function App() {
   const downloadFile = () => {

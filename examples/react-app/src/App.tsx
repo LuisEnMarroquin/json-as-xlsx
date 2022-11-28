@@ -1,32 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import "./App.css"
+import xlsx from "../../../src/index"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const downloadFile = () => {
+    let data = [
+      {
+        sheet: "Adults",
+        columns: [
+          { label: "User", value: "user" }, // Top level data
+          { label: "Age", value: "age", format: '# "years"' }, // Custom format
+          { label: "Phone", value: (row: any) => row?.more?.phone ?? "" }, // Run functions
+        ],
+        content: [
+          { user: "Andrea", age: 20, more: { phone: "11111111" } },
+          { user: "Luis", age: 21, more: { phone: "12345678" } },
+        ],
+      },
+      {
+        sheet: "Children",
+        columns: [
+          { label: "User", value: "user" }, // Top level data
+          { label: "Age", value: "age", format: '# "years"' }, // Custom format
+          { label: "Phone", value: (row: any) => row?.more?.phone ?? "" }, // Run functions
+        ],
+        content: [
+          { user: "Manuel", age: 16, more: { phone: "99999999" } },
+          { user: "Ana", age: 17, more: { phone: "87654321" } },
+        ],
+      },
+    ]
+    let settings = {
+      fileName: "MySpreadsheet",
+    }
+    xlsx(data, settings)
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
+    <div id="app">
+      <h1>Testing json-as-xlsx</h1>
+      <button onClick={downloadFile}>Download</button>
+      <h2>
+        <span>Visit this project on: </span>
+        <a href="https://github.com/LuisEnMarroquin/json-as-xlsx" target="_blank">
+          GitHub
         </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      </h2>
     </div>
   )
 }

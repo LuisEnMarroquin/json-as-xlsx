@@ -38,11 +38,12 @@ jobs:
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
       - name: Build VueJS project
         run: |
-          npm run build-client
-          cp CNAME dist/CNAME
+          npm run build
+          cp ../../CNAME dist/CNAME
+        working-directory: examples/reactjs-app
       - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          folder: dist
+          folder: examples/reactjs-app/dist
           branch: gh-pages
           git-config-name: LuisEnMarroquin
           git-config-email: mluis651@gmail.com

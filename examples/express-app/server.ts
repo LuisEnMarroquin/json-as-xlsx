@@ -1,6 +1,5 @@
 import express from "express"
-import xlsx from "../../src/index"
-import { IJsonSheet, ISettings } from "../../types"
+import xlsx, { IJsonSheet, ISettings } from "../../src/index"
 
 const app = express()
 app.use(express.json())
@@ -48,18 +47,18 @@ app.get("/", (_: any, res: any) => {
 })
 
 app.get("/rtl", (_: any, res: any) => {
-    const buffer = xlsx(data, {
-        ...settings,
-        RTL: true,
-    })
-    res.writeHead(200, {
-      "Content-Type": "application/octet-stream",
-      "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
-    })
-    res.end(buffer)
+  const buffer = xlsx(data, {
+    ...settings,
+    RTL: true,
   })
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
+  })
+  res.end(buffer)
+})
 
-const port = 3000
+const port = 3100
 app.listen(port, () => {
   console.log(`Your app is listening on port ${port}`)
 })

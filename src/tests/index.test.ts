@@ -1,6 +1,6 @@
 import { read as readBufferWorkBook } from "xlsx"
 import jsonxlsx from "../index"
-import { IContent, IJsonSheet, ISettings } from "../../types"
+import { IContent, IJsonSheet, ISettings } from ".."
 
 describe("json-as-xlsx", () => {
   it("should return undefined if sheets array is empty", () => {

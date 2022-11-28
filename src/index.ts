@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx"
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "../types/index"
+import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "./types.d"
 
 const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
   const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
@@ -171,4 +171,10 @@ const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallba
 }
 
 export default xlsx
-export { utils, xlsx, getContentProperty, getJsonSheetRow, getWorksheetColumnWidths }
+export { utils, xlsx, getContentProperty, getJsonSheetRow, getWorksheetColumnWidths, IJsonSheet, ISettings }
+
+// module.exports = xlsx
+// module.exports.getContentProperty = getContentProperty
+// module.exports.getJsonSheetRow = getJsonSheetRow
+// module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths
+// module.exports.utils = utils

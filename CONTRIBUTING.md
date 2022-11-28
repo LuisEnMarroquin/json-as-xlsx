@@ -15,19 +15,21 @@ After cloning the repository, run `npm install` to install the dependencies
 You'll have to use 2 consoles to run the app, one for the actual package `index.ts`
 
 ```shell
-$ npm run start
+$ npm run dev
 ```
 
-Then if you want to test the package with `VueJS` you can execute the following
+Then if you want to test the package with `ReactJS` you can execute the following
 
 ```shell
-$ npm run start-client
+$ cd examples/reactjs-app
+$ npm run dev
 ```
 
-Otherwise if you want to test with `express` use the following command
+Otherwise if you want to test with `Express` use the following command
 
 ```shell
-$ npm run start-server
+$ cd examples/express-app
+$ npm run dev
 ```
 
 ## Linting code

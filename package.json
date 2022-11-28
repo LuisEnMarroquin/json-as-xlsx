@@ -3,7 +3,7 @@
   "version": "2.5.0",
   "main": "src/index.js",
   "license": "MIT",
-  "types": "src/types.d.ts",
+  "types": "types/index.d.ts",
   "description": "Create excel xlsx file from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "homepage": "https://xlsx.marroquin.dev",
@@ -28,8 +28,7 @@
   },
   "files": [
     "src/index.js",
-    "src/index.ts",
-    "src/types.d.ts"
+    "types/index.d.ts"
   ],
   "repository": {
     "type": "git",

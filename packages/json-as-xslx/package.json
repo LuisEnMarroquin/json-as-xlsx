@@ -1,12 +1,20 @@
 {
   "name": "json-as-xlsx",
-  "private": true,
-  "version": "0.0.0",
+  "version": "2.5.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "types": "types/index.d.ts",
+  "description": "Create excel xlsx file from json",
+  "author": "LuisEnMarroquin <luis@marroquin.dev>",
+  "homepage": "https://xlsx.marroquin.dev",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "typescript": "^4.6.4",

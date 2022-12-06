@@ -62,7 +62,7 @@ app.get("/demo", (_, res) => {
   res.send("This is a demo route without any logic")
 })
 
-const port = 3100
+const port = 5500
 
 app.listen(port, () => {
   console.log("Your app is listening on port", port)

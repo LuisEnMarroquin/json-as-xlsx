@@ -1,8 +1,11 @@
 {
   "private": true,
+  "scripts": {
+    "dev": "lerna run --parallel --stream dev",
+    "build": "lerna run --stream build"
+  },
   "workspaces": [
-    "json-as-xlsx",
-    "example-express"
+    "packages/*"
   ],
   "dependencies": {
     "lerna": "^6.1.0"

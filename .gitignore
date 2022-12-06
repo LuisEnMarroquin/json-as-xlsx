@@ -1,21 +1,24 @@
-# Folders
-dist/
-node_modules/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# File managers
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.directory
-desktop.ini
-
-# Other lockfiles
-yarn.lock
-npm-shrinkwrap.json
-
-# Log files
-*.log*
-
-# Excel files
-*.xlsx
-
-# Now this is a typescript project
-src/index.js
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

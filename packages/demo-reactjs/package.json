@@ -16,6 +16,9 @@
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "json-as-xlsx": "*"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

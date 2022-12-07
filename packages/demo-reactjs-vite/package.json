@@ -5,8 +5,8 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build",
+    "start-skip": "vite",
+    "build-skip": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

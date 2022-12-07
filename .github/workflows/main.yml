@@ -33,14 +33,11 @@ jobs:
           echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
           gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
-      - name: Build VueJS project
-        run: |
-          npm run build
-          cp ../../CNAME dist/CNAME
-        working-directory: examples/reactjs-app
+      - name: Prepare static files for deployment
+        run: yarn run static
       - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          folder: examples/reactjs-app/dist
+          folder: dist
           branch: gh-pages
           git-config-name: LuisEnMarroquin
           git-config-email: mluis651@gmail.com

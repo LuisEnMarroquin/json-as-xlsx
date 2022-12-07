@@ -7,7 +7,10 @@ export default defineConfig({
   server: {
     port: 5600,
   },
-  optimizeDeps: {
-    include: ["json-as-xlsx"],
-  },
+  // https://vitejs.dev/config/dep-optimization-options.html
+  // optimizeDeps: {
+  //   include: ["json-as-xlsx"],
+  // },
+  // https://github.com/nuxt/vite/issues/56
+  // https://vite.nuxtjs.org/misc/common-issues/
 })

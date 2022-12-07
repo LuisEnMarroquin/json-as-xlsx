@@ -16,6 +16,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
+    "@types/node": "^18.11.11",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

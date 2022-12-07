@@ -84,7 +84,6 @@ Examples
 
 ```js
 // Number formats
-
 "$0.00" // Basic
 "\£#,##0.00" // Pound
 "0%" // Percentage

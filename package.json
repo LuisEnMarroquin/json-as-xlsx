@@ -4,7 +4,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "start": "lerna run --parallel --stream start",
-    "build": "lerna run --stream build"
+    "build": "lerna run --stream build",
+    "test": "lerna run --stream --no-bail test"
   },
   "workspaces": [
     "packages/*"

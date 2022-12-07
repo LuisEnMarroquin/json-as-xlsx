@@ -1,5 +1,4 @@
-import { IContent } from "../../types"
-import { getJsonSheetRow } from "../index"
+import { getJsonSheetRow, IContent } from "../index"
 
 test("", () => {
   const track = {

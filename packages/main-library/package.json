@@ -10,8 +10,8 @@
   "type": "commonjs",
   "private": false,
   "scripts": {
-    "start": "tsc -p tsconfig.json -w",
-    "build": "tsc -p tsconfig.json",
+    "start": "tsc -p tsconfig.json --watch",
+    "build": "tsc -p tsconfig.json && uglifyjs dist/index.js --output dist/index.js",
     "test": "jest --coverage"
   },
   "dependencies": {
@@ -27,7 +27,9 @@
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
     "@types/node": "^17.0.26",
-    "@types/testing-library__jest-dom": "^5.14.5"
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "jest-environment-jsdom": "^29.3.1",
+    "uglify-js": "^3.17.4"
   },
   "files": [
     "dist"

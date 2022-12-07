@@ -1,6 +1,7 @@
 # Folders
 dist/
 build/
+coverage/
 node_modules/
 
 # File managers

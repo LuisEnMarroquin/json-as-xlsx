@@ -1,5 +1,5 @@
 import express from "express"
-// import { finalValue } from "json-as-xlsx"
+import { finalValue } from "json-as-xlsx"
 // import xlsx, { IJsonSheet, ISettings } from "../../src/index";
 
 // console.log(finalValue)

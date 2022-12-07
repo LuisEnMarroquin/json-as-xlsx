@@ -19,5 +19,40 @@
   "devDependencies": {
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
-  }
+  },
+  "files": [
+    "src/index.js",
+    "types/index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx/issues"
+  },
+  "keywords": [
+    "json",
+    "xlsx",
+    "excel",
+    "jsonc",
+    "json-xlsx",
+    "xlsx-json",
+    "create-xlsx",
+    "create-excel",
+    "json-as-xlsx",
+    "json-to-xlsx",
+    "json-as-excel",
+    "json-to-excel",
+    "xlsx-as-json",
+    "xlsx-from-json",
+    "microsoft",
+    "microsoft-xlsx",
+    "microsoft-excel"
+  ],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }

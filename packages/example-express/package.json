@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "UNLICENSED",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon --exec ts-node src/server.ts"
   },

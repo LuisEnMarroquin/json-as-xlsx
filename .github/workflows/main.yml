@@ -1,4 +1,4 @@
-name: Production
+name: Prod deploy
 
 on:
   push:
@@ -11,12 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm ci
-      - name: Run unit tests
-        run: npm run test
-      - name: Build JavaScript file
-        run: npm run build
+      - run: yarn
+      - run: yarn test
+      - run: yarn build
       - name: Set environment variables
         run: |
           git fetch --all --tags

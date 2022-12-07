@@ -18,6 +18,3 @@ npm-shrinkwrap.json
 
 # Excel files
 *.xlsx
-
-# Now this is a typescript project
-src/index.js

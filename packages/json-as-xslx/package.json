@@ -1,5 +1,5 @@
 {
-  "name": "json-as-xlsx",
+  "name": "json-as-xlsx-v2",
   "version": "2.5.0",
   "license": "MIT",
   "types": "types/index.d.ts",

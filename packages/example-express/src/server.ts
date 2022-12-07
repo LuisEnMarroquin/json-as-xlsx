@@ -1,6 +1,5 @@
 import express from "express"
-import { finalValue } from "@luisenmarroquin/cwng-licensing-api"
-import { finalValueXD } from "json-as-xlsx"
+import { finalValue } from "@luisenmarroquin/json-as-xlsx"
 // import xlsx, { IJsonSheet, ISettings } from "../../src/index";
 
 console.log(finalValue)

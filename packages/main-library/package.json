@@ -1,9 +1,14 @@
 {
-  "name": "@luisenmarroquin/json-as-xlsx",
-  "version": "1.0.0",
-  "private": true,
+  "name": "json-as-xlsx",
+  "version": "2.5.0",
+  "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "description": "Create excel xlsx file from json",
+  "author": "LuisEnMarroquin <luis@marroquin.dev>",
+  "homepage": "https://xlsx.marroquin.dev",
+  "type": "module",
+  "private": false,
   "scripts": {
     "start": "tsc -p tsconfig.json -w",
     "build": "tsc -p tsconfig.json",
@@ -14,7 +19,8 @@
     "jest-cli": "^29.3.1",
     "lodash": "^4.17.21",
     "ts-jest": "^29.0.3",
-    "typescript": "4.6.4"
+    "typescript": "4.6.4",
+    "xslx": "^1.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -25,5 +31,36 @@
   },
   "files": [
     "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuisEnMarroquin/json-as-xlsx/issues"
+  },
+  "keywords": [
+    "json",
+    "xlsx",
+    "excel",
+    "jsonc",
+    "json-xlsx",
+    "xlsx-json",
+    "create-xlsx",
+    "create-excel",
+    "json-as-xlsx",
+    "json-to-xlsx",
+    "json-as-excel",
+    "json-to-excel",
+    "xlsx-as-json",
+    "xlsx-from-json",
+    "microsoft",
+    "microsoft-xlsx",
+    "microsoft-excel"
+  ],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
   ]
 }

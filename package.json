@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "dev": "lerna run --parallel --stream dev",
+    "start": "lerna run --parallel --stream start",
     "build": "lerna run --stream build"
   },
   "workspaces": [

@@ -40,7 +40,7 @@ function App() {
       <button onClick={downloadFile}>Download</button>
       <h2>
         <span>Visit this project on: </span>
-        <a href="https://github.com/LuisEnMarroquin/json-as-xlsx" target="_blank">
+        <a href="https://github.com/LuisEnMarroquin/json-as-xlsx" target="_blank" rel="noreferrer">
           GitHub
         </a>
       </h2>

@@ -38,6 +38,10 @@ const settings: ISettings = {
 }
 
 app.get("/", (_, res) => {
+  res.send("This is a demo route without any logic")
+})
+
+app.get("/get", (_, res) => {
   const buffer = xlsx(data, settings)
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
@@ -56,10 +60,6 @@ app.get("/rtl", (_, res) => {
     "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
   })
   res.end(buffer)
-})
-
-app.get("/demo", (_, res) => {
-  res.send("This is a demo route without any logic")
 })
 
 const port = 5500

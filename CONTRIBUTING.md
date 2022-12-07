@@ -11,17 +11,20 @@ $ yarn --version
 1.22.19
 ```
 
-Others may work, but I can not guarantee that
+Other versions may work but I can not guarantee that
 
 ## Develop locally
 
-It will start the library in dev mode along with a ReactJS and Express projects
+It will start the library and demo project in dev mode
 
 ```shell
 $ yarn start
 ```
 
-## Linting code
+- Express: localhost:5500
+- ReactJS: localhost:6500
+
+## Code linting
 
 This project uses `prettier` for linting code
 

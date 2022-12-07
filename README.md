@@ -100,5 +100,5 @@ Examples
 
 This are files used for development, please change imports from `../../src/index` to `json-as-xlsx`
 
-- [ReactJS with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/reactjs-app)
-- [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/express-app)
+- [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-express)
+- [ReactJS with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-reactjs)

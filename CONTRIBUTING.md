@@ -1,16 +1,19 @@
-# Dev environment
+## Requirements
 
-Here are the **node** and **npm** versions that we use to develop this project
+This are the software versions that I personally use
 
 ```shell
-$ node --version && npm --version
-v16.13.0
-8.1.0
+$ node --version
+v16.14.2
+$ npm --version
+8.5.0
+$ yarn --version
+1.22.19
 ```
 
-After cloning the repository, run `npm install` to install the dependencies
+Others may work, but I can not guarantee that
 
-## Run in dev mode
+## Develop locally
 
 It will start the library in dev mode along with a ReactJS and Express projects
 

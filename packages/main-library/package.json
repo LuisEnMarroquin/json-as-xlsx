@@ -7,7 +7,7 @@
   "description": "Create excel xlsx file from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "homepage": "https://xlsx.marroquin.dev",
-  "type": "module",
+  "type": "commonjs",
   "private": false,
   "scripts": {
     "start": "tsc -p tsconfig.json -w",

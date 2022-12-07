@@ -2,6 +2,7 @@
   "name": "example-express",
   "version": "1.0.0",
   "license": "UNLICENSED",
+  "private": true,
   "scripts": {
     "start": "nodemon --exec ts-node src/server.ts"
   },

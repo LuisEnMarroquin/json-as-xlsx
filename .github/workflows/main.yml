@@ -20,6 +20,7 @@ jobs:
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
           echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
+        working-directory: packages/main-library/
       - name: Publish package to NPM
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |
@@ -27,6 +28,7 @@ jobs:
           npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+        working-directory: packages/main-library/
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |

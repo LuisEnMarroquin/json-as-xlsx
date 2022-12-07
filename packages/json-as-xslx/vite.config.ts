@@ -7,9 +7,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src", "library.ts"),
-      name: "MyLib",
-      // the proper extensions will be added
-      fileName: "my-lib",
+      name: "JsonAsXlsx",
+      fileName: "library",
     },
   },
   server: {

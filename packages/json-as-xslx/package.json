@@ -1,7 +1,7 @@
 {
   "name": "json-as-xlsx",
   "version": "2.5.0",
-  "main": "src/index.js",
+  "main": "dist/xslx.js",
   "license": "MIT",
   "types": "types/index.d.ts",
   "description": "Create excel xlsx file from json",
@@ -21,7 +21,7 @@
     "vite": "^3.2.3"
   },
   "files": [
-    "src/index.js",
+    "dist/xslx.js",
     "types/index.d.ts"
   ],
   "repository": {

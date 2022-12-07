@@ -1,4 +1,5 @@
 {
+  "name": "json-as-xlsx",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",

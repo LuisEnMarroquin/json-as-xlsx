@@ -16,13 +16,12 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@types/node": "^18.11.11",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@types/jest": "^29.2.4",
-    "@types/node": "^17.0.26",
+    "@types/node": "^18.11.11",
     "@types/testing-library__jest-dom": "^5.14.5",
     "jest": "^29.3.1",
     "jest-cli": "^29.3.1",

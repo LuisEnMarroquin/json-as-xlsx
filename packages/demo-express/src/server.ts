@@ -1,4 +1,5 @@
 import express from "express"
+import { join } from "path"
 import xlsx, { IJsonSheet, ISettings } from "json-as-xlsx"
 
 const app = express()
@@ -38,7 +39,7 @@ const settings: ISettings = {
 }
 
 app.get("/", (_, res) => {
-  res.send("This is a demo route without any logic")
+  res.sendFile(join(__dirname, "index.html"))
 })
 
 app.get("/get", (_, res) => {

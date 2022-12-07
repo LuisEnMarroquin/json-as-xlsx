@@ -1,1 +1,1 @@
-export const finalValue = "hello"
+export const finalValueXD = "hello"

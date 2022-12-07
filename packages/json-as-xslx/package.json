@@ -1,13 +1,15 @@
 {
   "name": "json-as-xlsx",
   "version": "2.5.0",
-  "main": "dist/xslx.js",
   "license": "MIT",
   "types": "types/index.d.ts",
   "description": "Create excel xlsx file from json",
   "author": "LuisEnMarroquin <luis@marroquin.dev>",
   "homepage": "https://xlsx.marroquin.dev",
   "type": "module",
+  "main": "./dist/library.umd.cjs",
+  "module": "./dist/library.js",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -21,8 +23,7 @@
     "vite": "^3.2.3"
   },
   "files": [
-    "dist/xslx.js",
-    "types/index.d.ts"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -54,5 +55,11 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/library.js",
+      "require": "./dist/library.umd.cjs"
+    }
+  }
 }

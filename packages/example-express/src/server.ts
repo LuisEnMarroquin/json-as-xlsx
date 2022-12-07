@@ -1,9 +1,9 @@
 import express from "express"
 import { finalValue } from "@luisenmarroquin/cwng-licensing-api"
-import {  }
+import { finalValueXD } from "json-as-xlsx"
 // import xlsx, { IJsonSheet, ISettings } from "../../src/index";
 
-// console.log(finalValue)
+console.log(finalValue)
 
 const app = express()
 app.use(express.json())

@@ -1,6 +1,6 @@
 import express from "express"
-import xlsx from "../../src/index"
-import { IJsonSheet, ISettings } from "../../types"
+import { join } from "path"
+import xlsx, { IJsonSheet, ISettings } from "json-as-xlsx"
 
 const app = express()
 app.use(express.json())
@@ -38,7 +38,11 @@ const settings: ISettings = {
   },
 }
 
-app.get("/", (_: any, res: any) => {
+app.get("/", (_, res) => {
+  res.sendFile(join(__dirname, "index.html"))
+})
+
+app.get("/get", (_, res) => {
   const buffer = xlsx(data, settings)
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
@@ -47,19 +51,20 @@ app.get("/", (_: any, res: any) => {
   res.end(buffer)
 })
 
-app.get("/rtl", (_: any, res: any) => {
-    const buffer = xlsx(data, {
-        ...settings,
-        RTL: true,
-    })
-    res.writeHead(200, {
-      "Content-Type": "application/octet-stream",
-      "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
-    })
-    res.end(buffer)
+app.get("/rtl", (_, res) => {
+  const buffer = xlsx(data, {
+    ...settings,
+    RTL: true,
   })
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
+  })
+  res.end(buffer)
+})
 
-const port = 3000
+const port = 5500
+
 app.listen(port, () => {
-  console.log(`Your app is listening on port ${port}`)
+  console.log("Your app is listening on port", port)
 })

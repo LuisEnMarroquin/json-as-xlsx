@@ -1,5 +1,7 @@
 # Folders
 dist/
+build/
+coverage/
 node_modules/
 
 # File managers
@@ -8,7 +10,7 @@ node_modules/
 desktop.ini
 
 # Other lockfiles
-yarn.lock
+package-lock.json
 npm-shrinkwrap.json
 
 # Log files
@@ -16,6 +18,3 @@ npm-shrinkwrap.json
 
 # Excel files
 *.xlsx
-
-# Now this is a typescript project
-src/index.js

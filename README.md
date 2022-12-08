@@ -45,7 +45,7 @@ let data = [
 let settings = {
   fileName: "MySpreadsheet", // Name of the resulting spreadsheet
   extraLength: 3, // A bigger number means that columns will be wider
-  writeMode: 'writeFile', // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
+  writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
   writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
   RTL: true, // Display the columns from right-to-left (the default value is false)
 }
@@ -84,7 +84,6 @@ Examples
 
 ```js
 // Number formats
-
 "$0.00" // Basic
 "\£#,##0.00" // Pound
 "0%" // Percentage
@@ -99,7 +98,7 @@ Examples
 
 ## Examples
 
-This are files used for development, please change imports from `../../src/index.js` to `json-as-xlsx`
+This are files used for development, please change imports from `../../src/index` to `json-as-xlsx`
 
-- [VueJS with JavaScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/vue-app/App.vue)
-- [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/examples/express/server.ts)
+- [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-express)
+- [ReactJS with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-reactjs)

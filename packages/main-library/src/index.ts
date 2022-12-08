@@ -1,7 +1,42 @@
-import { utils, WorkBook, WorkSheet, write, writeFile } from "xlsx"
-import { IColumn, IContent, IJsonSheet, IJsonSheetRow, ISettings, IWorkbookCallback, IWorksheetColumnWidth } from "../types/index"
+import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "xlsx"
 
-const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
+export interface IColumn {
+  label: string
+  value: string | ((value: IContent) => string | number | boolean | Date | IContent)
+  format?: string
+}
+
+export interface IContent {
+  [key: string]: string | number | boolean | Date | IContent
+}
+
+export interface IJsonSheet {
+  sheet?: string
+  columns: IColumn[]
+  content: IContent[]
+}
+
+export interface ISettings {
+  extraLength?: number
+  fileName?: string
+  writeOptions?: WritingOptions
+  writeMode?: string
+  RTL?: boolean
+}
+
+export interface IJsonSheetRow {
+  [key: string]: string | number | boolean | Date | IContent
+}
+
+export interface IWorksheetColumnWidth {
+  width: number
+}
+
+export type IWorkbookCallback = (workbook: WorkBook) => void
+
+export { utils, WorkBook, WorkSheet }
+
+export const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
   const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
     const value = content[properties[0]]
 
@@ -20,7 +55,7 @@ const getContentProperty = (content: IContent, property: string): string | numbe
   return accessContentProperties(content, properties)
 }
 
-const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow => {
+export const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow => {
   const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
     if (typeof column.value === "function") {
@@ -84,7 +119,7 @@ const getObjectLength = (object: unknown): number => {
   return 0
 }
 
-const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
+export const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
   const columnLetters: string[] = getWorksheetColumnIds(worksheet)
 
   return columnLetters.map((column) => {
@@ -156,7 +191,7 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
   }
 }
 
-const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | undefined => {
+export const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): ReturnType<typeof writeWorkbook> => {
   if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file
@@ -171,10 +206,5 @@ const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallba
 }
 
 export default xlsx
-export { getContentProperty, getJsonSheetRow, getWorksheetColumnWidths }
-export { utils }
-module.exports = xlsx
-module.exports.getContentProperty = getContentProperty
-module.exports.getJsonSheetRow = getJsonSheetRow
-module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths
-module.exports.utils = utils
+
+export const libraryName = "json-as-xlsx"

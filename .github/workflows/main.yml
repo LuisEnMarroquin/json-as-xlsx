@@ -1,4 +1,4 @@
-name: Production
+name: Prod deploy
 
 on:
   push:
@@ -11,18 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm ci
-      - name: Run unit tests
-        run: npm run test
-      - name: Build JavaScript file
-        run: npm run build
+      - run: yarn
+      - run: yarn test
+      - run: yarn build
       - name: Set environment variables
         run: |
           git fetch --all --tags
           echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
           echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
+        working-directory: packages/main-library/
       - name: Publish package to NPM
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |
@@ -30,16 +28,15 @@ jobs:
           npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+        working-directory: packages/main-library/
       - name: Create GitHub release
         if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
         run: |
           echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
           gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
-      - name: Build VueJS project
-        run: |
-          npm run build-client
-          cp CNAME dist/CNAME
+      - name: Prepare static files for deployment
+        run: yarn run static
       - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           folder: dist

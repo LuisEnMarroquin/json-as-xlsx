@@ -1,6 +1,6 @@
 ## Requirements
 
-This are the software versions that I personally use
+These are the software versions I personally use
 
 ```shell
 $ node --version
@@ -30,4 +30,4 @@ This project uses `prettier` for linting code
 
 ## Deploy to NPM
 
-There is a pipeline for that, just do a PR and I'll be merged
+There is a pipeline for that, just do a PR and it will be merged

@@ -207,4 +207,4 @@ export const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workboo
 
 export default xlsx
 
-export const finalValue = "final value"
+export const libraryName = "json-as-xlsx"

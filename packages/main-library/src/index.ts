@@ -208,3 +208,9 @@ export const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workboo
 export default xlsx
 
 export const libraryName = "json-as-xlsx"
+
+module.exports = xlsx
+module.exports.getContentProperty = getContentProperty
+module.exports.getJsonSheetRow = getJsonSheetRow
+module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths
+module.exports.utils = utils

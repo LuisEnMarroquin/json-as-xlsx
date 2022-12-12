@@ -39,7 +39,7 @@ jobs:
         run: yarn run static
       - uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          folder: dist
+          folder: build
           branch: gh-pages
           git-config-name: LuisEnMarroquin
           git-config-email: mluis651@gmail.com

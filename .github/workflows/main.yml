@@ -14,30 +14,31 @@ jobs:
       - run: yarn
       - run: yarn test
       - run: yarn build
-      - name: Set environment variables
+      - name: Copy files to library output folder
         run: |
-          git fetch --all --tags
-          echo "TAG_VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
+          cp README.md packages/main-library/dist/README.md
+          cp LICENSE packages/main-library/dist/LICENSE
+          cp packages/main-library/package.json packages/main-library/dist/package.json
+      - name: Set environment variable for GitHub
+        run: |
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
-          echo Env TAG_VERSION ${{ env.TAG_VERSION }} and CURRENT_VERSION ${{ env.CURRENT_VERSION }}
+          echo CURRENT_VERSION ${{ env.CURRENT_VERSION }}
         working-directory: packages/main-library/
-      - name: Publish package to NPM
-        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+      - name: Publish package to NPM registry
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
           npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
         working-directory: packages/main-library/
-      - name: Create GitHub release
-        if: ${{ env.TAG_VERSION != env.CURRENT_VERSION }}
+      - name: Create a new GitHub release
         run: |
           echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
           gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
       - name: Prepare static files for deployment
         run: yarn run static
-      - uses: JamesIves/github-pages-deploy-action@4.1.7
+      - uses: JamesIves/github-pages-deploy-action@4.4.1
         with:
           folder: build
           branch: gh-pages

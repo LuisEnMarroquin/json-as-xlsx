@@ -18,6 +18,6 @@
     "types": ["jest", "node", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/**", "**/__mocks__/**"],
+  "exclude": ["node_modules/**", "src/__mocks__/**", "src/__tests__/**"],
   "compileOnSave": false
 }

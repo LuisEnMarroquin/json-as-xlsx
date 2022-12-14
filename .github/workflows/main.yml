@@ -38,7 +38,7 @@ jobs:
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
       - name: Prepare static files for deployment
         run: yarn run static
-      - uses: JamesIves/github-pages-deploy-action@4.4.1
+      - uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build
           branch: gh-pages

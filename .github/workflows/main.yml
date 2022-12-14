@@ -16,9 +16,8 @@ jobs:
       - run: yarn build
       - name: Copy files to library output folder
         run: |
-          cp README.md packages/main-library/dist/README.md
-          cp LICENSE packages/main-library/dist/LICENSE
-          cp packages/main-library/package.json packages/main-library/dist/package.json
+          cp README.md packages/main-library/README.md
+          cp LICENSE packages/main-library/LICENSE
       - name: Set environment variable for GitHub
         run: |
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV

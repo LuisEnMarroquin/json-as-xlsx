@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

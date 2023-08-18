@@ -7,7 +7,7 @@ export interface IColumn {
 }
 
 export interface IContent {
-  [key: string]: string | number | boolean | Date | IContent
+  [key: string]: string | number | boolean | Date | IContent | null
 }
 
 export interface IJsonSheet {

@@ -2,7 +2,7 @@ import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "xl
 
 export interface IColumn {
   label: string
-  value: string | ((value: IContent) => string | number | boolean | Date | IContent | null)
+  value: string | ((value: IContent) => string | number | boolean | Date | IContent)
   format?: string
 }
 

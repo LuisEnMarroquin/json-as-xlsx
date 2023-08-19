@@ -182,5 +182,25 @@ describe("json-as-xlsx", () => {
       expect(booksSheet.A3.v).toBe("Git")
       expect(booksSheet.B3.v).toBe("Robert")
     })
+
+    it("should allow null value in content", () => {
+      const sheets = [
+        {
+          sheet: "Users",
+          columns: [{ label: "IP", value: "metadata.ip" }],
+          content: [
+            { name: "Martin", metadata: { ip: null } },
+            { name: "Robert", metadata: { ip: null } },
+          ],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, settings)
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets.Users
+
+      expect(workSheet.A1.v).toBe("IP")
+      expect(workSheet.A2.v).toBe("")
+      expect(workSheet.A3.v).toBe("")
+    })
   })
 })

@@ -36,8 +36,8 @@ export type IWorkbookCallback = (workbook: WorkBook) => void
 
 export { utils, WorkBook, WorkSheet }
 
-export const getContentProperty = (content: IContent | null, property: string): string | number | boolean | Date | IContent => {
-  const accessContentProperties = (content: IContent | null, properties: string[]): string | number | boolean | Date | IContent => {
+export const getContentProperty = (content: IContent | null, property: string): string | number | boolean | Date | IContent | null => {
+  const accessContentProperties = (content: IContent | null, properties: string[]): string | number | boolean | Date | IContent | null => {
     if (!content) {
       return ""
     }

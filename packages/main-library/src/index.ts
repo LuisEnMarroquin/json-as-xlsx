@@ -44,7 +44,7 @@ export const getContentProperty = (content: IContent, property: string): string 
       return value ?? ""
     }
 
-    if (value === undefined || value === null || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
+    if (value === undefined || value == null || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
       return ""
     }
 

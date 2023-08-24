@@ -2,7 +2,7 @@ import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "xl
 
 export interface IColumn {
   label: string
-  value: string | ((value: IContent) => string | number | boolean | Date | IContent)
+  value: string | ((value: IContent) => string | number | boolean | Date | IContent | null)
   format?: string
 }
 
@@ -25,7 +25,7 @@ export interface ISettings {
 }
 
 export interface IJsonSheetRow {
-  [key: string]: string | number | boolean | Date | IContent
+  [key: string]: string | number | boolean | Date | IContent | null
 }
 
 export interface IWorksheetColumnWidth {
@@ -44,7 +44,7 @@ export const getContentProperty = (content: IContent, property: string): string 
       return value ?? ""
     }
 
-    if (value === undefined || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
+    if (value === undefined || value === null || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
       return ""
     }
 

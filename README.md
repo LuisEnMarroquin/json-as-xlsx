@@ -40,6 +40,64 @@ let data = [
       { user: "Ana", age: 17, more: { phone: 8765432135 } },
     ],
   },
+  {
+    sheet: "Styled list",
+    columns: [
+      { label: "Info", value: "example" }
+    ],
+    content: [
+      {
+        example: {
+          v: "Courier: 24",
+          t: "s",
+          s: {
+            font: {
+              name: "Courier",
+              sz: 24
+            }
+          }
+        },
+      },
+      {
+        example: {
+          v: "bold & color",
+          t: "s",
+          s: {
+            font: {
+              bold: true,
+              color: {
+                rgb: "FF0000"
+              }
+            }
+          }
+        },
+      },
+      {
+        example: {
+          v: "fill: color",
+          t: "s",
+          s: {
+            fill: {
+              fgColor: {
+                rgb: "E9E9E9"
+              }
+            }
+          }
+        },
+      },
+      {
+        example: {
+          v: "line\nbreak",
+          t: "s",
+          s: {
+            alignment: {
+              wrapText: true
+            }
+          }
+        },
+      }
+    ]
+  }
 ]
 
 let settings = {

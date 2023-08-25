@@ -16,7 +16,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "xlsx": "^0.18.5"
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

@@ -1,4 +1,4 @@
-import { utils } from "xlsx"
+import { utils } from "@e965/xlsx"
 import { getJsonSheetRow, getWorksheetColumnWidths } from "../index"
 
 test("Should return only one column width", () => {

@@ -105,7 +105,7 @@ const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
 
 const getObjectLength = (object: unknown): number => {
   if (typeof object === "string") {
-    return object.length
+    return Math.max(...object.split("\n").map((string) => string.length))
   }
   if (typeof object === "number") {
     return object.toString().length

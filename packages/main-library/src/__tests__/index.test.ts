@@ -1,4 +1,4 @@
-import { read as readBufferWorkBook } from "xlsx"
+import { read as readBufferWorkBook } from "@e965/xlsx"
 import jsonxlsx, { IContent, IJsonSheet, ISettings } from "../index"
 
 describe("json-as-xlsx", () => {

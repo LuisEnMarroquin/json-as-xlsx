@@ -1,4 +1,4 @@
-import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "xlsx"
+import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "@e965/xlsx"
 
 export interface IColumn {
   label: string
@@ -105,7 +105,7 @@ const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
 
 const getObjectLength = (object: unknown): number => {
   if (typeof object === "string") {
-    return object.length
+    return Math.max(...object.split("\n").map((string) => string.length))
   }
   if (typeof object === "number") {
     return object.toString().length

@@ -1,6 +1,8 @@
-/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
+/*! cpexcel.js (C) 2013-present SheetJS -- http://sheetjs.com */
 
-/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
+/*! cputils.js (C) 2013-present SheetJS -- http://sheetjs.com */
+
+/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
 
 /**
  * @license React

@@ -84,7 +84,13 @@ const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnForm
       const ref = utils.encode_cell({ r: row, c: column })
 
       if (worksheet[ref]) {
-        worksheet[ref].z = columnFormat
+        switch (columnFormat) {
+            case 'hyperlink':
+              worksheet[ref].l = { Target: worksheet[ref].v }
+              break;
+            default:
+              worksheet[ref].z = columnFormat
+        }
       }
     }
   }

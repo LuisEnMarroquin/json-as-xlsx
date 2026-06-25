@@ -16,7 +16,7 @@ Validation commands (run from the repo root):
 - `yarn build` — builds `main-library` (tsc + uglify) and `demo-reactjs`.
 - `yarn static` — copies the built `demo-reactjs` site into `build/` for deploy.
 
-Use the Node version in `.nvmrc` (currently `22.16.0`). Cloudflare reads `.nvmrc`,
+Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc`,
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 

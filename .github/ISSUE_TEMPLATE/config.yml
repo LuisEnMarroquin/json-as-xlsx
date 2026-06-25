@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation & live demo
+    url: https://xlsx.marroquin.dev
+    about: Check the README and the live demo before opening an issue.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/LuisEnMarroquin/json-as-xlsx/security/advisories/new
+    about: Please report security issues privately, not as a public issue.

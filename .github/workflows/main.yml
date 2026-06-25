@@ -9,11 +9,15 @@ jobs:
   deploy:
     if: github.repository == 'LuisEnMarroquin/json-as-xlsx'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          registry-url: 'https://registry.npmjs.org'
       - run: yarn
       - run: yarn test
       - run: yarn build
@@ -27,11 +31,7 @@ jobs:
           echo CURRENT_VERSION ${{ env.CURRENT_VERSION }}
         working-directory: packages/main-library/
       - name: Publish package to NPM registry
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
-          npm publish --access public
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+        run: npm publish --provenance --access public
         working-directory: packages/main-library/
       - name: Create a new GitHub release
         run: |

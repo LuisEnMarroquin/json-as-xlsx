@@ -32,6 +32,8 @@ jobs:
         working-directory: packages/main-library/
       - name: Publish package to NPM registry
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
         working-directory: packages/main-library/
       - name: Create a new GitHub release
         run: |

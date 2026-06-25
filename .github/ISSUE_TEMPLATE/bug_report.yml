@@ -1,0 +1,66 @@
+name: 🐛 Bug report
+description: Report something that is not working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill in as much
+        of the information below as you can — it helps a lot when reproducing.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Ideally a minimal code snippet (the `data` and `settings` you pass to `xlsx`).
+      placeholder: |
+        ```js
+        import xlsx from "json-as-xlsx"
+        // ...
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: json-as-xlsx version
+      placeholder: e.g. 2.5.9
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Browser
+        - Node.js
+        - Both
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node / browser version
+      placeholder: e.g. Node 24.11.1, Chrome 124
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help (screenshots, the generated file, etc.).
+    validations:
+      required: false

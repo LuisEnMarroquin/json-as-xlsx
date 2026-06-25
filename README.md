@@ -23,7 +23,7 @@ You can see a live demo on any of these sites (there are several, just in case):
 - 🎨 Per-column number, date, currency and hyperlink formatting.
 - 📐 Automatic column widths (tunable with `extraLength`).
 - ↔️ Right-to-left (RTL) sheet support.
-- 🌐 Works in the browser (file download) and in Node.js (buffer output).
+- 🌐 Works in the browser (file download) and in Node.js (file or buffer output).
 - 🟦 Written in TypeScript — ships with type definitions.
 
 ## Installation
@@ -125,7 +125,7 @@ app.get("/download", (_, res) => {
   const buffer = xlsx(data, settings)
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
-    "Content-disposition": "attachment; filename=MySheet.xlsx",
+    "Content-Disposition": "attachment; filename=MySheet.xlsx",
   })
   res.end(buffer)
 })

@@ -31,5 +31,7 @@ confirmed, a fix will be released as soon as practical and you will be credited
 unless you prefer to remain anonymous.
 
 Note: most of the spreadsheet generation is delegated to the underlying
-[SheetJS](https://docs.sheetjs.com) library — vulnerabilities originating there
-should also be reported to that project.
+[`@e965/xlsx`](https://www.npmjs.com/package/@e965/xlsx) library (a
+SheetJS-compatible distribution) — vulnerabilities originating there should be
+reported to that project, and, when relevant, to upstream
+[SheetJS](https://docs.sheetjs.com).

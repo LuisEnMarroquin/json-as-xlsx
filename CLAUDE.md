@@ -20,6 +20,24 @@ Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 
+## Backward compatibility — IMPORTANT
+
+`json-as-xlsx` is a published library that other people depend on. **The
+`main-library` public API MUST stay backward-compatible** so that existing
+users' code keeps working when they upgrade:
+
+- **Never remove or rename** an exported function, type, option, or parameter,
+  and never change the meaning, default value, or return type of an existing
+  one.
+- **Add, don't change.** New behavior must be opt-in (e.g. a new optional
+  setting) with defaults that preserve the current behavior.
+- This covers everything exported from `packages/main-library/src/index.ts`
+  (e.g. `xlsx`, `IJsonSheet`, `ISettings`, `IColumn`, the `utils` re-export) and
+  the accepted shape of the `data` / `settings` objects.
+- **If a change would be breaking, STOP — do NOT make it. Tell Luis first**,
+  explain exactly what would break and why, and wait for his explicit approval.
+  Breaking changes are only allowed with his go-ahead (and a major version bump).
+
 ## Branch workflow — IMPORTANT
 
 - **Never create new branches.** All work happens on `develop`. The AI must not

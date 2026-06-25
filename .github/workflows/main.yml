@@ -37,9 +37,9 @@ jobs:
         run: npm publish --provenance --access public
         working-directory: packages/main-library/
       - name: Create a new GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo ${{ secrets.TOKEN_GITHUB }} > nothing.md
-          gh auth login --with-token < nothing.md
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
       - name: Prepare static files for deployment
         run: yarn run static

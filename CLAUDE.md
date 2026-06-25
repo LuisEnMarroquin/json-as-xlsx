@@ -24,6 +24,9 @@ so it must stay on a version supported by the toolchain (lerna 9 needs
 
 - **Never create new branches.** All work happens on `develop`. The AI must not
   create feature/topic branches — commit to `develop` and push it.
+- **Pushing `develop` is always safe — do it freely, no confirmation needed.**
+  It only triggers a Cloudflare deploy to the dev environment, which is Luis's
+  internal/staging site. Nothing is published to npm or end users from `develop`.
 - **`main` is push-protected: you CANNOT push to it from local.** Whenever you
   find yourself on `main`, switch to `develop` and do the work there.
 - **When moving to `develop`, first bring in the latest changes from `main`**

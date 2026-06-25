@@ -6,8 +6,9 @@
 [![license](https://img.shields.io/npm/l/json-as-xlsx.svg)](LICENSE)
 
 Build an Excel (`.xlsx`) file straight from JSON. It is a thin, typed wrapper
-around the [`xlsx`](https://docs.sheetjs.com) library, so it works both in the
-**browser** (downloads the file) and in **Node.js** (returns a buffer).
+around the SheetJS-compatible [`@e965/xlsx`](https://www.npmjs.com/package/@e965/xlsx)
+library, so it works both in the **browser** (downloads the file) and in
+**Node.js** (can return a buffer when configured).
 
 You can see a live demo on any of these sites (there are several, just in case):
 

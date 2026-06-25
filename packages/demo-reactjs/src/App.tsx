@@ -1,7 +1,7 @@
-import xlsx from "json-as-xlsx"
+import xlsx, { IJsonSheet } from "json-as-xlsx"
 import "./App.css"
 
-const data = [
+const data: IJsonSheet[] = [
   {
     sheet: "Employees",
     columns: [
@@ -24,6 +24,54 @@ const data = [
     content: [
       { product: "Keyboard", price: 29.99, inventory: { stock: 1200 } },
       { product: "Monitor", price: 199.5, inventory: { stock: 340 } },
+    ],
+  },
+]
+
+const styledData: IJsonSheet[] = [
+  {
+    sheet: "Styled employees",
+    columns: [
+      {
+        label: "Name",
+        value: "name",
+        headerStyle: {
+          fill: { fgColor: { rgb: "21A366" } },
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+        },
+        cellStyle: {
+          alignment: { wrapText: true },
+        },
+      },
+      {
+        label: "Salary",
+        value: "salary",
+        format: "$#,##0.00",
+        cellStyle: {
+          font: { italic: true },
+        },
+      },
+      {
+        label: "Website",
+        value: "website",
+        format: "hyperlink",
+      },
+    ],
+    content: [
+      {
+        name: {
+          v: "Ada\nLovelace",
+          t: "s",
+          s: { font: { bold: true, color: { rgb: "FF0000" } } },
+        },
+        salary: 5000,
+        website: "https://example.com/ada",
+      },
+      {
+        name: "Grace Hopper",
+        salary: 6200,
+        website: "https://example.com/grace",
+      },
     ],
   },
 ]
@@ -77,6 +125,10 @@ function App() {
     xlsx(data, { fileName: "MySpreadsheet" })
   }
 
+  const downloadStyledFile = () => {
+    xlsx(styledData, { fileName: "StyledSpreadsheet", enableStyles: true })
+  }
+
   return (
     <div className="page">
       <main className="card">
@@ -94,10 +146,16 @@ function App() {
           ))}
         </ul>
 
-        <button className="download" onClick={downloadFile}>
-          <DownloadIcon />
-          Download example
-        </button>
+        <div className="actions">
+          <button className="download" onClick={downloadFile}>
+            <DownloadIcon />
+            Download example
+          </button>
+          <button className="download secondary" onClick={downloadStyledFile}>
+            <DownloadIcon />
+            Download styled
+          </button>
+        </div>
 
         <pre className="preview">
           <code>{snippet}</code>

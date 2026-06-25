@@ -31,6 +31,44 @@ const data: IJsonSheet[] = [
   },
 ]
 
+const styledData: IJsonSheet[] = [
+  {
+    sheet: "Styled adults",
+    columns: [
+      {
+        label: "Name",
+        value: "name",
+        headerStyle: {
+          fill: { fgColor: { rgb: "21A366" } },
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+        },
+        cellStyle: {
+          alignment: { wrapText: true },
+        },
+      },
+      {
+        label: "Age",
+        value: "age",
+        format: '# "years"',
+        cellStyle: {
+          font: { italic: true },
+        },
+      },
+    ],
+    content: [
+      {
+        name: {
+          v: "Monserrat\nStyled",
+          t: "s",
+          s: { font: { bold: true, color: { rgb: "FF0000" } } },
+        },
+        age: 21,
+      },
+      { name: "Luis", age: 22 },
+    ],
+  },
+]
+
 const settings: ISettings = {
   writeOptions: {
     type: "buffer",
@@ -59,6 +97,18 @@ app.get("/rtl", (_, res) => {
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
     "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
+  })
+  res.end(buffer)
+})
+
+app.get("/styled", (_, res) => {
+  const buffer = xlsx(styledData, {
+    ...settings,
+    enableStyles: true,
+  })
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-Styled.xlsx",
   })
   res.end(buffer)
 })

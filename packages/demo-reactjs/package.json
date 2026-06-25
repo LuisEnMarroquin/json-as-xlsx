@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "json-as-xlsx": "file:../main-library",
+    "json-as-xlsx": "2.5.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

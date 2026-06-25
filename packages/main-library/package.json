@@ -16,7 +16,8 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@e965/xlsx": "^0.20.3"
+    "@e965/xlsx": "^0.20.3",
+    "fflate": "^0.8.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

@@ -1,13 +1,20 @@
 import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "@e965/xlsx"
+import { ICellStyle, IStyledCell, isCellStyleObject, mergeCellStyles, patchStyledWorkbook, saveStyledOutput, toStyledOutput } from "./styles"
+
+export { IBorderStyle, ICellStyle, ICellStyleColor, ICellType, IStyledCell } from "./styles"
 
 export interface IColumn {
   label: string
-  value: string | ((value: IContent) => string | number | boolean | Date | IContent | null)
+  value: string | ((value: IContent) => IContentValue)
+  cellStyle?: ICellStyle
   format?: string
+  headerStyle?: ICellStyle
 }
 
+export type IContentValue = string | number | boolean | Date | IContent | IStyledCell | null
+
 export interface IContent {
-  [key: string]: string | number | boolean | Date | IContent | null
+  [key: string]: IContentValue
 }
 
 export interface IJsonSheet {
@@ -17,6 +24,7 @@ export interface IJsonSheet {
 }
 
 export interface ISettings {
+  enableStyles?: boolean
   extraLength?: number
   fileName?: string
   writeOptions?: WritingOptions
@@ -25,7 +33,7 @@ export interface ISettings {
 }
 
 export interface IJsonSheetRow {
-  [key: string]: string | number | boolean | Date | IContent | null
+  [key: string]: IContentValue
 }
 
 export interface IWorksheetColumnWidth {
@@ -36,8 +44,8 @@ export type IWorkbookCallback = (workbook: WorkBook) => void
 
 export { utils, WorkBook, WorkSheet }
 
-export const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent => {
-  const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent => {
+export const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent | IStyledCell => {
+  const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent | IStyledCell => {
     const value = content[properties[0]]
 
     if (properties.length === 1) {
@@ -48,7 +56,7 @@ export const getContentProperty = (content: IContent, property: string): string 
       return ""
     }
 
-    return accessContentProperties(value, properties.slice(1))
+    return accessContentProperties(value as IContent, properties.slice(1))
   }
 
   const properties = property.split(".")
@@ -85,12 +93,53 @@ const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnForm
 
       if (worksheet[ref]) {
         switch (columnFormat) {
-            case 'hyperlink':
-              worksheet[ref].l = { Target: worksheet[ref].v }
-              break;
-            default:
-              worksheet[ref].z = columnFormat
+          case "hyperlink":
+            worksheet[ref].l = { Target: worksheet[ref].v }
+            break
+          default:
+            worksheet[ref].z = columnFormat
         }
+      }
+    }
+  }
+}
+
+const applyHeaderStyles = (worksheet: WorkSheet, columnIds: string[], headerStyles: Array<ICellStyle | null>) => {
+  for (let i = 0; i < columnIds.length; i += 1) {
+    const headerStyle = headerStyles[i]
+
+    if (!headerStyle) {
+      continue
+    }
+
+    const column = utils.decode_col(columnIds[i])
+    const ref = utils.encode_cell({ r: 0, c: column })
+
+    if (worksheet[ref]) {
+      applyCellStyles(worksheet[ref] as IStyledCell, headerStyle)
+    }
+  }
+}
+
+const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyles: Array<ICellStyle | null>, columnFormats: Array<string | null>) => {
+  for (let i = 0; i < columnIds.length; i += 1) {
+    const columnStyle = columnStyles[i]
+    const columnFormat = columnFormats[i]
+
+    if (!columnStyle && !columnFormat) {
+      continue
+    }
+
+    const column = utils.decode_col(columnIds[i])
+    const range = utils.decode_range(worksheet["!ref"] ?? "")
+
+    // Note: Range.s.r + 1 skips the header row
+    for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+      const ref = utils.encode_cell({ r: row, c: column })
+
+      if (worksheet[ref]) {
+        const formatStyle = columnFormat && columnFormat !== "hyperlink" ? { numFmt: columnFormat } : undefined
+        applyCellStyles(worksheet[ref] as IStyledCell, columnStyle ?? undefined, formatStyle)
       }
     }
   }
@@ -110,6 +159,9 @@ const getWorksheetColumnIds = (worksheet: WorkSheet): string[] => {
 }
 
 const getObjectLength = (object: unknown): number => {
+  if (isStyledCell(object)) {
+    return getObjectLength(object.v)
+  }
   if (typeof object === "string") {
     return Math.max(...object.split("\n").map((string) => string.length))
   }
@@ -172,9 +224,33 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
   const worksheetColumnFormats = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.format ?? null)
   applyColumnFormat(worksheet, worksheetColumnIds, worksheetColumnFormats)
 
+  if (settings.enableStyles) {
+    const worksheetHeaderStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.headerStyle ?? null)
+    const worksheetColumnStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.cellStyle ?? null)
+    applyHeaderStyles(worksheet, worksheetColumnIds, worksheetHeaderStyles)
+    applyColumnStyles(worksheet, worksheetColumnIds, worksheetColumnStyles, worksheetColumnFormats)
+  }
+
   worksheet["!cols"] = getWorksheetColumnWidths(worksheet, settings.extraLength)
 
   return worksheet
+}
+
+const applyCellStyles = (cell: IStyledCell, ...styles: Array<ICellStyle | undefined>) => {
+  const existingStyle = isCellStyleObject(cell.s) ? cell.s : undefined
+  const mergedStyle = mergeCellStyles(...styles, existingStyle)
+
+  if (Object.keys(mergedStyle).length > 0) {
+    cell.s = mergedStyle
+  }
+}
+
+const isStyledCell = (value: unknown): value is IStyledCell => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false
+  }
+
+  return "v" in value || "t" in value || "s" in value || "z" in value
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
@@ -187,6 +263,29 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 
   const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
+
+  if (settings.enableStyles) {
+    const bookType = writeOptions.bookType ?? "xlsx"
+
+    if (bookType !== "xlsx") {
+      throw new Error("enableStyles only supports the xlsx book type")
+    }
+
+    const rawWorkbook = write(workbook, { ...writeOptions, bookType, type: "array" })
+    const styledWorkbook = patchStyledWorkbook(workbook, rawWorkbook)
+
+    if (settings.writeMode === "write") {
+      return toStyledOutput(styledWorkbook, writeOptions.type)
+    } else if (settings.writeMode === "writeFile") {
+      saveStyledOutput(styledWorkbook, filename)
+      return
+    } else if (writeOptions.type === "buffer") {
+      return toStyledOutput(styledWorkbook, writeOptions.type)
+    } else {
+      saveStyledOutput(styledWorkbook, filename)
+      return
+    }
+  }
 
   if (settings.writeMode === "write") {
     return write(workbook, writeOptions)

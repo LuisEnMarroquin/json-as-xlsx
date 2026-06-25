@@ -8,7 +8,7 @@ Guidance for Claude Code when working in this repository.
 
 - `main-library` — the published npm package `json-as-xlsx` (this is what gets released).
 - `demo-express` — runnable Express example (`ts-node`, started with `yarn start`).
-- `demo-reactjs` — the web UI / demo site (built with `react-scripts`).
+- `demo-reactjs` — the web UI / demo site (built with Vite).
 
 Validation commands (run from the repo root):
 
@@ -22,6 +22,11 @@ so it must stay on a version supported by the toolchain (lerna 9 needs
 
 ## Branch workflow — IMPORTANT
 
+- **Never create new branches.** All work happens on `develop`. The AI must not
+  create feature/topic branches — commit to `develop` and push it.
+- **Pushing `develop` is always safe — do it freely, no confirmation needed.**
+  It only triggers a Cloudflare deploy to the dev environment, which is Luis's
+  internal/staging site. Nothing is published to npm or end users from `develop`.
 - **`main` is push-protected: you CANNOT push to it from local.** Whenever you
   find yourself on `main`, switch to `develop` and do the work there.
 - **When moving to `develop`, first bring in the latest changes from `main`**
@@ -29,6 +34,20 @@ so it must stay on a version supported by the toolchain (lerna 9 needs
   outdated code. Then make changes, commit, and push `develop`.
 - Changes reach `main` via Pull Request (develop → main), since direct pushes
   to `main` are blocked.
+- **The AI may, at most, open the Pull Request (develop → main). It must never
+  merge it** — Luis reviews and merges the PR himself.
+
+## Versioning — IMPORTANT
+
+The released version lives in `packages/main-library/package.json`. When asked to
+"bump the version" (subir versión), follow these rules — **each segment is a single
+digit (0–9) and rolls over instead of going to 10**:
+
+- **Default: bump the patch.** e.g. `2.5.7` → `2.5.8`.
+- **When the patch is already `.9`, bump the minor and reset the patch to 0.**
+  e.g. `1.0.9` → `1.1.0` (never `1.0.10`).
+- **When both the minor and the patch are `.9`, bump the major and reset both to 0.**
+  e.g. `1.9.9` → `2.0.0` (never `1.9.10` or `1.10.0`).
 
 ## Deploys — who deploys what
 

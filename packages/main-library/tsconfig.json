@@ -7,6 +7,7 @@
     "outDir": "dist/",
     "rootDir": "src",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "module": "commonjs",
     "declaration": true,
     "inlineSourceMap": true,
@@ -15,7 +16,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["jest", "node", "@testing-library/jest-dom"]
+    "types": ["jest", "node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/**", "src/__mocks__/**", "src/__tests__/**"],

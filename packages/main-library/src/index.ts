@@ -191,9 +191,13 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
   if (settings.writeMode === "write") {
     return write(workbook, writeOptions)
   } else if (settings.writeMode === "writeFile") {
-    return writeFile(workbook, filename, writeOptions)
+    writeFile(workbook, filename, writeOptions)
+    return
+  } else if (writeOptions.type === "buffer") {
+    return write(workbook, writeOptions)
   } else {
-    return writeOptions.type === "buffer" ? write(workbook, writeOptions) : writeFile(workbook, filename, writeOptions)
+    writeFile(workbook, filename, writeOptions)
+    return
   }
 }
 

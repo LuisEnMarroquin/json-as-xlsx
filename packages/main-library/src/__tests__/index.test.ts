@@ -129,7 +129,7 @@ describe("json-as-xlsx", () => {
       ]
       jsonxlsx(sheets, settings, callback)
 
-      expect(callback).toBeCalledTimes(1)
+      expect(callback).toHaveBeenCalledTimes(1)
     })
 
     it("should handle multiple sheets", () => {

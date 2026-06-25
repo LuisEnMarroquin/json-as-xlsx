@@ -34,9 +34,11 @@ so it must stay on a version supported by the toolchain (lerna 9 needs
 
 - **`develop` → Cloudflare Pages.** Pushing `develop` builds and deploys the
   web UI (`demo-reactjs`) to Cloudflare (`develop` is the Cloudflare production
-  branch; build command `yarn build && yarn static`, output `build`). Other
+  branch; build command `yarn build && yarn static`, output `build`). Live at
+  **https://xlsx.luismarroquin.com** / **https://xlsx.pages.dev**. Other
   branches get Cloudflare *preview* deployments.
 - **`main` → GitHub Actions.** Pushing/merging to `main` runs `.github/workflows/main.yml`,
   which tests, builds, **publishes the package to npm**, creates a GitHub release,
-  and deploys to `gh-pages`. The npm version comes from
+  and deploys the UI to GitHub Pages at **https://xlsx.marroquin.dev** (the
+  `gh-pages` branch). The npm version comes from
   `packages/main-library/package.json`, so bump it before merging to `main`.

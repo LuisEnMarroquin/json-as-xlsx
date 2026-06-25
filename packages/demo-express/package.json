@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@types/express": "^5.0.6",
+    "@types/node": "^26.0.1",
     "express": "^5.2.1",
     "json-as-xlsx": "file:../main-library",
     "nodemon": "^3.1.14",

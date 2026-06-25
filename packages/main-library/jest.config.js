@@ -1,7 +1,7 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   preset: "ts-jest",
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   // collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageThreshold: {
     global: {
@@ -11,6 +11,5 @@ module.exports = {
       statements: 60,
     },
   },
-  setupFilesAfterEnv: ["@testing-library/jest-dom"],
   modulePathIgnorePatterns: ["<rootDir>/dist/"],
 }

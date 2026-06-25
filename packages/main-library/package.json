@@ -19,12 +19,10 @@
     "@e965/xlsx": "^0.20.3"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.0.1",
     "jest": "^30.4.2",
     "jest-cli": "^30.4.2",
-    "jest-environment-jsdom": "^30.4.1",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3",
     "uglify-js": "^3.19.3"

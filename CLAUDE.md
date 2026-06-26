@@ -39,6 +39,20 @@ task:
   (`packages/demo-express/src/server.ts`) — and the other way around.
 - Keep the demonstrated data and styling equivalent so the two stay in sync.
 
+## Demo dependency workflow — IMPORTANT
+
+- The demo packages are Yarn workspaces and are expected to be installed and run
+  from the repository root, not as standalone packages from inside
+  `packages/demo-*`.
+- Keep the demos' `json-as-xlsx` dependency pinned to the `main-library` package
+  version being prepared for release. From the repo root, Yarn resolves that
+  dependency to the local `packages/main-library` workspace.
+- Do **not** switch the demo dependencies back to `file:../main-library` just to
+  support standalone installs before the version is published to npm. That can
+  create stale local path installs or nested package copies, and makes the demos
+  less clearly reflect the release candidate. Only change this if Luis
+  explicitly asks to support standalone demo installs.
+
 ## Backward compatibility — IMPORTANT
 
 `json-as-xlsx` is a published library that other people depend on. **The

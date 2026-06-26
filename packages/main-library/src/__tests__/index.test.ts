@@ -409,6 +409,49 @@ describe("json-as-xlsx", () => {
         }
       }
     })
+
+    it("keeps digit-only format codes as custom number formats", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Formats",
+          columns: [
+            { label: "Zip", value: "zip", format: "00000" },
+            { label: "Date", value: "date", format: "14" },
+          ],
+          content: [{ zip: 1234, date: 45000 }],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const stylesXml = strFromU8(unzipXlsxBuffer(buffer)["xl/styles.xml"])
+
+      // "00000" (zip code) must survive as a custom format, not collapse to General
+      expect(stylesXml).toContain('formatCode="00000"')
+      // "14" is a valid built-in id, so it must NOT get a custom <numFmt> entry
+      expect(stylesXml).not.toContain('formatCode="14"')
+    })
+
+    it("only forces a border style when one is intended", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Borders",
+          columns: [
+            {
+              label: "Cell",
+              value: "value",
+              cellStyle: { border: { top: { color: { rgb: "FF0000" } }, bottom: {}, left: { style: "thick" } } },
+            },
+          ],
+          content: [{ value: "x" }],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const stylesXml = strFromU8(unzipXlsxBuffer(buffer)["xl/styles.xml"])
+
+      // color-only side defaults to thin, explicit style is honored, empty side has no style
+      expect(stylesXml).toContain('<top style="thin"><color rgb="FF0000"/></top>')
+      expect(stylesXml).toContain('<left style="thick"/>')
+      expect(stylesXml).toContain("<bottom/>")
+    })
   })
 
   describe("browser downloads", () => {

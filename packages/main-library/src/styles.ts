@@ -261,7 +261,10 @@ class StyleBuilder {
       return builtInId
     }
 
-    if (/^[0-9]+$/.test(numFmt)) {
+    // A bare integer string with no leading zeros that falls in the built-in id
+    // range is treated as a built-in numFmtId. Anything else (e.g. "00000" zip
+    // codes, or ids >= 164 which need their own entry) is a custom format code.
+    if (/^[1-9][0-9]*$/.test(numFmt) && Number(numFmt) <= 163) {
       return Number(numFmt)
     }
 
@@ -484,8 +487,18 @@ const borderPartNode = (direction: string, spec?: { color?: ICellStyleColor; sty
 
   if (!spec) return directionNode
 
-  directionNode.attr("style", spec.style ?? "medium")
-  if (spec.color) directionNode.append(colorNode("color", spec.color, false))
+  const colored = Boolean(spec.color) && hasColor(spec.color as ICellStyleColor)
+
+  // A border side only renders when it has a style. Honor an explicit style;
+  // otherwise default to "thin" when a color was given, and emit nothing for an
+  // empty/color-less spec instead of forcing a "medium" border.
+  if (spec.style) {
+    directionNode.attr("style", spec.style)
+  } else if (colored) {
+    directionNode.attr("style", "thin")
+  }
+
+  if (colored) directionNode.append(colorNode("color", spec.color as ICellStyleColor, false))
 
   return directionNode
 }

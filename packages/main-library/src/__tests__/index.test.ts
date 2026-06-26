@@ -478,4 +478,22 @@ describe("json-as-xlsx", () => {
       }
     })
   })
+
+  // These assertions are mostly compile-time: ts-jest type-checks this file, so
+  // if the xlsx() return-type overloads regress, the suite fails to build.
+  describe("return type overloads", () => {
+    const sheets: IJsonSheet[] = [{ sheet: "S", columns: [{ label: "N", value: "n" }], content: [{ n: "x" }] }]
+
+    it("narrows the return type from writeMode/writeOptions.type", () => {
+      const asBuffer: Buffer | undefined = jsonxlsx(sheets, { writeOptions: { type: "buffer" } })
+      const asString: string | undefined = jsonxlsx(sheets, { writeMode: "write", writeOptions: { type: "base64" } })
+      const asArray: ArrayBuffer | undefined = jsonxlsx(sheets, { writeMode: "write", writeOptions: { type: "array" } })
+      const asDefault: Buffer | undefined = jsonxlsx([])
+
+      expect(asBuffer).toBeInstanceOf(Buffer)
+      expect(typeof asString).toBe("string")
+      expect(asArray).toBeInstanceOf(ArrayBuffer)
+      expect(asDefault).toBeUndefined()
+    })
+  })
 })

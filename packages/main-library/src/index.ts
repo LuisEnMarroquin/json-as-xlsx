@@ -301,7 +301,19 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
   }
 }
 
-export const xlsx = (jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): ReturnType<typeof writeWorkbook> => {
+// Overloads narrow the return type to match how the workbook is requested. Data
+// is returned (rather than written to a file) only when writeMode is "write",
+// or when writeOptions.type is "buffer" — in those cases the type follows
+// writeOptions.type. Every variant still includes `undefined`, because xlsx()
+// returns undefined for an empty sheets array and for writeFile/download modes.
+// The default overload keeps the historical `Buffer | undefined` so existing
+// call sites are unaffected.
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "array" } }, workbookCallback?: IWorkbookCallback): ArrayBuffer | undefined
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "base64" | "binary" | "string" } }, workbookCallback?: IWorkbookCallback): string | undefined
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "buffer" } }, workbookCallback?: IWorkbookCallback): Buffer | undefined
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeOptions: WritingOptions & { type: "buffer" } }, workbookCallback?: IWorkbookCallback): Buffer | undefined
+export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings, workbookCallback?: IWorkbookCallback): Buffer | undefined
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | string | ArrayBuffer | undefined {
   if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file

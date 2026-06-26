@@ -111,16 +111,20 @@
 }
 
 .download.secondary {
-  color: #dffcf0;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(110, 231, 183, 0.34);
-  box-shadow: none;
+  color: #f0f9ff;
+  background: linear-gradient(135deg, #38bdf8, #1d4ed8);
+  border: 0;
+  box-shadow: 0 14px 32px -10px rgba(37, 99, 235, 0.6);
 }
 
 .download:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
   box-shadow: 0 20px 42px -12px rgba(33, 163, 102, 0.72);
+}
+
+.download.secondary:hover {
+  box-shadow: 0 20px 42px -12px rgba(37, 99, 235, 0.75);
 }
 
 .download:active {
@@ -130,6 +134,10 @@
 .download:focus-visible {
   outline: 2px solid #6ee7b7;
   outline-offset: 3px;
+}
+
+.download.secondary:focus-visible {
+  outline-color: #7dd3fc;
 }
 
 .download svg {
@@ -223,12 +231,6 @@
     color: #334155;
     background: rgba(2, 6, 12, 0.04);
     border-color: rgba(2, 6, 12, 0.09);
-  }
-
-  .download.secondary {
-    color: #0f5132;
-    background: rgba(33, 163, 102, 0.08);
-    border-color: rgba(33, 163, 102, 0.32);
   }
 
   .links a {

@@ -11,6 +11,13 @@ const unzipXlsxBuffer = (buffer: Buffer | undefined) => {
   return unzipSync(new Uint8Array(buffer as Buffer))
 }
 
+const getXmlCollectionCount = (xml: string, tagName: string): number => {
+  const match = xml.match(new RegExp(`<${tagName} count="(\\d+)"`))
+
+  expect(match).not.toBeNull()
+  return Number(match?.[1])
+}
+
 const mockBrowserDownload = () => {
   jest.useFakeTimers()
 
@@ -411,15 +418,59 @@ describe("json-as-xlsx", () => {
       }
     })
 
-    it("keeps digit-only format codes as custom number formats", () => {
+    it("should write styled workbooks to disk when process.getBuiltinModule is unavailable", () => {
+      const fileName = join(tmpdir(), `json-as-xlsx-style-fallback-${Date.now()}`)
+      const filePath = `${fileName}.xlsx`
+      const originalGetBuiltinModule = (process as any).getBuiltinModule
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Styled",
+          columns: [{ label: "Name", value: "name", headerStyle: { font: { bold: true } } }],
+          content: [{ name: "Ada" }],
+        },
+      ]
+
+      Object.defineProperty(process, "getBuiltinModule", {
+        configurable: true,
+        value: undefined,
+        writable: true,
+      })
+
+      try {
+        jsonxlsx(sheets, {
+          enableStyles: true,
+          fileName,
+          writeMode: "writeFile",
+          writeOptions: {
+            bookType: "xlsx",
+          },
+        })
+
+        expect(existsSync(filePath)).toBe(true)
+        expect(unzipSync(new Uint8Array(readFileSync(filePath)))["xl/styles.xml"]).toBeDefined()
+      } finally {
+        Object.defineProperty(process, "getBuiltinModule", {
+          configurable: true,
+          value: originalGetBuiltinModule,
+          writable: true,
+        })
+
+        if (existsSync(filePath)) {
+          unlinkSync(filePath)
+        }
+      }
+    })
+
+    it("keeps digit-only format codes as custom number formats when needed", () => {
       const sheets: IJsonSheet[] = [
         {
           sheet: "Formats",
           columns: [
             { label: "Zip", value: "zip", format: "00000" },
             { label: "Date", value: "date", format: "14" },
+            { label: "Custom", value: "custom", format: "164" },
           ],
-          content: [{ zip: 1234, date: 45000 }],
+          content: [{ zip: 1234, date: 45000, custom: 7 }],
         },
       ]
       const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
@@ -427,6 +478,8 @@ describe("json-as-xlsx", () => {
 
       // "00000" (zip code) must survive as a custom format, not collapse to General
       expect(stylesXml).toContain('formatCode="00000"')
+      // Numeric strings outside the built-in range need a custom <numFmt> entry.
+      expect(stylesXml).toContain('formatCode="164"')
       // "14" is a valid built-in id, so it must NOT get a custom <numFmt> entry
       expect(stylesXml).not.toContain('formatCode="14"')
     })
@@ -454,6 +507,21 @@ describe("json-as-xlsx", () => {
       expect(stylesXml).toContain("<bottom/>")
     })
 
+    it("emits count attributes for the fixed-size style collections", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Counts",
+          columns: [{ label: "Cell", value: "value", headerStyle: { font: { bold: true } } }],
+          content: [{ value: "x" }],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const stylesXml = strFromU8(unzipXlsxBuffer(buffer)["xl/styles.xml"])
+
+      expect(stylesXml).toContain('<cellStyleXfs count="1">')
+      expect(stylesXml).toContain('<cellStyles count="1">')
+    })
+
     it("deduplicates shared sub-components across distinct styles", () => {
       const sheets: IJsonSheet[] = [
         {
@@ -475,6 +543,23 @@ describe("json-as-xlsx", () => {
       // the declared count stays in sync with the actual number of entries
       expect(fontEls).toBe(fontCount)
       expect(fontEls).toBeLessThanOrEqual(2)
+    })
+
+    it("deduplicates styles that only differ by undefined keys", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Undefined",
+          columns: [
+            { label: "A", value: "a", cellStyle: { font: { bold: true, italic: undefined } } },
+            { label: "B", value: "b", cellStyle: { font: { bold: true } } },
+          ],
+          content: [{ a: 1, b: 2 }],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const stylesXml = strFromU8(unzipXlsxBuffer(buffer)["xl/styles.xml"])
+
+      expect(getXmlCollectionCount(stylesXml, "cellXfs")).toBe(3)
     })
   })
 
@@ -511,11 +596,13 @@ describe("json-as-xlsx", () => {
     it("narrows the return type from writeMode/writeOptions.type", () => {
       const asBuffer: Buffer | undefined = jsonxlsx(sheets, { writeOptions: { type: "buffer" } })
       const asString: string | undefined = jsonxlsx(sheets, { writeMode: "write", writeOptions: { type: "base64" } })
+      const asStyledString: string | undefined = jsonxlsx(sheets, { enableStyles: true, writeMode: "write", writeOptions: { type: "string" } })
       const asArray: ArrayBuffer | undefined = jsonxlsx(sheets, { writeMode: "write", writeOptions: { type: "array" } })
       const asDefault: Buffer | undefined = jsonxlsx([])
 
       expect(asBuffer).toBeInstanceOf(Buffer)
       expect(typeof asString).toBe("string")
+      expect(typeof asStyledString).toBe("string")
       expect(asArray).toBeInstanceOf(ArrayBuffer)
       expect(asDefault).toBeUndefined()
     })
@@ -548,6 +635,31 @@ describe("json-as-xlsx", () => {
         expect(Array.from(output, (char) => char.charCodeAt(0))).toEqual(expectedCharCodes)
       } finally {
         ;(global as any).Buffer = originalBuffer
+      }
+    })
+
+    it("passes byte-preserving binary strings to btoa without Buffer", () => {
+      const originalBuffer = (global as any).Buffer
+      const originalBtoa = (global as any).btoa
+      const btoa = jest.fn((value: string) => {
+        expect(Array.from(value, (char) => char.charCodeAt(0))).toEqual(expectedCharCodes)
+        return "encoded"
+      })
+
+      ;(global as any).Buffer = undefined
+      ;(global as any).btoa = btoa
+
+      try {
+        expect(toStyledOutput(bytes, "base64")).toBe("encoded")
+        expect(btoa).toHaveBeenCalledTimes(1)
+      } finally {
+        ;(global as any).Buffer = originalBuffer
+
+        if (originalBtoa === undefined) {
+          delete (global as any).btoa
+        } else {
+          ;(global as any).btoa = originalBtoa
+        }
       }
     })
   })

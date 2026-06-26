@@ -74,6 +74,22 @@ users' code keeps working when they upgrade:
 - **The AI may, at most, open the Pull Request (develop → main). It must never
   merge it** — Luis reviews and merges the PR himself.
 
+## Pull request review comments — IMPORTANT
+
+Whenever GitHub Copilot (or any reviewer) leaves review comments on a PR, handle
+every comment the same way:
+
+- **Evaluate, then fix what applies.** Decide whether each comment is valid. Fix
+  the ones that are (add a test when it's a behavior change). For anything you
+  intentionally don't change, that's fine — just explain why.
+- **Reply on the thread tagging `@copilot`**, briefly stating what you did (or
+  why you didn't) and referencing the commit that addresses it.
+- **Resolve the conversation** once it's handled.
+
+Notes: resolving threads needs the GraphQL API (REST can't) — list the PR's
+`reviewThreads` to get each thread id, then call the `resolveReviewThread`
+mutation. After pushing the fixes, re-request Copilot's review so it runs again.
+
 ## Versioning — IMPORTANT
 
 The released version lives in `packages/main-library/package.json`. When asked to

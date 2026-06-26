@@ -74,6 +74,12 @@ users' code keeps working when they upgrade:
 - **The AI may, at most, open the Pull Request (develop → main). It must never
   merge it** — Luis reviews and merges the PR himself.
 
+## Commit workflow — IMPORTANT
+
+- When the AI makes a commit, it must include **all pending worktree changes**:
+  tracked modifications, deletions, and new files. Do not leave local changes
+  uncommitted unless Luis explicitly asks to exclude something.
+
 ## Pull request review comments — IMPORTANT
 
 Whenever GitHub Copilot (or any reviewer) leaves review comments on a PR, handle

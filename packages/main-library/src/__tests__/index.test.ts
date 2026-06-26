@@ -487,6 +487,26 @@ describe("json-as-xlsx", () => {
       expect(stylesXml).not.toContain('formatCode="14"')
     })
 
+    it("rejects numeric custom number format ids", () => {
+      const builtInSheets: IJsonSheet[] = [
+        {
+          sheet: "BuiltIn",
+          columns: [{ label: "Date", value: "date", cellStyle: { numFmt: 14 } }],
+          content: [{ date: 45000 }],
+        },
+      ]
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Formats",
+          columns: [{ label: "Custom", value: "custom", cellStyle: { numFmt: 164 } }],
+          content: [{ custom: 7 }],
+        },
+      ]
+
+      expect(() => jsonxlsx(builtInSheets, { ...settings, enableStyles: true })).not.toThrow()
+      expect(() => jsonxlsx(sheets, { ...settings, enableStyles: true })).toThrow("Numeric numFmt values must be built-in IDs")
+    })
+
     it("only forces a border style when one is intended", () => {
       const sheets: IJsonSheet[] = [
         {
@@ -508,6 +528,32 @@ describe("json-as-xlsx", () => {
       expect(stylesXml).toContain('<top style="thin"><color rgb="FF0000"/></top>')
       expect(stylesXml).toContain('<left style="thick"/>')
       expect(stylesXml).toContain("<bottom/>")
+    })
+
+    it("skips empty direct cell styles", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Noop",
+          columns: [
+            { label: "Empty", value: "empty" },
+            { label: "Undefined", value: "undefinedStyle" },
+            { label: "Styled", value: "styled" },
+          ],
+          content: [
+            {
+              empty: { v: "Ada", t: "s", s: {} },
+              undefinedStyle: { v: "Grace", t: "s", s: { fill: undefined, font: { bold: undefined } } },
+              styled: { v: "Bold", t: "s", s: { font: { bold: true } } },
+            },
+          ],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(sheetXml).not.toMatch(/<c r="A2"[^>]* s="/)
+      expect(sheetXml).not.toMatch(/<c r="B2"[^>]* s="/)
+      expect(sheetXml).toMatch(/<c r="C2"[^>]* s="\d+"[^>]*>/)
     })
 
     it("emits count attributes for the fixed-size style collections", () => {

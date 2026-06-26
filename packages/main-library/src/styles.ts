@@ -269,6 +269,13 @@ class StyleBuilder {
     if (numFmt === undefined || numFmt === null || numFmt === "") return 0
 
     if (typeof numFmt === "number") {
+      // Numeric numFmt values are OOXML built-in ids only. Custom ids (>= 164)
+      // need a matching <numFmt formatCode="..."> entry, and a number alone
+      // does not provide that format code. Require callers to pass custom
+      // formats as strings so we can write valid, self-contained styles.xml.
+      if (!Number.isInteger(numFmt) || numFmt < 0 || numFmt > maxBuiltInNumFmtId) {
+        throw new Error(`Numeric numFmt values must be built-in IDs between 0 and ${maxBuiltInNumFmtId}; use a string format code for custom formats.`)
+      }
       return numFmt
     }
 
@@ -280,7 +287,7 @@ class StyleBuilder {
     // A bare integer string with no leading zeros that falls in the built-in id
     // range is treated as a built-in numFmtId. Anything else (e.g. "00000" zip
     // codes, or ids >= 164 which need their own entry) is a custom format code.
-    if (/^[1-9][0-9]*$/.test(numFmt) && Number(numFmt) <= 163) {
+    if (/^[1-9][0-9]*$/.test(numFmt) && Number(numFmt) <= maxBuiltInNumFmtId) {
       return Number(numFmt)
     }
 
@@ -372,6 +379,8 @@ const builtInNumberFormats: Record<string, number> = {
   '"上午/下午 "hh"時"mm"分"ss"秒 "': 56,
 }
 
+const maxBuiltInNumFmtId = 163
+
 export const mergeCellStyles = (...styles: Array<ICellStyle | undefined>): ICellStyle => {
   return styles.reduce<ICellStyle>((mergedStyle, style) => {
     if (!style) return mergedStyle
@@ -384,6 +393,74 @@ export const isCellStyleObject = (style: unknown): style is ICellStyle => {
   // keeps non-style values (e.g. a Date used as a cell value) from being merged
   // and hashed as styles, which would bloat or corrupt styles.xml.
   return Boolean(style) && typeof style === "object" && !Array.isArray(style) && !(style instanceof Date)
+}
+
+const hasMeaningfulValue = (value: unknown): boolean => value !== undefined && value !== null && value !== "" && value !== false
+
+const hasEffectiveAlignment = (alignment?: ICellStyle["alignment"]): boolean => {
+  return Boolean(alignment) && Object.values(alignment as Record<string, unknown>).some(hasMeaningfulValue)
+}
+
+const hasEffectiveFont = (font?: ICellStyle["font"]): boolean => {
+  return Boolean(
+    font &&
+      (font.bold ||
+        font.italic ||
+        font.outline ||
+        font.shadow ||
+        font.strike ||
+        font.underline ||
+        hasMeaningfulValue(font.name) ||
+        hasMeaningfulValue(font.sz) ||
+        hasMeaningfulValue(font.vertAlign) ||
+        (font.color && hasColor(font.color)))
+  )
+}
+
+const hasEffectiveFill = (fill?: ICellStyle["fill"]): boolean => {
+  return Boolean(
+    fill &&
+      (fill.patternType === "solid" ||
+        fill.patternType === "gray125" ||
+        (fill.fgColor && hasColor(fill.fgColor)) ||
+        (fill.bgColor && hasColor(fill.bgColor)))
+  )
+}
+
+const hasEffectiveBorderSide = (side?: { color?: ICellStyleColor; style?: IBorderStyle }): boolean => {
+  return Boolean(side && (side.style || (side.color && hasColor(side.color))))
+}
+
+const hasEffectiveBorder = (border?: ICellStyle["border"]): boolean => {
+  return Boolean(
+    border &&
+      (hasEffectiveBorderSide(border.top) ||
+        hasEffectiveBorderSide(border.bottom) ||
+        hasEffectiveBorderSide(border.left) ||
+        hasEffectiveBorderSide(border.right) ||
+        hasEffectiveBorderSide(border.diagonal) ||
+        border.diagonal?.diagonalUp ||
+        border.diagonal?.diagonalDown)
+  )
+}
+
+const hasEffectiveNumFmt = (numFmt?: string | number): boolean => {
+  return numFmt !== undefined && numFmt !== null && numFmt !== "" && numFmt !== 0 && numFmt !== "General"
+}
+
+const hasEffectiveCellStyle = (style: unknown): style is ICellStyle => {
+  if (!isCellStyleObject(style)) return false
+
+  // Empty/no-op style objects must not write s="..." markers. They are common
+  // when callers build cell objects conditionally, and treating them as real
+  // styles bloats styles.xml without changing the rendered workbook.
+  return (
+    hasEffectiveAlignment(style.alignment) ||
+    hasEffectiveBorder(style.border) ||
+    hasEffectiveFill(style.fill) ||
+    hasEffectiveFont(style.font) ||
+    hasEffectiveNumFmt(style.numFmt)
+  )
 }
 
 export const patchStyledWorkbook = (workbook: IWorkbookLike, workbookData: ArrayBuffer | Uint8Array): Uint8Array => {
@@ -501,12 +578,13 @@ const getCellStyle = (cell?: IStyledCell): ICellStyle | undefined => {
   if (!cell) return undefined
 
   const styles: ICellStyle[] = []
-  if (isCellStyleObject(cell.s)) styles.push(cell.s)
+  if (hasEffectiveCellStyle(cell.s)) styles.push(cell.s)
   if (cell.z) styles.push({ numFmt: cell.z })
 
   if (styles.length === 0) return undefined
 
-  return mergeCellStyles(...styles)
+  const style = mergeCellStyles(...styles)
+  return hasEffectiveCellStyle(style) ? style : undefined
 }
 
 const patchWorksheetXml = (xml: string, stylesByRef: Map<string, number>): string => {

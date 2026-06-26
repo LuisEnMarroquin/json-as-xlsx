@@ -246,15 +246,31 @@ const applyCellStyles = (cell: IStyledCell, ...styles: Array<ICellStyle | undefi
   }
 }
 
+const validCellTypes = new Set(["b", "n", "e", "s", "d", "z", "str"])
+const styleKeys = new Set(["alignment", "border", "fill", "font", "numFmt"])
+
+const hasStyleKeys = (style: unknown): style is ICellStyle => {
+  return isCellStyleObject(style) && Object.keys(style).some((key) => styleKeys.has(key))
+}
+
+const isCellLink = (value: unknown): value is IStyledCell["l"] => {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value) && typeof (value as Record<string, unknown>).Target === "string"
+}
+
 const isStyledCell = (value: unknown): value is IStyledCell => {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return false
   }
 
-  // Only the cell-specific markers identify a cell object. `v` alone is too
-  // generic — ordinary nested data objects can have a `v` property — so it is
-  // intentionally excluded to avoid misclassifying plain data as a cell.
-  return "t" in value || "s" in value || "z" in value || "l" in value
+  const cell = value as Record<string, unknown>
+
+  // `v` alone is too generic, and so are marker names with arbitrary values
+  // (`t` is a common "type" field in user data). Only unwrap objects that look
+  // like actual worksheet cells with a value plus a valid cell marker.
+  return (
+    "v" in cell &&
+    (validCellTypes.has(String(cell.t)) || hasStyleKeys(cell.s) || typeof cell.z === "string" || isCellLink(cell.l))
+  )
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {

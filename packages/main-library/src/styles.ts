@@ -565,12 +565,18 @@ const toUint8Array = (data: ArrayBuffer | Uint8Array): Uint8Array => {
   return data instanceof Uint8Array ? data : new Uint8Array(data)
 }
 
+const binaryStringChunkSize = 0x8000
+
 const uint8ToBinaryString = (data: Uint8Array): string => {
-  let result = ""
-  for (let index = 0; index < data.length; index += 1) {
-    result += String.fromCharCode(data[index])
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(data).toString("binary")
   }
-  return result
+
+  const chunks: string[] = []
+  for (let index = 0; index < data.length; index += binaryStringChunkSize) {
+    chunks.push(String.fromCharCode(...data.subarray(index, index + binaryStringChunkSize)))
+  }
+  return chunks.join("")
 }
 
 const uint8ToBase64 = (data: Uint8Array): string => {

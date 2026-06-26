@@ -4,6 +4,7 @@ import { tmpdir } from "os"
 import { join } from "path"
 import { strFromU8, unzipSync } from "fflate"
 import jsonxlsx, { IContent, IJsonSheet, ISettings } from "../index"
+import { toStyledOutput } from "../styles"
 
 const unzipXlsxBuffer = (buffer: Buffer | undefined) => {
   expect(buffer).toBeInstanceOf(Buffer)
@@ -524,6 +525,30 @@ describe("json-as-xlsx", () => {
       // undefined type) while the styled path returns a buffer.
       expect(jsonxlsx(sheets, { writeMode: "write" })).toBeInstanceOf(Buffer)
       expect(jsonxlsx(sheets, { writeMode: "write", enableStyles: true })).toBeInstanceOf(Buffer)
+    })
+  })
+
+  describe("styled binary output", () => {
+    const bytes = new Uint8Array([0x00, 0x41, 0x7f, 0x80, 0x9f, 0xff])
+    const expectedCharCodes = Array.from(bytes)
+
+    it("preserves bytes in Node", () => {
+      const output = toStyledOutput(bytes, "binary") as string
+
+      expect(Array.from(output, (char) => char.charCodeAt(0))).toEqual(expectedCharCodes)
+    })
+
+    it("preserves bytes without Buffer", () => {
+      const originalBuffer = (global as any).Buffer
+      ;(global as any).Buffer = undefined
+
+      try {
+        const output = toStyledOutput(bytes, "string") as string
+
+        expect(Array.from(output, (char) => char.charCodeAt(0))).toEqual(expectedCharCodes)
+      } finally {
+        ;(global as any).Buffer = originalBuffer
+      }
     })
   })
 })

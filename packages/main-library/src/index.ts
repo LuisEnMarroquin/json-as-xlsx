@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "@e965/xlsx"
-import { ICellStyle, IStyledCell, isCellStyleObject, mergeCellStyles, patchStyledWorkbook, saveStyledOutput, toStyledOutput } from "./styles"
+import { ICellStyle, IStyledCell, isCellStyleObject, mergeCellStyles, patchStyledWorkbook, saveXlsxOutput, toStyledOutput } from "./styles"
 
 export { IBorderStyle, ICellStyle, ICellStyleColor, ICellType, IStyledCell } from "./styles"
 
@@ -277,12 +277,12 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
     if (settings.writeMode === "write") {
       return toStyledOutput(styledWorkbook, writeOptions.type)
     } else if (settings.writeMode === "writeFile") {
-      saveStyledOutput(styledWorkbook, filename)
+      saveXlsxOutput(styledWorkbook, filename)
       return
     } else if (writeOptions.type === "buffer") {
       return toStyledOutput(styledWorkbook, writeOptions.type)
     } else {
-      saveStyledOutput(styledWorkbook, filename)
+      saveXlsxOutput(styledWorkbook, filename)
       return
     }
   }

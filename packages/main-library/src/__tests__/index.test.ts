@@ -10,6 +10,78 @@ const unzipXlsxBuffer = (buffer: Buffer | undefined) => {
   return unzipSync(new Uint8Array(buffer as Buffer))
 }
 
+const mockBrowserDownload = () => {
+  jest.useFakeTimers()
+
+  const originalBlob = (global as any).Blob
+  const originalDocument = (global as any).document
+  const originalUrl = (global as any).URL
+  const link = {
+    download: "",
+    href: "",
+    parentNode: undefined as undefined | { removeChild: jest.Mock },
+    rel: "",
+    style: {} as Record<string, string>,
+    click: jest.fn(),
+  }
+  const parent = {
+    appendChild: jest.fn((node: typeof link) => {
+      node.parentNode = parent
+      return node
+    }),
+    removeChild: jest.fn((node: typeof link) => {
+      node.parentNode = undefined
+      return node
+    }),
+  }
+
+  ;(global as any).Blob = class {
+    size: number
+    type: string
+
+    constructor(parts: Array<ArrayBuffer>, options: { type?: string } = {}) {
+      this.size = parts.reduce((size, part) => size + part.byteLength, 0)
+      this.type = options.type ?? ""
+    }
+  }
+  ;(global as any).document = {
+    body: parent,
+    createElement: jest.fn(() => link),
+    documentElement: parent,
+  }
+  ;(global as any).URL = {
+    createObjectURL: jest.fn(() => "blob:json-as-xlsx-test"),
+    revokeObjectURL: jest.fn(),
+  }
+
+  return {
+    link,
+    parent,
+    restore: () => {
+      jest.runOnlyPendingTimers()
+      jest.useRealTimers()
+
+      if (originalBlob === undefined) {
+        delete (global as any).Blob
+      } else {
+        ;(global as any).Blob = originalBlob
+      }
+
+      if (originalDocument === undefined) {
+        delete (global as any).document
+      } else {
+        ;(global as any).document = originalDocument
+      }
+
+      if (originalUrl === undefined) {
+        delete (global as any).URL
+      } else {
+        ;(global as any).URL = originalUrl
+      }
+    },
+  }
+}
+
 describe("json-as-xlsx", () => {
   it("should return undefined if sheets array is empty", () => {
     const sheets: IJsonSheet[] = []
@@ -335,6 +407,31 @@ describe("json-as-xlsx", () => {
         if (existsSync(filePath)) {
           unlinkSync(filePath)
         }
+      }
+    })
+  })
+
+  describe("browser downloads", () => {
+    const sheets: IJsonSheet[] = [
+      {
+        sheet: "Users",
+        columns: [{ label: "Name", value: "name" }],
+        content: [{ name: "Ada" }],
+      },
+    ]
+
+    it("should use the requested filename for styled workbook downloads", () => {
+      const browser = mockBrowserDownload()
+
+      try {
+        jsonxlsx(sheets, { enableStyles: true, fileName: "StyledSpreadsheet" })
+
+        expect(browser.link.download).toBe("StyledSpreadsheet.xlsx")
+        expect(browser.link.href).toBe("blob:json-as-xlsx-test")
+        expect(browser.parent.appendChild).toHaveBeenCalledWith(browser.link)
+        expect(browser.link.click).toHaveBeenCalledTimes(1)
+      } finally {
+        browser.restore()
       }
     })
   })

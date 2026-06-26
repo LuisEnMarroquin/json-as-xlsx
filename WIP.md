@@ -115,8 +115,13 @@ and avoid copying more than needed.
   enabled, it is mirrored into the generated style `numFmt`.
 - Deep property access remains backward-compatible for regular objects that
   happen to have a `v` property.
-- Styled `writeFile` uses browser Blob download when `document` exists, and
-  `process.getBuiltinModule("fs")` in Node.
+- Styled `writeFile` uses a browser Blob download when `document` exists, and
+  `process.getBuiltinModule("fs")` in Node. The helper (`saveXlsxOutput`)
+  appends a hidden anchor to the DOM, sets `download` to the requested filename,
+  clicks it, then revokes the object URL after a short delay.
+- The non-styled path is left untouched and keeps delegating to SheetJS
+  `writeFile`/`write`, so existing (non-styled) behavior is byte-for-byte the
+  same as before this feature.
 - Root `yarn build` now builds `json-as-xlsx` before `demo-reactjs` so the demo
   sees fresh generated declaration files.
 - Demo packages now depend on workspace version `2.5.9` instead of
@@ -151,6 +156,23 @@ and avoid copying more than needed.
 - Local Vite dev logs browser-compatibility warnings from the underlying XLSX
   browser bundle (`stream` / `fs` externalized), but the page has no runtime
   errors and both downloads produce valid XLSX blobs.
+- UUID-filename bug (root cause): the first version of the styled download
+  helper created a detached `<a>` (never appended to the DOM) and revoked the
+  blob URL on a 0 ms timeout. In that race the browser ignores the `download`
+  attribute and falls back to the blob URL's UUID. Fix: append the anchor to the
+  DOM and delay `revokeObjectURL`. Verified in the React demo — both buttons now
+  save `MySpreadsheet.xlsx` / `StyledSpreadsheet.xlsx`.
+- Scope correction during review: the helper is used ONLY for the styled path.
+  The non-styled path was reverted to the original SheetJS `writeFile`, which
+  already appends its own anchor to the DOM and was never affected by the bug.
+  This keeps the public, non-styled behavior 100% backward-compatible.
+- Style XML fix during review: `defaultPivotStyle` was `TableStyleMedium4`
+  (invalid pivot-style name); corrected to `PivotStyleMedium4` to match the
+  reference `xlsx-js-style` output.
+- Version: `packages/main-library/package.json` is still `2.5.9`. Per the repo
+  versioning rules the next bump is `2.6.0` (patch is already `.9`). It must be
+  bumped before this feature is merged to `main`/published to npm, but that is a
+  release step, not part of develop work.
 - `yarn workspace demo-express tsc ...` can accidentally pick the root
   TypeScript binary from Lerna. Use
   `packages/demo-express/node_modules/.bin/tsc -p packages/demo-express/tsconfig.json --noEmit`

@@ -152,7 +152,7 @@ class StyleBuilder {
   private cellXfs = new XmlNode("cellXfs").attr("count", 0)
   private cellStyles = new XmlNode("cellStyles").append(new XmlNode("cellStyle").attr("name", "Normal").attr("xfId", 0).attr("builtinId", 0))
   private dxfs = new XmlNode("dxfs").attr("count", 0)
-  private tableStyles = new XmlNode("tableStyles").attr("count", 0).attr("defaultTableStyle", "TableStyleMedium9").attr("defaultPivotStyle", "TableStyleMedium4")
+  private tableStyles = new XmlNode("tableStyles").attr("count", 0).attr("defaultTableStyle", "TableStyleMedium9").attr("defaultPivotStyle", "PivotStyleMedium4")
   private styles = new XmlNode("styleSheet")
     .attr("xmlns:mc", "http://schemas.openxmlformats.org/markup-compatibility/2006")
     .attr("xmlns:x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac")
@@ -397,26 +397,33 @@ export const toStyledOutput = (data: Uint8Array, type?: string): any => {
   }
 }
 
-export const saveStyledOutput = (data: Uint8Array, filename: string): void => {
-  if (typeof document !== "undefined") {
-    const blobData = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
+export const saveXlsxOutput = (data: ArrayBuffer | Uint8Array, filename: string): void => {
+  if (typeof document !== "undefined" && typeof Blob !== "undefined" && typeof URL !== "undefined" && URL.createObjectURL) {
+    const bytes = toUint8Array(data)
+    const blobData = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
     const blob = new Blob([blobData], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
     link.download = filename
+    link.rel = "noopener"
+    link.style.display = "none"
+    ;(document.body ?? document.documentElement).appendChild(link)
     link.click()
-    setTimeout(() => URL.revokeObjectURL(url), 0)
+    setTimeout(() => {
+      link.parentNode?.removeChild(link)
+      URL.revokeObjectURL(url)
+    }, 100)
     return
   }
 
   const fs = typeof process !== "undefined" ? ((process as any).getBuiltinModule?.("fs") as typeof import("fs") | undefined) : undefined
 
   if (!fs) {
-    throw new Error("Unable to write styled workbook file in this environment")
+    throw new Error("Unable to write workbook file in this environment")
   }
 
-  fs.writeFileSync(filename, Buffer.from(data))
+  fs.writeFileSync(filename, Buffer.from(toUint8Array(data)))
 }
 
 const getCellStyle = (cell?: IStyledCell): ICellStyle | undefined => {

@@ -348,7 +348,10 @@ export const mergeCellStyles = (...styles: Array<ICellStyle | undefined>): ICell
 }
 
 export const isCellStyleObject = (style: unknown): style is ICellStyle => {
-  return Boolean(style) && typeof style === "object" && !Array.isArray(style)
+  // Only treat plain objects as styles. Excluding arrays and Date instances
+  // keeps non-style values (e.g. a Date used as a cell value) from being merged
+  // and hashed as styles, which would bloat or corrupt styles.xml.
+  return Boolean(style) && typeof style === "object" && !Array.isArray(style) && !(style instanceof Date)
 }
 
 export const patchStyledWorkbook = (workbook: IWorkbookLike, workbookData: ArrayBuffer | Uint8Array): Uint8Array => {

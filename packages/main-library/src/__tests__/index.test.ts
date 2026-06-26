@@ -495,5 +495,12 @@ describe("json-as-xlsx", () => {
       expect(asArray).toBeInstanceOf(ArrayBuffer)
       expect(asDefault).toBeUndefined()
     })
+
+    it("defaults writeMode 'write' to a buffer consistently across both paths", () => {
+      // Without this default the non-styled path throws (SheetJS rejects an
+      // undefined type) while the styled path returns a buffer.
+      expect(jsonxlsx(sheets, { writeMode: "write" })).toBeInstanceOf(Buffer)
+      expect(jsonxlsx(sheets, { writeMode: "write", enableStyles: true })).toBeInstanceOf(Buffer)
+    })
   })
 })

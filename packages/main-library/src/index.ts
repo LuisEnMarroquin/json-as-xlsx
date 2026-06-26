@@ -264,6 +264,11 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 
   const filename = `${settings.fileName ?? "Spreadsheet"}.xlsx`
   const writeOptions = settings.writeOptions ?? {}
+  // Data-returning modes default to a Buffer when no explicit type is given.
+  // SheetJS write() throws on an undefined type, and the styled path would
+  // otherwise default differently — keeping a single default makes both paths
+  // behave the same for `writeMode: "write"` with no writeOptions.type.
+  const writeType = writeOptions.type ?? "buffer"
 
   if (settings.enableStyles) {
     const bookType = writeOptions.bookType ?? "xlsx"
@@ -276,7 +281,7 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
     const styledWorkbook = patchStyledWorkbook(workbook, rawWorkbook)
 
     if (settings.writeMode === "write") {
-      return toStyledOutput(styledWorkbook, writeOptions.type)
+      return toStyledOutput(styledWorkbook, writeType)
     } else if (settings.writeMode === "writeFile") {
       saveXlsxOutput(styledWorkbook, filename)
       return
@@ -289,7 +294,7 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
   }
 
   if (settings.writeMode === "write") {
-    return write(workbook, writeOptions)
+    return write(workbook, { ...writeOptions, type: writeType })
   } else if (settings.writeMode === "writeFile") {
     writeFile(workbook, filename, writeOptions)
     return
@@ -308,6 +313,12 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 // returns undefined for an empty sheets array and for writeFile/download modes.
 // The default overload keeps the historical `Buffer | undefined` so existing
 // call sites are unaffected.
+//
+// TODO (next major, likely v3.0.0): replace these overloads with a single,
+// fully accurate return type (e.g. a conditional type over the settings, or a
+// plain widened `Buffer | string | ArrayBuffer | undefined`). That is a
+// breaking change for TS consumers that rely on today's `Buffer | undefined`,
+// so it must wait for a major version bump rather than this minor release.
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "array" } }, workbookCallback?: IWorkbookCallback): ArrayBuffer | undefined
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "base64" | "binary" | "string" } }, workbookCallback?: IWorkbookCallback): string | undefined
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "buffer" } }, workbookCallback?: IWorkbookCallback): Buffer | undefined

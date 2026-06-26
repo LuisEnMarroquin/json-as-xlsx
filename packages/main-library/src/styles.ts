@@ -80,6 +80,8 @@ interface IWorkbookLike {
   Sheets: Record<string, IWorksheetLike>
 }
 
+export type IStyledOutput = ArrayBuffer | Buffer | Uint8Array | string
+
 type XmlAttributes = Record<string, string | number | boolean | undefined>
 
 class XmlNode {
@@ -419,10 +421,16 @@ export const patchStyledWorkbook = (workbook: IWorkbookLike, workbookData: Array
   return zipSync(zip)
 }
 
-export const toStyledOutput = (data: Uint8Array, type?: string): any => {
+const toArrayBuffer = (data: Uint8Array): ArrayBuffer => {
+  const output = new ArrayBuffer(data.byteLength)
+  new Uint8Array(output).set(data)
+  return output
+}
+
+export const toStyledOutput = (data: Uint8Array, type?: string): IStyledOutput => {
   switch (type) {
     case "array":
-      return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
+      return toArrayBuffer(data)
     // "string" and "binary" both yield a binary string, matching the string
     // return type the xlsx() overloads advertise for those write types.
     case "string":

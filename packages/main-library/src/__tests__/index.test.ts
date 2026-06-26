@@ -6,6 +6,9 @@ import { strFromU8, unzipSync } from "fflate"
 import jsonxlsx, { IContent, IJsonSheet, ISettings } from "../index"
 import { toStyledOutput } from "../styles"
 
+type IsAny<T> = 0 extends 1 & T ? true : false
+type ExpectFalse<T extends false> = T
+
 const unzipXlsxBuffer = (buffer: Buffer | undefined) => {
   expect(buffer).toBeInstanceOf(Buffer)
   return unzipSync(new Uint8Array(buffer as Buffer))
@@ -618,6 +621,14 @@ describe("json-as-xlsx", () => {
   describe("styled binary output", () => {
     const bytes = new Uint8Array([0x00, 0x41, 0x7f, 0x80, 0x9f, 0xff])
     const expectedCharCodes = Array.from(bytes)
+
+    it("keeps toStyledOutput typed as a concrete union", () => {
+      const returnTypeIsAny: ExpectFalse<IsAny<ReturnType<typeof toStyledOutput>>> = false
+      const output: ReturnType<typeof toStyledOutput> = toStyledOutput(bytes, "buffer")
+
+      expect(returnTypeIsAny).toBe(false)
+      expect(output).toBeInstanceOf(Buffer)
+    })
 
     it("preserves bytes in Node", () => {
       const output = toStyledOutput(bytes, "binary") as string

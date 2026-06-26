@@ -1,5 +1,5 @@
 import { utils, WorkBook, WorkSheet, write, writeFile, WritingOptions } from "@e965/xlsx"
-import { ICellStyle, IStyledCell, isCellStyleObject, mergeCellStyles, patchStyledWorkbook, saveXlsxOutput, toStyledOutput } from "./styles"
+import { ICellStyle, IStyledCell, IStyledOutput, isCellStyleObject, mergeCellStyles, patchStyledWorkbook, saveXlsxOutput, toStyledOutput } from "./styles"
 
 export { IBorderStyle, ICellStyle, ICellStyleColor, ICellType, IStyledCell } from "./styles"
 
@@ -273,7 +273,7 @@ const isStyledCell = (value: unknown): value is IStyledCell => {
   )
 }
 
-const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {
+const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): IStyledOutput | undefined => {
   const RTL = Boolean(settings.RTL)
   workbook.Workbook ??= {}
   workbook.Workbook.Views ??= [{}]
@@ -335,7 +335,7 @@ const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | u
 //
 // TODO (next major, likely v3.0.0): replace these overloads with a single,
 // fully accurate return type (e.g. a conditional type over the settings, or a
-// plain widened `Buffer | string | ArrayBuffer | undefined`). That is a
+// plain widened `Buffer | Uint8Array | string | ArrayBuffer | undefined`). That is a
 // breaking change for TS consumers that rely on today's `Buffer | undefined`,
 // so it must wait for a major version bump rather than this minor release.
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "array" } }, workbookCallback?: IWorkbookCallback): ArrayBuffer | undefined
@@ -343,7 +343,7 @@ export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeMode: "write"; writeOptions: WritingOptions & { type: "buffer" } }, workbookCallback?: IWorkbookCallback): Buffer | undefined
 export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings & { writeOptions: WritingOptions & { type: "buffer" } }, workbookCallback?: IWorkbookCallback): Buffer | undefined
 export function xlsx(jsonSheets: IJsonSheet[], settings?: ISettings, workbookCallback?: IWorkbookCallback): Buffer | undefined
-export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): Buffer | string | ArrayBuffer | undefined {
+export function xlsx(jsonSheets: IJsonSheet[], settings: ISettings = {}, workbookCallback: IWorkbookCallback = () => {}): IStyledOutput | undefined {
   if (jsonSheets.length === 0) return
 
   const workbook = utils.book_new() // Creating a workbook, this is the name given to an Excel file

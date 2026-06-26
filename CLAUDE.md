@@ -27,6 +27,18 @@ Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 
+## Demo parity — IMPORTANT
+
+`demo-reactjs` (the web UI) and `demo-express` (the API) are two views of the
+same library and **must demonstrate the same features**. Whenever you add or
+change an example in one, make the equivalent change in the other in the same
+task:
+
+- If you add an example/download to the UI
+  (`packages/demo-reactjs/src/App.tsx`), add the matching endpoint to the API
+  (`packages/demo-express/src/server.ts`) — and the other way around.
+- Keep the demonstrated data and styling equivalent so the two stay in sync.
+
 ## Backward compatibility — IMPORTANT
 
 `json-as-xlsx` is a published library that other people depend on. **The

@@ -417,13 +417,37 @@ export const saveXlsxOutput = (data: ArrayBuffer | Uint8Array, filename: string)
     return
   }
 
-  const fs = typeof process !== "undefined" ? ((process as any).getBuiltinModule?.("fs") as typeof import("fs") | undefined) : undefined
+  const fs = loadNodeFs()
 
   if (!fs) {
     throw new Error("Unable to write workbook file in this environment")
   }
 
   fs.writeFileSync(filename, Buffer.from(toUint8Array(data)))
+}
+
+// Resolve Node's "fs" module across runtimes. Prefer process.getBuiltinModule
+// (Node >= 22.3), and fall back to the CommonJS module require for older Node
+// versions. module.require (rather than the bare require global) keeps bundlers
+// from trying to statically resolve "fs" in browser builds.
+const loadNodeFs = (): typeof import("fs") | undefined => {
+  if (typeof process === "undefined") return undefined
+
+  const runtime = process as unknown as { getBuiltinModule?: (id: string) => unknown }
+
+  try {
+    if (typeof runtime.getBuiltinModule === "function") {
+      return runtime.getBuiltinModule("fs") as typeof import("fs")
+    }
+
+    if (typeof module !== "undefined" && typeof module.require === "function") {
+      return module.require("fs") as typeof import("fs")
+    }
+  } catch {
+    return undefined
+  }
+
+  return undefined
 }
 
 const getCellStyle = (cell?: IStyledCell): ICellStyle | undefined => {
@@ -513,6 +537,7 @@ const stableStringify = (value: unknown): string => {
   }
 
   const entries = Object.keys(value)
+    .filter((key) => (value as Record<string, unknown>)[key] !== undefined)
     .sort()
     .map((key) => `"${key}":${stableStringify((value as Record<string, unknown>)[key])}`)
 

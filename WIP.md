@@ -20,7 +20,7 @@ on SheetJS 0.18.5. Replacing the engine would be risky for a published library.
 
 - `xlsx-js-style` is not a small wrapper. It is a full SheetJS fork with basic
   style writing added.
-- The style code in `/Users/enrique/Music/xlsx-js-style` is mostly in generated
+- In the `xlsx-js-style` source the style code lives mostly in the generated
   `src/xlsx.js`, not clean modular source.
 - The reusable part is a `StyleBuilder` that builds `xl/styles.xml`.
 - `StyleBuilder` alone is not enough. The writer also needs to set `s="..."`

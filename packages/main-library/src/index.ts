@@ -121,12 +121,14 @@ const applyHeaderStyles = (worksheet: WorkSheet, columnIds: string[], headerStyl
   }
 }
 
-const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyles: Array<ICellStyle | null>, columnFormats: Array<string | null>) => {
+const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyles: Array<ICellStyle | null>) => {
   for (let i = 0; i < columnIds.length; i += 1) {
     const columnStyle = columnStyles[i]
-    const columnFormat = columnFormats[i]
 
-    if (!columnStyle && !columnFormat) {
+    // Column `format` is applied through `cell.z` (see applyColumnFormat) and the
+    // style patcher already merges that into the cell's numFmt, so columns that
+    // only have a format and no cellStyle need no extra per-row pass here.
+    if (!columnStyle) {
       continue
     }
 
@@ -138,8 +140,7 @@ const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyl
       const ref = utils.encode_cell({ r: row, c: column })
 
       if (worksheet[ref]) {
-        const formatStyle = columnFormat && columnFormat !== "hyperlink" ? { numFmt: columnFormat } : undefined
-        applyCellStyles(worksheet[ref] as IStyledCell, columnStyle ?? undefined, formatStyle)
+        applyCellStyles(worksheet[ref] as IStyledCell, columnStyle)
       }
     }
   }
@@ -228,7 +229,7 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
     const worksheetHeaderStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.headerStyle ?? null)
     const worksheetColumnStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.cellStyle ?? null)
     applyHeaderStyles(worksheet, worksheetColumnIds, worksheetHeaderStyles)
-    applyColumnStyles(worksheet, worksheetColumnIds, worksheetColumnStyles, worksheetColumnFormats)
+    applyColumnStyles(worksheet, worksheetColumnIds, worksheetColumnStyles)
   }
 
   worksheet["!cols"] = getWorksheetColumnWidths(worksheet, settings.extraLength)

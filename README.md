@@ -87,7 +87,7 @@ xlsx(data, settings) // Will download the excel file
 
 | Option         | Type                  | Default         | Description                                                                                   |
 | -------------- | --------------------- | --------------- | --------------------------------------------------------------------------------------------- |
-| `enableStyles` | `boolean`             | `false`         | Write cell style objects into the `.xlsx` file.                                                |
+| `enableStyles` | `boolean`             | `false`         | Write cell style objects into the `.xlsx` file. Only supported with `bookType: "xlsx"`.         |
 | `fileName`     | `string`              | `"Spreadsheet"` | Name of the resulting file (the `.xlsx` extension is added automatically).                     |
 | `extraLength`  | `number`              | `1`             | Extra characters added to every auto-calculated column width.                                 |
 | `writeMode`    | `"writeFile"`/`"write"` | `"writeFile"` | `"writeFile"` downloads/writes the file; `"write"` returns the raw data (e.g. a Node buffer).  |
@@ -180,6 +180,8 @@ columns: [{ label: "Website", value: "url", format: "hyperlink" }]
 
 Cell styling is disabled by default to keep the regular export path unchanged.
 Set `enableStyles: true` to write style objects into the generated `.xlsx` file.
+Styled exports only support XLSX output; if you set `writeOptions.bookType`, keep
+it as `"xlsx"`.
 
 You can style headers, full columns, or individual cell values:
 

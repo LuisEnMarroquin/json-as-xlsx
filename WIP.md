@@ -124,7 +124,7 @@ and avoid copying more than needed.
   same as before this feature.
 - Root `yarn build` now builds `json-as-xlsx` before `demo-reactjs` so the demo
   sees fresh generated declaration files.
-- Demo packages now depend on workspace version `2.5.9` instead of
+- Demo packages now depend on the workspace version (`2.6.0`) instead of
   `file:../main-library`, preventing stale nested package copies.
 - README, React demo, and Express demo now include styled examples.
 - Vite pre-optimizes `json-as-xlsx` for the React demo so the linked CommonJS
@@ -169,10 +169,10 @@ and avoid copying more than needed.
 - Style XML fix during review: `defaultPivotStyle` was `TableStyleMedium4`
   (invalid pivot-style name); corrected to `PivotStyleMedium4` to match the
   reference `xlsx-js-style` output.
-- Version: `packages/main-library/package.json` is still `2.5.9`. Per the repo
-  versioning rules the next bump is `2.6.0` (patch is already `.9`). It must be
-  bumped before this feature is merged to `main`/published to npm, but that is a
-  release step, not part of develop work.
+- Version: `packages/main-library/package.json` is bumped to `2.6.0` in this PR
+  (the patch was already `.9`, so per the repo rules the minor rolls over). The
+  demo workspaces are updated to match. Publishing to npm still happens on merge
+  to `main`.
 - `yarn workspace demo-express tsc ...` can accidentally pick the root
   TypeScript binary from Lerna. Use
   `packages/demo-express/node_modules/.bin/tsc -p packages/demo-express/tsconfig.json --noEmit`

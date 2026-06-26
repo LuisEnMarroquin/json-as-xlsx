@@ -452,6 +452,29 @@ describe("json-as-xlsx", () => {
       expect(stylesXml).toContain('<left style="thick"/>')
       expect(stylesXml).toContain("<bottom/>")
     })
+
+    it("deduplicates shared sub-components across distinct styles", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Dedup",
+          columns: [
+            { label: "A", value: "a", cellStyle: { font: { bold: true }, fill: { fgColor: { rgb: "FF0000" } } } },
+            { label: "B", value: "b", cellStyle: { font: { bold: true }, fill: { fgColor: { rgb: "00FF00" } } } },
+          ],
+          content: [{ a: 1, b: 2 }],
+        },
+      ]
+      const buffer = jsonxlsx(sheets, { ...settings, enableStyles: true })
+      const stylesXml = strFromU8(unzipXlsxBuffer(buffer)["xl/styles.xml"])
+
+      const fontEls = (stylesXml.match(/<font>/g) ?? []).length
+      const fontCount = Number((stylesXml.match(/<fonts count="(\d+)"/) ?? [])[1])
+
+      // the shared bold font is written once (default font + the bold font), and
+      // the declared count stays in sync with the actual number of entries
+      expect(fontEls).toBe(fontCount)
+      expect(fontEls).toBeLessThanOrEqual(2)
+    })
   })
 
   describe("browser downloads", () => {

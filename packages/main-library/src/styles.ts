@@ -142,15 +142,23 @@ class XmlNode {
 // sheetjs-style, and sheetjs-style-v2 for the original style-writing approach.
 class StyleBuilder {
   private customNumFmtId = 164
+  // Full-style dedup, plus per-component dedup so that distinct styles sharing a
+  // font/fill/border/numFmt reuse one entry instead of bloating styles.xml.
   private hashIndex = new Map<string, number>()
+  private fontHashIndex = new Map<string, number>()
+  private fillHashIndex = new Map<string, number>()
+  private borderHashIndex = new Map<string, number>()
+  private numFmtHashIndex = new Map<string, number>()
   private defaultStyle: ICellStyle
   private fonts = new XmlNode("fonts").attr("count", 0).attr("x14ac:knownFonts", "1")
   private fills = new XmlNode("fills").attr("count", 0)
   private borders = new XmlNode("borders").attr("count", 0)
   private numFmts = new XmlNode("numFmts").attr("count", 0)
-  private cellStyleXfs = new XmlNode("cellStyleXfs")
+  // cellStyleXfs and cellStyles always hold exactly one entry here; emit the
+  // matching count="1" so stricter OOXML readers don't reject the file.
+  private cellStyleXfs = new XmlNode("cellStyleXfs").attr("count", 1)
   private cellXfs = new XmlNode("cellXfs").attr("count", 0)
-  private cellStyles = new XmlNode("cellStyles").append(new XmlNode("cellStyle").attr("name", "Normal").attr("xfId", 0).attr("builtinId", 0))
+  private cellStyles = new XmlNode("cellStyles").attr("count", 1).append(new XmlNode("cellStyle").attr("name", "Normal").attr("xfId", 0).attr("builtinId", 0))
   private dxfs = new XmlNode("dxfs").attr("count", 0)
   private tableStyles = new XmlNode("tableStyles").attr("count", 0).attr("defaultTableStyle", "TableStyleMedium9").attr("defaultPivotStyle", "PivotStyleMedium4")
   private styles = new XmlNode("styleSheet")
@@ -232,6 +240,10 @@ class StyleBuilder {
   private addFont(font?: ICellStyle["font"]): number {
     if (!font) return 0
 
+    const key = stableStringify(font)
+    const cached = this.fontHashIndex.get(key)
+    if (cached !== undefined) return cached
+
     const fontNode = new XmlNode("font")
       .append(new XmlNode("sz").attr("val", font.sz ?? this.defaultStyle.font?.sz ?? 11))
       .append(new XmlNode("name").attr("val", font.name ?? this.defaultStyle.font?.name ?? "Calibri"))
@@ -246,7 +258,9 @@ class StyleBuilder {
     if (font.color) fontNode.append(colorNode("color", font.color, false))
 
     this.fonts.append(fontNode).attr("count", this.fonts.children().length)
-    return this.fonts.children().length - 1
+    const id = this.fonts.children().length - 1
+    this.fontHashIndex.set(key, id)
+    return id
   }
 
   private addNumFmt(numFmt?: string | number): number {
@@ -268,13 +282,21 @@ class StyleBuilder {
       return Number(numFmt)
     }
 
+    const cached = this.numFmtHashIndex.get(numFmt)
+    if (cached !== undefined) return cached
+
     const id = ++this.customNumFmtId
     this.numFmts.append(new XmlNode("numFmt").attr("numFmtId", id).attr("formatCode", numFmt)).attr("count", this.numFmts.children().length)
+    this.numFmtHashIndex.set(numFmt, id)
     return id
   }
 
   private addFill(fill?: ICellStyle["fill"]): number {
     if (!fill) return 0
+
+    const key = stableStringify(fill)
+    const cached = this.fillHashIndex.get(key)
+    if (cached !== undefined) return cached
 
     const patternFill = new XmlNode("patternFill").attr("patternType", fill.patternType ?? "solid")
 
@@ -291,11 +313,17 @@ class StyleBuilder {
     }
 
     this.fills.append(new XmlNode("fill").append(patternFill)).attr("count", this.fills.children().length)
-    return this.fills.children().length - 1
+    const id = this.fills.children().length - 1
+    this.fillHashIndex.set(key, id)
+    return id
   }
 
   private addBorder(border?: ICellStyle["border"]): number {
     if (!border) return 0
+
+    const key = stableStringify(border)
+    const cached = this.borderHashIndex.get(key)
+    if (cached !== undefined) return cached
 
     const diagonal = border.diagonal
     const borderNode = new XmlNode("border").attr("diagonalUp", diagonal?.diagonalUp).attr("diagonalDown", diagonal?.diagonalDown)
@@ -304,7 +332,9 @@ class StyleBuilder {
     })
 
     this.borders.append(borderNode).attr("count", this.borders.children().length)
-    return this.borders.children().length - 1
+    const id = this.borders.children().length - 1
+    this.borderHashIndex.set(key, id)
+    return id
   }
 }
 
@@ -393,6 +423,9 @@ export const toStyledOutput = (data: Uint8Array, type?: string): any => {
   switch (type) {
     case "array":
       return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
+    // "string" and "binary" both yield a binary string, matching the string
+    // return type the xlsx() overloads advertise for those write types.
+    case "string":
     case "binary":
       return uint8ToBinaryString(data)
     case "base64":

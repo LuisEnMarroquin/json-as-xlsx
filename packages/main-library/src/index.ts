@@ -251,7 +251,10 @@ const isStyledCell = (value: unknown): value is IStyledCell => {
     return false
   }
 
-  return "v" in value || "t" in value || "s" in value || "z" in value
+  // Only the cell-specific markers identify a cell object. `v` alone is too
+  // generic — ordinary nested data objects can have a `v` property — so it is
+  // intentionally excluded to avoid misclassifying plain data as a cell.
+  return "t" in value || "s" in value || "z" in value || "l" in value
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): Buffer | undefined => {

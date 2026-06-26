@@ -4,7 +4,7 @@
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "lerna run --parallel --stream start",
-    "build": "lerna run --stream build",
+    "build": "yarn workspace json-as-xlsx build && yarn workspace demo-reactjs build",
     "test": "lerna run --stream --no-bail test",
     "static": "cp -R packages/demo-reactjs/build/ build/ && cp CNAME build/CNAME"
   },

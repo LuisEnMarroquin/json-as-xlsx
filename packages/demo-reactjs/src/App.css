@@ -85,8 +85,15 @@
   border-radius: 10px;
 }
 
-.download {
+.actions {
   margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.download {
   display: inline-flex;
   align-items: center;
   gap: 0.6ch;
@@ -103,10 +110,21 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
+.download.secondary {
+  color: #f0f9ff;
+  background: linear-gradient(135deg, #38bdf8, #1d4ed8);
+  border: 0;
+  box-shadow: 0 14px 32px -10px rgba(37, 99, 235, 0.6);
+}
+
 .download:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
   box-shadow: 0 20px 42px -12px rgba(33, 163, 102, 0.72);
+}
+
+.download.secondary:hover {
+  box-shadow: 0 20px 42px -12px rgba(37, 99, 235, 0.75);
 }
 
 .download:active {
@@ -116,6 +134,10 @@
 .download:focus-visible {
   outline: 2px solid #6ee7b7;
   outline-offset: 3px;
+}
+
+.download.secondary:focus-visible {
+  outline-color: #7dd3fc;
 }
 
 .download svg {
@@ -232,6 +254,10 @@
 
   .tagline {
     font-size: 0.98rem;
+  }
+
+  .actions {
+    flex-direction: column;
   }
 
   .download {

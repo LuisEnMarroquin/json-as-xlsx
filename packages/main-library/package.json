@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.5.9",
+  "version": "2.6.0",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,8 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@e965/xlsx": "^0.20.3"
+    "@e965/xlsx": "^0.20.3",
+    "fflate": "^0.8.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

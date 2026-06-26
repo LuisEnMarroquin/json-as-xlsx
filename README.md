@@ -21,6 +21,7 @@ You can see a live demo on any of these sites (there are several, just in case):
 - 📊 Turn an array of JSON sheets into a multi-sheet workbook.
 - 🧭 Read deeply nested values (`"more.phone"`) or compute them with a function.
 - 🎨 Per-column number, date, currency and hyperlink formatting.
+- 🖌️ Opt-in cell styling for fonts, fills, borders, alignment and number formats.
 - 📐 Automatic column widths (tunable with `extraLength`).
 - ↔️ Right-to-left (RTL) sheet support.
 - 🌐 Works in the browser (file download) and in Node.js (file or buffer output).
@@ -72,6 +73,7 @@ let data = [
 
 let settings = {
   fileName: "MySpreadsheet", // Name of the resulting spreadsheet
+  enableStyles: false, // Set to true to write cell styles (`s`) into the .xlsx file
   extraLength: 3, // A bigger number means that columns will be wider
   writeMode: "writeFile", // The available parameters are 'writeFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
   writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
@@ -85,6 +87,7 @@ xlsx(data, settings) // Will download the excel file
 
 | Option         | Type                  | Default         | Description                                                                                   |
 | -------------- | --------------------- | --------------- | --------------------------------------------------------------------------------------------- |
+| `enableStyles` | `boolean`             | `false`         | Write cell style objects into the `.xlsx` file. Only supported with `bookType: "xlsx"`.         |
 | `fileName`     | `string`              | `"Spreadsheet"` | Name of the resulting file (the `.xlsx` extension is added automatically).                     |
 | `extraLength`  | `number`              | `1`             | Extra characters added to every auto-calculated column width.                                 |
 | `writeMode`    | `"writeFile"`/`"write"` | `"writeFile"` | `"writeFile"` downloads/writes the file; `"write"` returns the raw data (e.g. a Node buffer).  |
@@ -173,13 +176,70 @@ clickable links:
 columns: [{ label: "Website", value: "url", format: "hyperlink" }]
 ```
 
+### Cell Styling
+
+Cell styling is disabled by default to keep the regular export path unchanged.
+Set `enableStyles: true` to write style objects into the generated `.xlsx` file.
+Styled exports only support XLSX output; if you set `writeOptions.bookType`, keep
+it as `"xlsx"`.
+
+You can style headers, full columns, or individual cell values:
+
+```js
+let data = [
+  {
+    sheet: "Styled employees",
+    columns: [
+      {
+        label: "Name",
+        value: "name",
+        headerStyle: {
+          fill: { fgColor: { rgb: "21A366" } },
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+        },
+        cellStyle: {
+          alignment: { wrapText: true },
+        },
+      },
+      {
+        label: "Salary",
+        value: "salary",
+        format: "$#,##0.00",
+        cellStyle: {
+          font: { italic: true },
+        },
+      },
+    ],
+    content: [
+      {
+        name: {
+          v: "Ada\nLovelace",
+          t: "s",
+          s: { font: { bold: true, color: { rgb: "FF0000" } } },
+        },
+        salary: 5000,
+      },
+    ],
+  },
+]
+
+xlsx(data, {
+  fileName: "StyledSpreadsheet",
+  enableStyles: true,
+})
+```
+
+Supported style groups are `alignment`, `border`, `fill`, `font`, and `numFmt`.
+Column `format` values are also preserved as number formats when styles are
+enabled.
+
 ## TypeScript
 
 The package is written in TypeScript and ships its own type definitions. The
 public interfaces are exported for your convenience:
 
 ```ts
-import xlsx, { IJsonSheet, ISettings, IColumn, IContent } from "json-as-xlsx"
+import xlsx, { IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
 
 const data: IJsonSheet[] = [
   /* ... */

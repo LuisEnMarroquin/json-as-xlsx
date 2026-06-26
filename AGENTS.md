@@ -27,6 +27,32 @@ Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 
+## Demo parity — IMPORTANT
+
+`demo-reactjs` (the web UI) and `demo-express` (the API) are two views of the
+same library and **must demonstrate the same features**. Whenever you add or
+change an example in one, make the equivalent change in the other in the same
+task:
+
+- If you add an example/download to the UI
+  (`packages/demo-reactjs/src/App.tsx`), add the matching endpoint to the API
+  (`packages/demo-express/src/server.ts`) — and the other way around.
+- Keep the demonstrated data and styling equivalent so the two stay in sync.
+
+## Demo dependency workflow — IMPORTANT
+
+- The demo packages are Yarn workspaces and are expected to be installed and run
+  from the repository root, not as standalone packages from inside
+  `packages/demo-*`.
+- Keep the demos' `json-as-xlsx` dependency pinned to the `main-library` package
+  version being prepared for release. From the repo root, Yarn resolves that
+  dependency to the local `packages/main-library` workspace.
+- Do **not** switch the demo dependencies back to `file:../main-library` just to
+  support standalone installs before the version is published to npm. That can
+  create stale local path installs or nested package copies, and makes the demos
+  less clearly reflect the release candidate. Only change this if Luis
+  explicitly asks to support standalone demo installs.
+
 ## Backward compatibility — IMPORTANT
 
 `json-as-xlsx` is a published library that other people depend on. **The
@@ -61,6 +87,28 @@ users' code keeps working when they upgrade:
   to `main` are blocked.
 - **The AI may, at most, open the Pull Request (develop → main). It must never
   merge it** — Luis reviews and merges the PR himself.
+
+## Commit workflow — IMPORTANT
+
+- When the AI makes a commit, it must include **all pending worktree changes**:
+  tracked modifications, deletions, and new files. Do not leave local changes
+  uncommitted unless Luis explicitly asks to exclude something.
+
+## Pull request review comments — IMPORTANT
+
+Whenever GitHub Copilot (or any reviewer) leaves review comments on a PR, handle
+every comment the same way:
+
+- **Evaluate, then fix what applies.** Decide whether each comment is valid. Fix
+  the ones that are (add a test when it's a behavior change). For anything you
+  intentionally don't change, that's fine — just explain why.
+- **Reply on the thread tagging `@copilot`**, briefly stating what you did (or
+  why you didn't) and referencing the commit that addresses it.
+- **Resolve the conversation** once it's handled.
+
+Notes: resolving threads needs the GraphQL API (REST can't) — list the PR's
+`reviewThreads` to get each thread id, then call the `resolveReviewThread`
+mutation. After pushing the fixes, re-request Copilot's review so it runs again.
 
 ## Versioning — IMPORTANT
 

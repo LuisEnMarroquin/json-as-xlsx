@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "demo-reactjs",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["workspace", "demo-reactjs", "start"],
+      "port": 6500
+    }
+  ]
+}

@@ -3,6 +3,7 @@ dist/
 build/
 coverage/
 node_modules/
+.playwright-mcp/
 
 # File managers
 .DS_Store

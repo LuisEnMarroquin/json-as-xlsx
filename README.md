@@ -253,8 +253,8 @@ xlsx(data, settings)
 
 ## Examples
 
-These are the files used during development — when copying them, change the
-imports from `../../src/index` to `json-as-xlsx`.
+These examples are part of the Yarn workspace and are intended to be installed
+and run from the repository root.
 
 - [Express with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-express)
 - [ReactJS with TypeScript](https://github.com/LuisEnMarroquin/json-as-xlsx/blob/main/packages/demo-reactjs)

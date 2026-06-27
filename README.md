@@ -19,6 +19,7 @@ You can see a live demo on any of these sites (there are several, just in case):
 ## Features
 
 - 📊 Turn an array of JSON sheets into a multi-sheet workbook.
+- 🧱 Render several tables in the same sheet (opt-in, vertical or horizontal layout).
 - 🧭 Read deeply nested values (`"more.phone"`) or compute them with a function.
 - 🎨 Per-column number, date, currency and hyperlink formatting.
 - 🖌️ Opt-in cell styling for fonts, fills, borders, alignment and number formats.
@@ -232,6 +233,57 @@ xlsx(data, {
 Supported style groups are `alignment`, `border`, `fill`, `font`, and `numFmt`.
 Column `format` values are also preserved as number formats when styles are
 enabled.
+
+### Multiple tables per sheet
+
+By default a sheet renders a single table from its `columns` and `content`. To
+place **several independent tables in the same sheet**, provide a `tables` array
+instead — each entry has its own `columns` and `content` (with the same
+formatting and styling options). This is fully opt-in: sheets that don't set
+`tables` keep working exactly as before.
+
+```js
+let data = [
+  {
+    sheet: "Quarter summary",
+    tablesLayout: "vertical", // "vertical" (default) stacks tables; "horizontal" places them side by side
+    tablesGap: 1, // blank rows (vertical) or columns (horizontal) between tables — defaults to 1
+    tables: [
+      {
+        columns: [
+          { label: "Product", value: "product" },
+          { label: "Revenue", value: "revenue", format: "$#,##0.00" },
+        ],
+        content: [
+          { product: "Keyboard", revenue: 35988 },
+          { product: "Monitor", revenue: 67830 },
+        ],
+      },
+      {
+        columns: [
+          { label: "Team", value: "team" },
+          { label: "Expenses", value: "expenses", format: "$#,##0.00" },
+        ],
+        content: [
+          { team: "Engineering", expenses: 42000 },
+          { team: "Marketing", expenses: 18500 },
+        ],
+      },
+    ],
+  },
+]
+
+xlsx(data, { fileName: "MultiTableSpreadsheet" })
+```
+
+When `tables` is present and non-empty it takes precedence over the sheet's
+top-level `columns`/`content`.
+
+| Sheet option    | Type                         | Default      | Description                                                              |
+| --------------- | ---------------------------- | ------------ | ------------------------------------------------------------------------ |
+| `tables`        | `{ columns, content }[]`     | —            | Render multiple tables in the sheet. Each table keeps its own formatting. |
+| `tablesLayout`  | `"vertical"`/`"horizontal"`  | `"vertical"` | Stack tables top-to-bottom or place them left-to-right.                  |
+| `tablesGap`     | `number`                     | `1`          | Blank rows (vertical) or columns (horizontal) left between tables.       |
 
 ## TypeScript
 

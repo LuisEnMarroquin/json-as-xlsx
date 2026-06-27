@@ -85,6 +85,9 @@ users' code keeps working when they upgrade:
   outdated code. Then make changes, commit, and push `develop`.
 - Changes reach `main` via Pull Request (develop → main), since direct pushes
   to `main` are blocked.
+- **When Luis asks to "make a PR" (or "open the PR") and we are on `develop`,
+  it is ALWAYS a PR from `develop` into `main`.** Don't ask which base branch —
+  the target is always `main`.
 - **The AI may, at most, open the Pull Request (develop → main). It must never
   merge it** — Luis reviews and merges the PR himself.
 

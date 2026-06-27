@@ -134,6 +134,39 @@ const styledData: IJsonSheet[] = [
   },
 ]
 
+// Two independent tables living in the same sheet. `tables` opts into the
+// multi-table layout; without it a sheet renders a single columns/content table.
+const multiTableData: IJsonSheet[] = [
+  {
+    sheet: "Quarter summary",
+    tablesLayout: "vertical", // stack the tables top to bottom (the default)
+    tablesGap: 1, // leave one blank row between them
+    tables: [
+      {
+        columns: [
+          { label: "Product", value: "product" },
+          { label: "Revenue", value: "revenue", format: "$#,##0.00" },
+          { label: "Units", value: "units", format: "#,##0" },
+        ],
+        content: [
+          { product: "Keyboard", revenue: 35988, units: 1200 },
+          { product: "Monitor", revenue: 67830, units: 340 },
+        ],
+      },
+      {
+        columns: [
+          { label: "Team", value: "team" },
+          { label: "Expenses", value: "expenses", format: "$#,##0.00" },
+        ],
+        content: [
+          { team: "Engineering", expenses: 42000 },
+          { team: "Marketing", expenses: 18500 },
+        ],
+      },
+    ],
+  },
+]
+
 const snippet = `import xlsx from "json-as-xlsx"
 
 const data = [{
@@ -150,7 +183,7 @@ const data = [{
 
 xlsx(data, { fileName: "MySpreadsheet" })`
 
-const features = ["📑 Multi-sheet", "🎨 Cell formatting", "🟦 TypeScript", "🌐 Browser & Node"]
+const features = ["📑 Multi-sheet", "🧱 Multi-table sheets", "🎨 Cell formatting", "🟦 TypeScript", "🌐 Browser & Node"]
 
 function DownloadIcon() {
   return (
@@ -187,6 +220,10 @@ function App() {
     xlsx(styledData, { fileName: "StyledSpreadsheet", enableStyles: true })
   }
 
+  const downloadMultiTableFile = () => {
+    xlsx(multiTableData, { fileName: "MultiTableSpreadsheet" })
+  }
+
   return (
     <div className="page">
       <main className="card">
@@ -212,6 +249,10 @@ function App() {
           <button className="download secondary" onClick={downloadStyledFile}>
             <DownloadIcon />
             Download styled
+          </button>
+          <button className="download secondary" onClick={downloadMultiTableFile}>
+            <DownloadIcon />
+            Download multi-table
           </button>
         </div>
 

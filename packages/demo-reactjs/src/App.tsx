@@ -167,6 +167,26 @@ const multiTableData: IJsonSheet[] = [
   },
 ]
 
+// Empty strings, nulls and missing paths can be exported as true blank cells so
+// Excel does not count them as text values.
+const blankCellData: IJsonSheet[] = [
+  {
+    sheet: "Sparse data",
+    columns: [
+      { label: "ID", value: "id" },
+      { label: "Name", value: "name" },
+      { label: "Email", value: (row: any) => row?.contact?.email ?? "" },
+      { label: "Score", value: "score", format: "0.00" },
+    ],
+    content: [
+      { id: "ID-101", name: "Ada Lovelace", contact: { email: "ada@example.com" }, score: 98.5 },
+      { id: "ID-102", name: "Grace Hopper", contact: { email: "" } },
+      { id: "ID-103", name: "Katherine Johnson", score: null },
+      { id: "ID-104", contact: {} },
+    ],
+  },
+]
+
 const snippet = `import xlsx from "json-as-xlsx"
 
 const data = [{
@@ -183,7 +203,7 @@ const data = [{
 
 xlsx(data, { fileName: "MySpreadsheet" })`
 
-const features = ["📑 Multi-sheet", "🧱 Multi-table sheets", "🎨 Cell formatting", "🟦 TypeScript", "🌐 Browser & Node"]
+const features = ["📑 Multi-sheet", "🧱 Multi-table sheets", "🎨 Cell formatting", "⬜ True blank cells", "🟦 TypeScript", "🌐 Browser & Node"]
 
 function DownloadIcon() {
   return (
@@ -224,6 +244,10 @@ function App() {
     xlsx(multiTableData, { fileName: "MultiTableSpreadsheet" })
   }
 
+  const downloadBlankCellFile = () => {
+    xlsx(blankCellData, { fileName: "BlankCellSpreadsheet", writeEmptyValuesAsBlankCells: true })
+  }
+
   return (
     <div className="page">
       <main className="card">
@@ -253,6 +277,10 @@ function App() {
           <button className="download secondary" onClick={downloadMultiTableFile}>
             <DownloadIcon />
             Download multi-table
+          </button>
+          <button className="download secondary" onClick={downloadBlankCellFile}>
+            <DownloadIcon />
+            Download blank cells
           </button>
         </div>
 

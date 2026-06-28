@@ -343,6 +343,99 @@ describe("json-as-xlsx", () => {
       expect(workSheet.A3.v).toBe("")
     })
 
+    it("should write empty values as empty-string cells by default", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Users",
+          columns: [
+            { label: "ID", value: "id" },
+            { label: "Score", value: "score", format: "0.00" },
+            { label: "Email", value: (row: IContent) => row.email ?? "" },
+            { label: "Nested", value: "metadata.code" },
+          ],
+          content: [
+            { id: "ID-1", score: 42, email: "ada@example.com", metadata: { code: "A" } },
+            { id: "ID-2", email: "" },
+            { id: "ID-3", score: null, metadata: {} },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, settings)
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(sheetXml).toMatch(/<c r="B3"[^>]*><v><\/v><\/c>/)
+      expect(sheetXml).toContain('<c r="C3" t="str"><v></v></c>')
+      expect(sheetXml).toContain('<c r="D3" t="str"><v></v></c>')
+      expect(sheetXml).toMatch(/<c r="B4"[^>]*><v><\/v><\/c>/)
+      expect(sheetXml).toContain('<c r="C4" t="str"><v></v></c>')
+      expect(sheetXml).toContain('<c r="D4" t="str"><v></v></c>')
+    })
+
+    it("should optionally write empty values as true blank cells", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Users",
+          columns: [
+            { label: "ID", value: "id" },
+            { label: "Score", value: "score", format: "0.00" },
+            { label: "Email", value: (row: IContent) => row.email ?? "" },
+            { label: "Nested", value: "metadata.code" },
+          ],
+          content: [
+            { id: "ID-1", score: 42, email: "ada@example.com", metadata: { code: "A" } },
+            { id: "ID-2", email: "" },
+            { id: "ID-3", score: null, metadata: {} },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, { ...settings, writeEmptyValuesAsBlankCells: true })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets.Users
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet.A3.v).toBe("ID-2")
+      expect(workSheet.A4.v).toBe("ID-3")
+      expect(workSheet.B3).toBeUndefined()
+      expect(workSheet.C3).toBeUndefined()
+      expect(workSheet.D3).toBeUndefined()
+      expect(workSheet.B4).toBeUndefined()
+      expect(workSheet.C4).toBeUndefined()
+      expect(workSheet.D4).toBeUndefined()
+      expect(sheetXml).not.toMatch(/<c r="B3"/)
+      expect(sheetXml).not.toMatch(/<c r="C3"/)
+      expect(sheetXml).not.toMatch(/<c r="D3"/)
+      expect(sheetXml).not.toMatch(/<c r="B4"/)
+      expect(sheetXml).not.toMatch(/<c r="C4"/)
+      expect(sheetXml).not.toMatch(/<c r="D4"/)
+    })
+
+    it("should optionally render empty-content sheets with headers only", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Headers only",
+          columns: [
+            { label: "Name", value: "name" },
+            { label: "Age", value: "age" },
+          ],
+          content: [],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, { ...settings, writeEmptyValuesAsBlankCells: true })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets["Headers only"]
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet["!ref"]).toBe("A1:B1")
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.B1.v).toBe("Age")
+      expect(sheetXml).not.toContain('<row r="2"')
+      expect(sheetXml).not.toContain('<c r="A2"')
+      expect(sheetXml).not.toContain('<c r="B2"')
+    })
+
     it("should not write style objects unless styles are enabled", () => {
       const sheets: IJsonSheet[] = [
         {

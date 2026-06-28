@@ -10,6 +10,8 @@ for the rules.
 
 ## Unreleased
 
+- Added opt-in `writeEmptyValuesAsBlankCells` support so empty, null and missing
+  values can be exported as true blank cells in Excel.
 - Documentation overhaul: revamped `README.md` (installation, settings table,
   Node.js/buffer usage, hyperlink format, TypeScript notes) and `CONTRIBUTING.md`.
 - Added `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue/PR templates.

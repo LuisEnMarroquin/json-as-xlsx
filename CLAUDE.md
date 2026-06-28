@@ -120,6 +120,9 @@ mentions, multiple lines), the only real gotcha is this: **`--body` takes its
 value literally — it does NOT read stdin and does NOT interpret `@file`/`@-`.**
 So `--body @-` posts the literal string `@-`. Pick one of the forms below.
 
+- When replying to a specific person in a GitHub issue or PR comment, tag them
+  by GitHub username (e.g. `@username`) so the reply is clearly directed to
+  them.
 - **Inline via command substitution is fine** (a multi-line heredoc works
   perfectly — we use it for PR bodies):
   `gh pr comment <num> --repo <owner/repo> --body "$(cat <<'EOF' … EOF)"`

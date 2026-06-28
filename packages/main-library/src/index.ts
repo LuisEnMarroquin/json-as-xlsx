@@ -47,6 +47,13 @@ export interface ISettings {
   writeOptions?: WritingOptions
   writeMode?: string
   RTL?: boolean
+  // Opt-in: write null, undefined and empty-string values as true blank cells
+  // instead of empty-string cells. Defaults to false for backward compatibility.
+  writeEmptyValuesAsBlankCells?: boolean
+}
+
+export interface IEmptyCellOptions {
+  writeEmptyValuesAsBlankCells?: boolean
 }
 
 export interface IJsonSheetRow {
@@ -61,16 +68,27 @@ export type IWorkbookCallback = (workbook: WorkBook) => void
 
 export { utils, WorkBook, WorkSheet }
 
-export const getContentProperty = (content: IContent, property: string): string | number | boolean | Date | IContent | IStyledCell => {
-  const accessContentProperties = (content: IContent, properties: string[]): string | number | boolean | Date | IContent | IStyledCell => {
+const normalizeEmptyCellValue = (value: IContentValue | undefined, options: IEmptyCellOptions = {}): IContentValue => {
+  if (options.writeEmptyValuesAsBlankCells && (value === undefined || value === null || value === "")) {
+    return null
+  }
+
+  return value ?? ""
+}
+
+export function getContentProperty(content: IContent, property: string): Exclude<IContentValue, null>
+export function getContentProperty(content: IContent, property: string, options: IEmptyCellOptions & { writeEmptyValuesAsBlankCells: true }): IContentValue
+export function getContentProperty(content: IContent, property: string, options: IEmptyCellOptions): IContentValue
+export function getContentProperty(content: IContent, property: string, options: IEmptyCellOptions = {}): IContentValue {
+  const accessContentProperties = (content: IContent, properties: string[]): IContentValue => {
     const value = content[properties[0]]
 
     if (properties.length === 1) {
-      return value ?? ""
+      return normalizeEmptyCellValue(value, options)
     }
 
     if (value === undefined || value === null || typeof value === "string" || typeof value === "boolean" || typeof value === "number" || value instanceof Date) {
-      return ""
+      return normalizeEmptyCellValue(undefined, options)
     }
 
     return accessContentProperties(value as IContent, properties.slice(1))
@@ -80,13 +98,13 @@ export const getContentProperty = (content: IContent, property: string): string 
   return accessContentProperties(content, properties)
 }
 
-export const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonSheetRow => {
+export const getJsonSheetRow = (content: IContent, columns: IColumn[], options: IEmptyCellOptions = {}): IJsonSheetRow => {
   const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
     if (typeof column.value === "function") {
-      jsonSheetRow[column.label] = column.value(content)
+      jsonSheetRow[column.label] = normalizeEmptyCellValue(column.value(content), options)
     } else {
-      jsonSheetRow[column.label] = getContentProperty(content, column.value)
+      jsonSheetRow[column.label] = getContentProperty(content, column.value, options)
     }
   })
   return jsonSheetRow
@@ -117,7 +135,7 @@ const applyColumnFormat = (worksheet: WorkSheet, table: IPlacedTable, columnForm
     for (let row = table.startRow + 1; row <= table.startRow + table.dataRowCount; ++row) {
       const ref = utils.encode_cell({ r: row, c: column })
 
-      if (worksheet[ref]) {
+      if (worksheet[ref] && !isBlankWorksheetCell(worksheet[ref])) {
         switch (columnFormat) {
           case "hyperlink":
             worksheet[ref].l = { Target: worksheet[ref].v }
@@ -164,7 +182,7 @@ const applyColumnStyles = (worksheet: WorkSheet, table: IPlacedTable, columnStyl
     for (let row = table.startRow + 1; row <= table.startRow + table.dataRowCount; ++row) {
       const ref = utils.encode_cell({ r: row, c: column })
 
-      if (worksheet[ref]) {
+      if (worksheet[ref] && !isBlankWorksheetCell(worksheet[ref])) {
         applyCellStyles(worksheet[ref] as IStyledCell, columnStyle)
       }
     }
@@ -203,6 +221,10 @@ const getObjectLength = (object: unknown): number => {
   return 0
 }
 
+const isBlankWorksheetCell = (cell: WorkSheet[string]): boolean => {
+  return cell.t === "z" || cell.v === null || cell.v === undefined
+}
+
 export const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: number = 1): IWorksheetColumnWidth[] => {
   const columnLetters: string[] = getWorksheetColumnIds(worksheet)
 
@@ -232,9 +254,13 @@ export const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: numb
   })
 }
 
-const buildJsonSheetRows = (columns: IColumn[], content: IContent[]): IJsonSheetRow[] => {
+const buildJsonSheetRows = (columns: IColumn[], content: IContent[], settings: ISettings): IJsonSheetRow[] => {
   if (content.length > 0) {
-    return content.map((contentItem) => getJsonSheetRow(contentItem, columns))
+    return content.map((contentItem) => getJsonSheetRow(contentItem, columns, settings))
+  }
+
+  if (settings.writeEmptyValuesAsBlankCells) {
+    return []
   }
 
   // If there's no content, show only column labels
@@ -256,15 +282,16 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
   const placedTables: IPlacedTable[] = []
 
   tables.forEach((table) => {
-    const jsonSheetRows = buildJsonSheetRows(table.columns, table.content)
+    const jsonSheetRows = buildJsonSheetRows(table.columns, table.content, settings)
+    const jsonSheetOptions = table.content.length === 0 && settings.writeEmptyValuesAsBlankCells ? { header: table.columns.map((column) => column.label) } : {}
     const startRow = nextRow
     const startCol = nextCol
 
     if (!worksheet) {
       // First table anchors the worksheet at A1 (both layouts start at 0,0).
-      worksheet = utils.json_to_sheet(jsonSheetRows)
+      worksheet = utils.json_to_sheet(jsonSheetRows, jsonSheetOptions)
     } else {
-      utils.sheet_add_json(worksheet, jsonSheetRows, { origin: { r: startRow, c: startCol } })
+      utils.sheet_add_json(worksheet, jsonSheetRows, { ...jsonSheetOptions, origin: { r: startRow, c: startCol } })
     }
 
     placedTables.push({ columns: table.columns, startRow, startCol, dataRowCount: jsonSheetRows.length })

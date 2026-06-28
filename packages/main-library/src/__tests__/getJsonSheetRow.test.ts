@@ -51,6 +51,8 @@ test("", () => {
 
   expect(getJsonSheetRow(track, [{ label: "URI", value: "uri" }])).toEqual({ URI: "" })
 
+  expect(getJsonSheetRow(track, [{ label: "URI", value: "uri" }], { writeEmptyValuesAsBlankCells: true })).toEqual({ URI: null })
+
   expect(getJsonSheetRow(track, [{ label: "Album", value: "album" }])).toEqual({
     Album: {
       id: "532o48sn3",
@@ -60,4 +62,33 @@ test("", () => {
       releaseDate: "2014-03-11",
     },
   })
+})
+
+test("Should optionally keep function-column empty strings as blank cells", () => {
+  const track = {
+    id: "4ase432i",
+    uri: "",
+  }
+
+  expect(
+    getJsonSheetRow(track, [
+      {
+        label: "URI",
+        value: (content: IContent) => content.uri,
+      },
+    ])
+  ).toEqual({ URI: "" })
+
+  expect(
+    getJsonSheetRow(
+      track,
+      [
+        {
+          label: "URI",
+          value: (content: IContent) => content.uri,
+        },
+      ],
+      { writeEmptyValuesAsBlankCells: true }
+    )
+  ).toEqual({ URI: null })
 })

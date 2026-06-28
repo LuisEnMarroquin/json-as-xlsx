@@ -97,6 +97,21 @@ users' code keeps working when they upgrade:
   tracked modifications, deletions, and new files. Do not leave local changes
   uncommitted unless Luis explicitly asks to exclude something.
 
+## Agent-Specific Instructions
+
+### OpenAI / Codex
+
+- When OpenAI Codex creates a commit, include this trailer at the end of the
+  commit message:
+  `Co-authored-by: OpenAI Codex <noreply@openai.com>`
+
+### Anthropic / Claude
+
+- When Claude Code creates a commit, keep using its standard generated-by footer
+  and co-author trailer:
+  `🤖 Generated with [Claude Code](https://claude.ai/code)`
+  `Co-Authored-By: Claude <noreply@anthropic.com>`
+
 ## Pull request review comments — IMPORTANT
 
 Whenever GitHub Copilot (or any reviewer) leaves review comments on a PR, handle

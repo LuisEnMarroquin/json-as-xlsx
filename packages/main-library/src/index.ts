@@ -73,6 +73,14 @@ const normalizeEmptyCellValue = (value: IContentValue | undefined, options: IEmp
     return null
   }
 
+  if (options.writeEmptyValuesAsBlankCells && isStyledCell(value)) {
+    const styledValue = (value as IStyledCell & { v?: unknown }).v
+
+    if (styledValue === undefined || styledValue === null || styledValue === "") {
+      return null
+    }
+  }
+
   return value ?? ""
 }
 

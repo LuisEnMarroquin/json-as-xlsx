@@ -467,6 +467,42 @@ describe("json-as-xlsx", () => {
       expect(sheetXml).toMatch(/<c r="B3"[^>]* s="\d+"[^>]*>/)
     })
 
+    it("should omit direct styled empty cell objects when blank cells are enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Direct styled blanks",
+          columns: [
+            { label: "Styled empty", value: "styledEmpty" },
+            { label: "Typed empty", value: "typedEmpty" },
+            { label: "Styled filled", value: "styledFilled" },
+          ],
+          content: [
+            {
+              styledEmpty: { v: "", t: "s", s: { font: { bold: true } } },
+              typedEmpty: { v: "", t: "s" },
+              styledFilled: { v: "Ada", t: "s", s: { font: { italic: true } } },
+            },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, {
+        ...settings,
+        enableStyles: true,
+        writeEmptyValuesAsBlankCells: true,
+      })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets["Direct styled blanks"]
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet.A2).toBeUndefined()
+      expect(workSheet.B2).toBeUndefined()
+      expect(workSheet.C2.v).toBe("Ada")
+      expect(sheetXml).not.toMatch(/<c r="A2"/)
+      expect(sheetXml).not.toMatch(/<c r="B2"/)
+      expect(sheetXml).toMatch(/<c r="C2"[^>]* s="\d+"[^>]*>/)
+    })
+
     it("should not write style objects unless styles are enabled", () => {
       const sheets: IJsonSheet[] = [
         {

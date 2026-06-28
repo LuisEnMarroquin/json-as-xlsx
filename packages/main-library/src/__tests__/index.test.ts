@@ -100,6 +100,34 @@ describe("json-as-xlsx", () => {
     expect(result).toBeUndefined()
   })
 
+  // Regression guard for issue #87 ("xlsx is not a function"). We overwrite the
+  // whole `module.exports` with the `xlsx` function so `require("json-as-xlsx")`
+  // returns it directly. That override drops the named bindings tsc emitted, so
+  // they are re-attached. Without `xlsx`/`default` re-attached,
+  // `import { xlsx } from ...` and a default import transpiled to `.default`
+  // (TS without esModuleInterop) both resolve to undefined and crash.
+  describe("CommonJS export surface (issue #87)", () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const required = require("../index")
+
+    it("returns the xlsx function as the module itself", () => {
+      expect(typeof required).toBe("function")
+    })
+
+    it("re-attaches xlsx and default so named/default imports resolve to the function", () => {
+      expect(required.xlsx).toBe(required)
+      expect(required.default).toBe(required)
+    })
+
+    it("keeps the other named bindings after the module.exports override", () => {
+      expect(typeof required.utils).toBe("object")
+      expect(typeof required.getContentProperty).toBe("function")
+      expect(typeof required.getJsonSheetRow).toBe("function")
+      expect(typeof required.getWorksheetColumnWidths).toBe("function")
+      expect(required.libraryName).toBe("json-as-xlsx")
+    })
+  })
+
   describe("writeOptions.type is set to buffer", () => {
     const settings: ISettings = {
       writeOptions: {

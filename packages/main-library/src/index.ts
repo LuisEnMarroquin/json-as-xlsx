@@ -420,7 +420,17 @@ export default xlsx
 
 export const libraryName = "json-as-xlsx"
 
+// `module.exports = xlsx` makes `require("json-as-xlsx")` (and a bare
+// `import xlsx from ...`) return the function directly. Reassigning the whole
+// exports object would otherwise drop the named bindings tsc emitted, so we
+// re-attach them here. `xlsx` and `default` are re-attached too: without them
+// `import { xlsx } from ...` resolves to `undefined`, and a default import
+// transpiled to `.default` (e.g. TS without esModuleInterop) crashes with
+// "xlsx is not a function". See issue #87.
 module.exports = xlsx
+module.exports.xlsx = xlsx
+module.exports.default = xlsx
+module.exports.libraryName = libraryName
 module.exports.getContentProperty = getContentProperty
 module.exports.getJsonSheetRow = getJsonSheetRow
 module.exports.getWorksheetColumnWidths = getWorksheetColumnWidths

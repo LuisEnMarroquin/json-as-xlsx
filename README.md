@@ -23,6 +23,7 @@ You can see a live demo on any of these sites (there are several, just in case):
 - 🧭 Read deeply nested values (`"more.phone"`) or compute them with a function.
 - 🎨 Per-column number, date, currency and hyperlink formatting.
 - 🖌️ Opt-in cell styling for fonts, fills, borders, alignment and number formats.
+- ⬜ Opt-in true blank cells for empty, null or missing values.
 - 📐 Automatic column widths (tunable with `extraLength`).
 - ↔️ Right-to-left (RTL) sheet support.
 - 🌐 Works in the browser (file download) and in Node.js (file or buffer output).
@@ -42,8 +43,9 @@ pnpm add json-as-xlsx
 
 ```js
 import xlsx from "json-as-xlsx"
-// or require
-let xlsx = require("json-as-xlsx")
+// Alternative import styles:
+// import { xlsx } from "json-as-xlsx"
+// const xlsx = require("json-as-xlsx")
 
 let data = [
   {
@@ -79,6 +81,7 @@ let settings = {
   writeMode: "writeFile", // The available parameters are 'writeFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
   writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
   RTL: true, // Display the columns from right-to-left (the default value is false)
+  writeEmptyValuesAsBlankCells: false, // Set to true so Excel treats empty, null and missing values as blank cells
 }
 
 xlsx(data, settings) // Will download the excel file
@@ -94,6 +97,45 @@ xlsx(data, settings) // Will download the excel file
 | `writeMode`    | `"writeFile"`/`"write"` | `"writeFile"` | `"writeFile"` downloads/writes the file; `"write"` returns the raw data (e.g. a Node buffer).  |
 | `writeOptions` | `object`              | `{}`            | Passed straight to SheetJS — see [write options](https://docs.sheetjs.com/docs/api/write-options). |
 | `RTL`          | `boolean`             | `false`         | Render every sheet right-to-left.                                                             |
+| `writeEmptyValuesAsBlankCells` | `boolean` | `false` | Omit empty-string, `null`, `undefined` and missing-path values so Excel treats them as blank cells. |
+
+### True blank cells
+
+For backward compatibility, empty values are written as empty strings by
+default. Excel can count those cells as text values even when they look blank.
+Set `writeEmptyValuesAsBlankCells: true` to omit empty-string, `null`,
+`undefined` and missing-path values from the worksheet XML:
+
+```js
+let data = [
+  {
+    sheet: "Sparse data",
+    columns: [
+      { label: "ID", value: "id" },
+      { label: "Email", value: (row) => row.contact?.email ?? "" },
+      { label: "Score", value: "score", format: "0.00" },
+    ],
+    content: [
+      { id: "ID-101", contact: { email: "ada@example.com" }, score: 98.5 },
+      { id: "ID-102", contact: { email: "" } },
+      { id: "ID-103", score: null },
+      { id: "ID-104" },
+    ],
+  },
+]
+
+xlsx(data, {
+  fileName: "BlankCellSpreadsheet",
+  writeEmptyValuesAsBlankCells: true,
+})
+```
+
+Values like `0` and `false` are still written normally.
+
+This option applies to both string-path columns (`value: "email"`) and function
+columns (`value: (row) => row.email ?? ""`). Formats, hyperlinks and cell styles
+are applied only to cells that still have a value; blank cells remain truly
+blank. Sheets or multi-table entries with no content still render their headers.
 
 ### Callback
 
@@ -288,10 +330,13 @@ top-level `columns`/`content`.
 ## TypeScript
 
 The package is written in TypeScript and ships its own type definitions. The
-public interfaces are exported for your convenience:
+public interfaces are exported for your convenience. The `xlsx` function is
+available as both the default export and a named export:
 
 ```ts
 import xlsx, { IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
+// or:
+// import { xlsx, IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
 
 const data: IJsonSheet[] = [
   /* ... */

@@ -10,6 +10,8 @@ test("Should access first level property", () => {
   expect(getContentProperty(supportTicket, "user")).toBe("daniel31")
 
   expect(getContentProperty(supportTicket, "description")).toBe("")
+
+  expect(getContentProperty(supportTicket, "description", { writeEmptyValuesAsBlankCells: true })).toBeNull()
 })
 
 test("Should access second level property", () => {
@@ -27,6 +29,8 @@ test("Should access second level property", () => {
   expect(getContentProperty(employee, "email.personal")).toBe("sophie@email.com")
 
   expect(getContentProperty(employee, "email.business")).toBe("")
+
+  expect(getContentProperty(employee, "email.business", { writeEmptyValuesAsBlankCells: true })).toBeNull()
 })
 
 test("Should access third level property", () => {
@@ -50,4 +54,17 @@ test("Should access third level property", () => {
   expect(getContentProperty(purchase, "costumer.billingAddress.postalCode")).toBe(55555)
 
   expect(getContentProperty(purchase, "costumer.billingAddress.countryCode")).toBe("")
+
+  expect(getContentProperty(purchase, "costumer.billingAddress.countryCode", { writeEmptyValuesAsBlankCells: true })).toBeNull()
+})
+
+test("Should optionally return null for empty string values", () => {
+  const user = {
+    id: "user-1",
+    email: "",
+  }
+
+  expect(getContentProperty(user, "email")).toBe("")
+
+  expect(getContentProperty(user, "email", { writeEmptyValuesAsBlankCells: true })).toBeNull()
 })

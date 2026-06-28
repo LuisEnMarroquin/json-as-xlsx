@@ -173,6 +173,27 @@ const multiTableData: IJsonSheet[] = [
   },
 ]
 
+// Empty strings, nulls and missing paths can be exported as true blank cells so
+// Excel does not count them as text values.
+// Kept in parity with the React demo (packages/demo-reactjs/src/App.tsx)
+const blankCellData: IJsonSheet[] = [
+  {
+    sheet: "Sparse data",
+    columns: [
+      { label: "ID", value: "id" },
+      { label: "Name", value: "name" },
+      { label: "Email", value: (row: any) => row?.contact?.email ?? "" },
+      { label: "Score", value: "score", format: "0.00" },
+    ],
+    content: [
+      { id: "ID-101", name: "Ada Lovelace", contact: { email: "ada@example.com" }, score: 98.5 },
+      { id: "ID-102", name: "Grace Hopper", contact: { email: "" } },
+      { id: "ID-103", name: "Katherine Johnson", score: null },
+      { id: "ID-104", contact: {} },
+    ],
+  },
+]
+
 const settings: ISettings = {
   writeOptions: {
     type: "buffer",
@@ -222,6 +243,18 @@ app.get("/multi-table", (_, res) => {
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
     "Content-disposition": "attachment; filename=MySheet-MultiTable.xlsx",
+  })
+  res.end(buffer)
+})
+
+app.get("/blank-cells", (_, res) => {
+  const buffer = xlsx(blankCellData, {
+    ...settings,
+    writeEmptyValuesAsBlankCells: true,
+  })
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-BlankCells.xlsx",
   })
   res.end(buffer)
 })

@@ -100,6 +100,34 @@ describe("json-as-xlsx", () => {
     expect(result).toBeUndefined()
   })
 
+  // Regression guard for issue #87 ("xlsx is not a function"). We overwrite the
+  // whole `module.exports` with the `xlsx` function so `require("json-as-xlsx")`
+  // returns it directly. That override drops the named bindings tsc emitted, so
+  // they are re-attached. Without `xlsx`/`default` re-attached,
+  // `import { xlsx } from ...` and a default import transpiled to `.default`
+  // (TS without esModuleInterop) both resolve to undefined and crash.
+  describe("CommonJS export surface (issue #87)", () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const required = require("../index")
+
+    it("returns the xlsx function as the module itself", () => {
+      expect(typeof required).toBe("function")
+    })
+
+    it("re-attaches xlsx and default so named/default imports resolve to the function", () => {
+      expect(required.xlsx).toBe(required)
+      expect(required.default).toBe(required)
+    })
+
+    it("keeps the other named bindings after the module.exports override", () => {
+      expect(typeof required.utils).toBe("object")
+      expect(typeof required.getContentProperty).toBe("function")
+      expect(typeof required.getJsonSheetRow).toBe("function")
+      expect(typeof required.getWorksheetColumnWidths).toBe("function")
+      expect(required.libraryName).toBe("json-as-xlsx")
+    })
+  })
+
   describe("writeOptions.type is set to buffer", () => {
     const settings: ISettings = {
       writeOptions: {
@@ -313,6 +341,166 @@ describe("json-as-xlsx", () => {
       expect(workSheet.A1.v).toBe("IP")
       expect(workSheet.A2.v).toBe("")
       expect(workSheet.A3.v).toBe("")
+    })
+
+    it("should write empty values as empty-string cells by default", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Users",
+          columns: [
+            { label: "ID", value: "id" },
+            { label: "Score", value: "score", format: "0.00" },
+            { label: "Email", value: (row: IContent) => row.email ?? "" },
+            { label: "Nested", value: "metadata.code" },
+          ],
+          content: [
+            { id: "ID-1", score: 42, email: "ada@example.com", metadata: { code: "A" } },
+            { id: "ID-2", email: "" },
+            { id: "ID-3", score: null, metadata: {} },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, settings)
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(sheetXml).toMatch(/<c r="B3"[^>]*><v><\/v><\/c>/)
+      expect(sheetXml).toContain('<c r="C3" t="str"><v></v></c>')
+      expect(sheetXml).toContain('<c r="D3" t="str"><v></v></c>')
+      expect(sheetXml).toMatch(/<c r="B4"[^>]*><v><\/v><\/c>/)
+      expect(sheetXml).toContain('<c r="C4" t="str"><v></v></c>')
+      expect(sheetXml).toContain('<c r="D4" t="str"><v></v></c>')
+    })
+
+    it("should optionally write empty values as true blank cells", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Users",
+          columns: [
+            { label: "ID", value: "id" },
+            { label: "Score", value: "score", format: "0.00" },
+            { label: "Email", value: (row: IContent) => row.email ?? "" },
+            { label: "Nested", value: "metadata.code" },
+          ],
+          content: [
+            { id: "ID-1", score: 42, email: "ada@example.com", metadata: { code: "A" } },
+            { id: "ID-2", email: "" },
+            { id: "ID-3", score: null, metadata: {} },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, { ...settings, writeEmptyValuesAsBlankCells: true })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets.Users
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet.A3.v).toBe("ID-2")
+      expect(workSheet.A4.v).toBe("ID-3")
+      expect(workSheet.B3).toBeUndefined()
+      expect(workSheet.C3).toBeUndefined()
+      expect(workSheet.D3).toBeUndefined()
+      expect(workSheet.B4).toBeUndefined()
+      expect(workSheet.C4).toBeUndefined()
+      expect(workSheet.D4).toBeUndefined()
+      expect(sheetXml).not.toMatch(/<c r="B3"/)
+      expect(sheetXml).not.toMatch(/<c r="C3"/)
+      expect(sheetXml).not.toMatch(/<c r="D3"/)
+      expect(sheetXml).not.toMatch(/<c r="B4"/)
+      expect(sheetXml).not.toMatch(/<c r="C4"/)
+      expect(sheetXml).not.toMatch(/<c r="D4"/)
+    })
+
+    it("should optionally render empty-content sheets with headers only", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Headers only",
+          columns: [
+            { label: "Name", value: "name" },
+            { label: "Age", value: "age" },
+          ],
+          content: [],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, { ...settings, writeEmptyValuesAsBlankCells: true })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets["Headers only"]
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet["!ref"]).toBe("A1:B1")
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.B1.v).toBe("Age")
+      expect(sheetXml).not.toContain('<row r="2"')
+      expect(sheetXml).not.toContain('<c r="A2"')
+      expect(sheetXml).not.toContain('<c r="B2"')
+    })
+
+    it("should keep styled empty values as true blank cells when enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Styled blanks",
+          columns: [
+            { label: "Website", value: "url", format: "hyperlink", cellStyle: { font: { bold: true } } },
+            { label: "Amount", value: "amount", format: "0.00", cellStyle: { font: { italic: true } } },
+            { label: "Name", value: "name", cellStyle: { fill: { fgColor: { rgb: "DCFCE7" } } } },
+          ],
+          content: [
+            { url: "", amount: null, name: "Ada" },
+            { url: "https://example.com", amount: 42, name: "" },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, {
+        ...settings,
+        enableStyles: true,
+        writeEmptyValuesAsBlankCells: true,
+      })
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(sheetXml).not.toMatch(/<c r="A2"/)
+      expect(sheetXml).not.toMatch(/<c r="B2"/)
+      expect(sheetXml).not.toMatch(/<c r="C3"/)
+      expect(sheetXml).toMatch(/<c r="C2"[^>]* s="\d+"[^>]*>/)
+      expect(sheetXml).toMatch(/<c r="A3"[^>]* s="\d+"[^>]*>/)
+      expect(sheetXml).toMatch(/<c r="B3"[^>]* s="\d+"[^>]*>/)
+    })
+
+    it("should omit direct styled empty cell objects when blank cells are enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Direct styled blanks",
+          columns: [
+            { label: "Styled empty", value: "styledEmpty" },
+            { label: "Typed empty", value: "typedEmpty" },
+            { label: "Styled filled", value: "styledFilled" },
+          ],
+          content: [
+            {
+              styledEmpty: { v: "", t: "s", s: { font: { bold: true } } },
+              typedEmpty: { v: "", t: "s" },
+              styledFilled: { v: "Ada", t: "s", s: { font: { italic: true } } },
+            },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, {
+        ...settings,
+        enableStyles: true,
+        writeEmptyValuesAsBlankCells: true,
+      })
+      const workBook = readBufferWorkBook(buffer)
+      const workSheet = workBook.Sheets["Direct styled blanks"]
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(workSheet.A2).toBeUndefined()
+      expect(workSheet.B2).toBeUndefined()
+      expect(workSheet.C2.v).toBe("Ada")
+      expect(sheetXml).not.toMatch(/<c r="A2"/)
+      expect(sheetXml).not.toMatch(/<c r="B2"/)
+      expect(sheetXml).toMatch(/<c r="C2"[^>]* s="\d+"[^>]*>/)
     })
 
     it("should not write style objects unless styles are enabled", () => {
@@ -867,6 +1055,38 @@ describe("json-as-xlsx", () => {
 
       expect(workSheet.A1.v).toBe("Name")
       expect(workSheet.A2.v).toBe("Alice")
+    })
+
+    it("renders empty tables with headers only when blank cells are enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }],
+            },
+            {
+              columns: [
+                { label: "Product", value: "product" },
+                { label: "Price", value: "price" },
+              ],
+              content: [],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, { ...bufferSettings, writeEmptyValuesAsBlankCells: true }))
+      const workSheet = workBook.Sheets.Multi
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+      expect(workSheet.A3).toBeUndefined()
+      expect(workSheet.A4.v).toBe("Product")
+      expect(workSheet.B4.v).toBe("Price")
+      expect(workSheet.A5).toBeUndefined()
+      expect(workSheet.B5).toBeUndefined()
     })
   })
 

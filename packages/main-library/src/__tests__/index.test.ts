@@ -436,6 +436,37 @@ describe("json-as-xlsx", () => {
       expect(sheetXml).not.toContain('<c r="B2"')
     })
 
+    it("should keep styled empty values as true blank cells when enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Styled blanks",
+          columns: [
+            { label: "Website", value: "url", format: "hyperlink", cellStyle: { font: { bold: true } } },
+            { label: "Amount", value: "amount", format: "0.00", cellStyle: { font: { italic: true } } },
+            { label: "Name", value: "name", cellStyle: { fill: { fgColor: { rgb: "DCFCE7" } } } },
+          ],
+          content: [
+            { url: "", amount: null, name: "Ada" },
+            { url: "https://example.com", amount: 42, name: "" },
+          ],
+        },
+      ]
+
+      const buffer = jsonxlsx(sheets, {
+        ...settings,
+        enableStyles: true,
+        writeEmptyValuesAsBlankCells: true,
+      })
+      const sheetXml = strFromU8(unzipXlsxBuffer(buffer)["xl/worksheets/sheet1.xml"])
+
+      expect(sheetXml).not.toMatch(/<c r="A2"/)
+      expect(sheetXml).not.toMatch(/<c r="B2"/)
+      expect(sheetXml).not.toMatch(/<c r="C3"/)
+      expect(sheetXml).toMatch(/<c r="C2"[^>]* s="\d+"[^>]*>/)
+      expect(sheetXml).toMatch(/<c r="A3"[^>]* s="\d+"[^>]*>/)
+      expect(sheetXml).toMatch(/<c r="B3"[^>]* s="\d+"[^>]*>/)
+    })
+
     it("should not write style objects unless styles are enabled", () => {
       const sheets: IJsonSheet[] = [
         {
@@ -988,6 +1019,38 @@ describe("json-as-xlsx", () => {
 
       expect(workSheet.A1.v).toBe("Name")
       expect(workSheet.A2.v).toBe("Alice")
+    })
+
+    it("renders empty tables with headers only when blank cells are enabled", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }],
+            },
+            {
+              columns: [
+                { label: "Product", value: "product" },
+                { label: "Price", value: "price" },
+              ],
+              content: [],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, { ...bufferSettings, writeEmptyValuesAsBlankCells: true }))
+      const workSheet = workBook.Sheets.Multi
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+      expect(workSheet.A3).toBeUndefined()
+      expect(workSheet.A4.v).toBe("Product")
+      expect(workSheet.B4.v).toBe("Price")
+      expect(workSheet.A5).toBeUndefined()
+      expect(workSheet.B5).toBeUndefined()
     })
   })
 

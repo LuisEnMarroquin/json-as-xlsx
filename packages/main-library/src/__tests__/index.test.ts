@@ -664,6 +664,212 @@ describe("json-as-xlsx", () => {
     })
   })
 
+  describe("multiple tables per sheet", () => {
+    const bufferSettings: ISettings = { writeOptions: { type: "buffer" } }
+
+    it("stacks tables vertically with a blank-row gap by default", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }, { name: "Bob" }],
+            },
+            {
+              columns: [
+                { label: "Product", value: "product" },
+                { label: "Price", value: "price" },
+              ],
+              content: [{ product: "Pen", price: 1.2 }],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, bufferSettings))
+      const workSheet = workBook.Sheets.Multi
+
+      // First table at A1..A3
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+      expect(workSheet.A3.v).toBe("Bob")
+      // Row 4 is the gap and stays empty
+      expect(workSheet.A4).toBeUndefined()
+      // Second table starts at row 5
+      expect(workSheet.A5.v).toBe("Product")
+      expect(workSheet.B5.v).toBe("Price")
+      expect(workSheet.A6.v).toBe("Pen")
+      expect(workSheet.B6.v).toBe(1.2)
+    })
+
+    it("places tables side by side when layout is horizontal", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tablesLayout: "horizontal",
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }],
+            },
+            {
+              columns: [{ label: "Product", value: "product" }],
+              content: [{ product: "Pen" }],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, bufferSettings))
+      const workSheet = workBook.Sheets.Multi
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+      // Column B is the gap and stays empty
+      expect(workSheet.B1).toBeUndefined()
+      // Second table starts at column C
+      expect(workSheet.C1.v).toBe("Product")
+      expect(workSheet.C2.v).toBe("Pen")
+    })
+
+    it("honors a custom tablesGap", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tablesGap: 0,
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }],
+            },
+            {
+              columns: [{ label: "Product", value: "product" }],
+              content: [{ product: "Pen" }],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, bufferSettings))
+      const workSheet = workBook.Sheets.Multi
+
+      // No blank row between the tables
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+      expect(workSheet.A3.v).toBe("Product")
+      expect(workSheet.A4.v).toBe("Pen")
+    })
+
+    it("applies each table's column formats at its own offset", () => {
+      let workbook: any
+      jsonxlsx(
+        [
+          {
+            sheet: "Multi",
+            tables: [
+              {
+                columns: [{ label: "Name", value: "name" }],
+                content: [{ name: "Alice" }],
+              },
+              {
+                columns: [
+                  { label: "Price", value: "price", format: "0.00" },
+                  { label: "Site", value: "site", format: "hyperlink" },
+                ],
+                content: [{ price: 1.2, site: "https://example.com" }],
+              },
+            ],
+          },
+        ],
+        { writeMode: "write" },
+        (capturedWorkbook) => {
+          workbook = capturedWorkbook
+        },
+      )
+
+      const workSheet = workbook.Sheets.Multi
+
+      // Second table header lands at row 4 (1 header + 1 data row + 1 gap)
+      expect(workSheet.A4.v).toBe("Price")
+      expect(workSheet.B4.v).toBe("Site")
+      // Its number format and hyperlink are applied to the second table's data row
+      expect(workSheet.A5.z).toBe("0.00")
+      expect(workSheet.B5.l.Target).toBe("https://example.com")
+    })
+
+    it("applies each table's header styles at its own offset", () => {
+      let workbook: any
+      jsonxlsx(
+        [
+          {
+            sheet: "Multi",
+            tables: [
+              {
+                columns: [{ label: "Name", value: "name" }],
+                content: [{ name: "Alice" }],
+              },
+              {
+                columns: [{ label: "Product", value: "product", headerStyle: { font: { bold: true } } }],
+                content: [{ product: "Pen" }],
+              },
+            ],
+          },
+        ],
+        { enableStyles: true, writeMode: "write" },
+        (capturedWorkbook) => {
+          workbook = capturedWorkbook
+        },
+      )
+
+      const workSheet = workbook.Sheets.Multi
+
+      // First table header is untouched, second table header (row 4) is bold
+      expect(workSheet.A1.s).toBeUndefined()
+      expect(workSheet.A4.v).toBe("Product")
+      expect(workSheet.A4.s.font.bold).toBe(true)
+    })
+
+    it("ignores top-level columns/content when tables is provided", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          columns: [{ label: "Ignored", value: "ignored" }],
+          content: [{ ignored: "nope" }],
+          tables: [
+            {
+              columns: [{ label: "Name", value: "name" }],
+              content: [{ name: "Alice" }],
+            },
+          ],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, bufferSettings))
+      const workSheet = workBook.Sheets.Multi
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+    })
+
+    it("falls back to single-table columns/content when tables is empty", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Single",
+          columns: [{ label: "Name", value: "name" }],
+          content: [{ name: "Alice" }],
+          tables: [],
+        },
+      ]
+
+      const workBook = readBufferWorkBook(jsonxlsx(sheets, bufferSettings))
+      const workSheet = workBook.Sheets.Single
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.A2.v).toBe("Alice")
+    })
+  })
+
   describe("styled binary output", () => {
     const bytes = new Uint8Array([0x00, 0x41, 0x7f, 0x80, 0x9f, 0xff])
     const expectedCharCodes = Array.from(bytes)

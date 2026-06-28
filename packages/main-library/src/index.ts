@@ -17,10 +17,27 @@ export interface IContent {
   [key: string]: IContentValue
 }
 
-export interface IJsonSheet {
-  sheet?: string
+export interface IJsonSheetTable {
   columns: IColumn[]
   content: IContent[]
+}
+
+export interface IJsonSheet {
+  sheet?: string
+  // `columns` and `content` describe a single table. They stay optional so a
+  // sheet can instead provide `tables` for a multi-table layout. When `tables`
+  // is set (and non-empty) it takes precedence and these are ignored.
+  columns?: IColumn[]
+  content?: IContent[]
+  // Opt-in: render several tables in the same sheet. Each entry is an
+  // independent table with its own columns/content, formats and styles.
+  tables?: IJsonSheetTable[]
+  // How multiple `tables` are arranged. "vertical" (default) stacks them top to
+  // bottom; "horizontal" places them left to right.
+  tablesLayout?: "vertical" | "horizontal"
+  // Blank rows (vertical) or columns (horizontal) left between adjacent tables.
+  // Defaults to 1.
+  tablesGap?: number
 }
 
 export interface ISettings {
@@ -75,8 +92,18 @@ export const getJsonSheetRow = (content: IContent, columns: IColumn[]): IJsonShe
   return jsonSheetRow
 }
 
-const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnFormats: Array<string | null>) => {
-  for (let i = 0; i < columnIds.length; i += 1) {
+// A table after it has been placed in the worksheet. `startRow`/`startCol` are
+// the 0-based coordinates of its header cell, `dataRowCount` the number of data
+// rows below that header. The single-table case is just a table placed at A1.
+interface IPlacedTable {
+  columns: IColumn[]
+  startRow: number
+  startCol: number
+  dataRowCount: number
+}
+
+const applyColumnFormat = (worksheet: WorkSheet, table: IPlacedTable, columnFormats: Array<string | null>) => {
+  for (let i = 0; i < columnFormats.length; i += 1) {
     const columnFormat = columnFormats[i]
 
     // Skip column if it doesn't have a format
@@ -84,11 +111,10 @@ const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnForm
       continue
     }
 
-    const column = utils.decode_col(columnIds[i])
-    const range = utils.decode_range(worksheet["!ref"] ?? "")
+    const column = table.startCol + i
 
-    // Note: Range.s.r + 1 skips the header row
-    for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+    // Note: table.startRow + 1 skips the header row
+    for (let row = table.startRow + 1; row <= table.startRow + table.dataRowCount; ++row) {
       const ref = utils.encode_cell({ r: row, c: column })
 
       if (worksheet[ref]) {
@@ -104,16 +130,16 @@ const applyColumnFormat = (worksheet: WorkSheet, columnIds: string[], columnForm
   }
 }
 
-const applyHeaderStyles = (worksheet: WorkSheet, columnIds: string[], headerStyles: Array<ICellStyle | null>) => {
-  for (let i = 0; i < columnIds.length; i += 1) {
+const applyHeaderStyles = (worksheet: WorkSheet, table: IPlacedTable, headerStyles: Array<ICellStyle | null>) => {
+  for (let i = 0; i < headerStyles.length; i += 1) {
     const headerStyle = headerStyles[i]
 
     if (!headerStyle) {
       continue
     }
 
-    const column = utils.decode_col(columnIds[i])
-    const ref = utils.encode_cell({ r: 0, c: column })
+    const column = table.startCol + i
+    const ref = utils.encode_cell({ r: table.startRow, c: column })
 
     if (worksheet[ref]) {
       applyCellStyles(worksheet[ref] as IStyledCell, headerStyle)
@@ -121,8 +147,8 @@ const applyHeaderStyles = (worksheet: WorkSheet, columnIds: string[], headerStyl
   }
 }
 
-const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyles: Array<ICellStyle | null>) => {
-  for (let i = 0; i < columnIds.length; i += 1) {
+const applyColumnStyles = (worksheet: WorkSheet, table: IPlacedTable, columnStyles: Array<ICellStyle | null>) => {
+  for (let i = 0; i < columnStyles.length; i += 1) {
     const columnStyle = columnStyles[i]
 
     // Column `format` is applied through `cell.z` (see applyColumnFormat) and the
@@ -132,11 +158,10 @@ const applyColumnStyles = (worksheet: WorkSheet, columnIds: string[], columnStyl
       continue
     }
 
-    const column = utils.decode_col(columnIds[i])
-    const range = utils.decode_range(worksheet["!ref"] ?? "")
+    const column = table.startCol + i
 
-    // Note: Range.s.r + 1 skips the header row
-    for (let row = range.s.r + 1; row <= range.e.r; ++row) {
+    // Note: table.startRow + 1 skips the header row
+    for (let row = table.startRow + 1; row <= table.startRow + table.dataRowCount; ++row) {
       const ref = utils.encode_cell({ r: row, c: column })
 
       if (worksheet[ref]) {
@@ -207,34 +232,68 @@ export const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: numb
   })
 }
 
+const buildJsonSheetRows = (columns: IColumn[], content: IContent[]): IJsonSheetRow[] => {
+  if (content.length > 0) {
+    return content.map((contentItem) => getJsonSheetRow(contentItem, columns))
+  }
+
+  // If there's no content, show only column labels
+  return columns.map((column) => ({ [column.label]: "" }))
+}
+
 const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => {
-  let jsonSheetRows: IJsonSheetRow[]
+  // A sheet either holds a single table (`columns`/`content`) or several
+  // (`tables`). Normalize both into one list so the rest is layout-agnostic.
+  const tables: IJsonSheetTable[] =
+    jsonSheet.tables && jsonSheet.tables.length > 0 ? jsonSheet.tables : [{ columns: jsonSheet.columns ?? [], content: jsonSheet.content ?? [] }]
 
-  if (jsonSheet.content.length > 0) {
-    jsonSheetRows = jsonSheet.content.map((contentItem) => {
-      return getJsonSheetRow(contentItem, jsonSheet.columns)
-    })
-  } else {
-    // If there's no content, show only column labels
-    jsonSheetRows = jsonSheet.columns.map((column) => ({ [column.label]: "" }))
-  }
+  const layout = jsonSheet.tablesLayout ?? "vertical"
+  const gap = jsonSheet.tablesGap ?? 1
 
-  const worksheet = utils.json_to_sheet(jsonSheetRows)
-  const worksheetColumnIds = getWorksheetColumnIds(worksheet)
+  let worksheet: WorkSheet | undefined
+  let nextRow = 0
+  let nextCol = 0
+  const placedTables: IPlacedTable[] = []
 
-  const worksheetColumnFormats = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.format ?? null)
-  applyColumnFormat(worksheet, worksheetColumnIds, worksheetColumnFormats)
+  tables.forEach((table) => {
+    const jsonSheetRows = buildJsonSheetRows(table.columns, table.content)
+    const startRow = nextRow
+    const startCol = nextCol
 
-  if (settings.enableStyles) {
-    const worksheetHeaderStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.headerStyle ?? null)
-    const worksheetColumnStyles = jsonSheet.columns.map((jsonSheetColumn) => jsonSheetColumn.cellStyle ?? null)
-    applyHeaderStyles(worksheet, worksheetColumnIds, worksheetHeaderStyles)
-    applyColumnStyles(worksheet, worksheetColumnIds, worksheetColumnStyles)
-  }
+    if (!worksheet) {
+      // First table anchors the worksheet at A1 (both layouts start at 0,0).
+      worksheet = utils.json_to_sheet(jsonSheetRows)
+    } else {
+      utils.sheet_add_json(worksheet, jsonSheetRows, { origin: { r: startRow, c: startCol } })
+    }
 
-  worksheet["!cols"] = getWorksheetColumnWidths(worksheet, settings.extraLength)
+    placedTables.push({ columns: table.columns, startRow, startCol, dataRowCount: jsonSheetRows.length })
 
-  return worksheet
+    if (layout === "horizontal") {
+      nextCol = startCol + table.columns.length + gap
+    } else {
+      nextRow = startRow + 1 + jsonSheetRows.length + gap
+    }
+  })
+
+  // `tables` always has at least one entry, so the worksheet is defined here.
+  const builtWorksheet = worksheet as WorkSheet
+
+  placedTables.forEach((placedTable) => {
+    const tableColumnFormats = placedTable.columns.map((tableColumn) => tableColumn.format ?? null)
+    applyColumnFormat(builtWorksheet, placedTable, tableColumnFormats)
+
+    if (settings.enableStyles) {
+      const tableHeaderStyles = placedTable.columns.map((tableColumn) => tableColumn.headerStyle ?? null)
+      const tableColumnStyles = placedTable.columns.map((tableColumn) => tableColumn.cellStyle ?? null)
+      applyHeaderStyles(builtWorksheet, placedTable, tableHeaderStyles)
+      applyColumnStyles(builtWorksheet, placedTable, tableColumnStyles)
+    }
+  })
+
+  builtWorksheet["!cols"] = getWorksheetColumnWidths(builtWorksheet, settings.extraLength)
+
+  return builtWorksheet
 }
 
 const applyCellStyles = (cell: IStyledCell, ...styles: Array<ICellStyle | undefined>) => {

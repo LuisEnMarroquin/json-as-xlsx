@@ -139,6 +139,40 @@ const styledData: IJsonSheet[] = [
   },
 ]
 
+// Two independent tables living in the same sheet. `tables` opts into the
+// multi-table layout; without it a sheet renders a single columns/content table.
+// Kept in parity with the React demo (packages/demo-reactjs/src/App.tsx)
+const multiTableData: IJsonSheet[] = [
+  {
+    sheet: "Quarter summary",
+    tablesLayout: "vertical", // stack the tables top to bottom (the default)
+    tablesGap: 1, // leave one blank row between them
+    tables: [
+      {
+        columns: [
+          { label: "Product", value: "product" },
+          { label: "Revenue", value: "revenue", format: "$#,##0.00" },
+          { label: "Units", value: "units", format: "#,##0" },
+        ],
+        content: [
+          { product: "Keyboard", revenue: 35988, units: 1200 },
+          { product: "Monitor", revenue: 67830, units: 340 },
+        ],
+      },
+      {
+        columns: [
+          { label: "Team", value: "team" },
+          { label: "Expenses", value: "expenses", format: "$#,##0.00" },
+        ],
+        content: [
+          { team: "Engineering", expenses: 42000 },
+          { team: "Marketing", expenses: 18500 },
+        ],
+      },
+    ],
+  },
+]
+
 const settings: ISettings = {
   writeOptions: {
     type: "buffer",
@@ -179,6 +213,15 @@ app.get("/styled", (_, res) => {
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
     "Content-disposition": "attachment; filename=MySheet-Styled.xlsx",
+  })
+  res.end(buffer)
+})
+
+app.get("/multi-table", (_, res) => {
+  const buffer = xlsx(multiTableData, settings)
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-MultiTable.xlsx",
   })
   res.end(buffer)
 })

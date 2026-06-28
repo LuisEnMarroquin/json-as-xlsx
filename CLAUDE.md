@@ -113,6 +113,30 @@ Notes: resolving threads needs the GraphQL API (REST can't) — list the PR's
 `reviewThreads` to get each thread id, then call the `resolveReviewThread`
 mutation. After pushing the fixes, re-request Copilot's review so it runs again.
 
+## Posting GitHub comments — IMPORTANT
+
+When posting issue/PR comments whose body contains Markdown (code blocks,
+mentions, multiple lines), the only real gotcha is this: **`--body` takes its
+value literally — it does NOT read stdin and does NOT interpret `@file`/`@-`.**
+So `--body @-` posts the literal string `@-`. Pick one of the forms below.
+
+- **Inline via command substitution is fine** (a multi-line heredoc works
+  perfectly — we use it for PR bodies):
+  `gh pr comment <num> --repo <owner/repo> --body "$(cat <<'EOF' … EOF)"`
+- **From a file or stdin** with `--body-file`:
+  - Issue: `gh issue comment <num> --repo <owner/repo> --body-file <file>`
+  - PR: `gh pr comment <num> --repo <owner/repo> --body-file <file>`
+  - `--body-file -` reads from stdin (e.g. a heredoc).
+- To **edit** an existing comment, PATCH it via the API (the numeric
+  `comment_id` is the `issuecomment-<id>` suffix in the comment URL). To read the
+  body from a file use `-F body=@<file>`, but note `-F` coerces types — a file
+  whose entire content is `true`/`false`/`null`/a number becomes that type
+  instead of a string. The fully safe form is to pass the string directly:
+  `gh api -X PATCH repos/<owner/repo>/issues/comments/<comment_id> -f body="$(cat <file>)"`.
+- After posting, verify the rendered body (e.g.
+  `gh api repos/<owner/repo>/issues/comments/<id> --jq .body`) instead of
+  assuming it worked.
+
 ## Versioning — IMPORTANT
 
 The released version lives in `packages/main-library/package.json`. When asked to

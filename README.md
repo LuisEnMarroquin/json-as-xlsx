@@ -131,6 +131,11 @@ xlsx(data, {
 
 Values like `0` and `false` are still written normally.
 
+This option applies to both string-path columns (`value: "email"`) and function
+columns (`value: (row) => row.email ?? ""`). Formats, hyperlinks and cell styles
+are applied only to cells that still have a value; blank cells remain truly
+blank. Sheets or multi-table entries with no content still render their headers.
+
 ### Callback
 
 If you want to inspect or post-process the workbook, pass a `callback` as the

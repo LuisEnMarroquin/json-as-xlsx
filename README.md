@@ -43,8 +43,9 @@ pnpm add json-as-xlsx
 
 ```js
 import xlsx from "json-as-xlsx"
-// or require
-let xlsx = require("json-as-xlsx")
+// Alternative import styles:
+// import { xlsx } from "json-as-xlsx"
+// const xlsx = require("json-as-xlsx")
 
 let data = [
   {
@@ -329,10 +330,13 @@ top-level `columns`/`content`.
 ## TypeScript
 
 The package is written in TypeScript and ships its own type definitions. The
-public interfaces are exported for your convenience:
+public interfaces are exported for your convenience. The `xlsx` function is
+available as both the default export and a named export:
 
 ```ts
 import xlsx, { IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
+// or:
+// import { xlsx, IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
 
 const data: IJsonSheet[] = [
   /* ... */

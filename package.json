@@ -15,9 +15,9 @@
     "lerna": "^9.0.7"
   },
   "comments": {
-    "resolutions": "babel-plugin-istanbul@7.0.1 (pulled by jest's coverage) ships a stray 'workspaces' field, which makes yarn print 'Workspaces can only be enabled in private projects.' on every install. 7.0.0 is identical (same deps/main) but lacks that field, so we pin it here."
+    "resolutions": "Jest coverage still requests babel-plugin-istanbul ^7.0.1. Keep this resolution until Jest's dependency range accepts v8, so Yarn can install the current version and `yarn outdated` stays clean."
   },
   "resolutions": {
-    "babel-plugin-istanbul": "7.0.0"
+    "babel-plugin-istanbul": "8.0.0"
   }
 }

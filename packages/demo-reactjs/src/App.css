@@ -85,8 +85,20 @@
   border-radius: 10px;
 }
 
-.actions {
+.downloads {
   margin-top: 2rem;
+}
+
+.downloads h2 {
+  margin: 0;
+  color: #dbe7f3;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.actions {
+  margin-top: 0.85rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -100,31 +112,52 @@
   font-family: inherit;
   font-size: 1.02rem;
   font-weight: 600;
-  color: #04130b;
-  background: linear-gradient(135deg, #6ee7b7, #21a366);
+  color: var(--download-color);
+  background: var(--download-bg);
   border: 0;
   padding: 0.85rem 1.6rem;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 14px 32px -10px rgba(33, 163, 102, 0.6);
+  box-shadow: 0 14px 32px -10px var(--download-shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
-.download.secondary {
-  color: #f0f9ff;
-  background: linear-gradient(135deg, #38bdf8, #1d4ed8);
-  border: 0;
-  box-shadow: 0 14px 32px -10px rgba(37, 99, 235, 0.6);
+.download.example {
+  --download-color: #04130b;
+  --download-bg: linear-gradient(135deg, #6ee7b7, #21a366);
+  --download-shadow: rgba(33, 163, 102, 0.6);
+  --download-hover-shadow: rgba(33, 163, 102, 0.72);
+  --download-focus: #6ee7b7;
+}
+
+.download.styled {
+  --download-color: #f0f9ff;
+  --download-bg: linear-gradient(135deg, #38bdf8, #2563eb);
+  --download-shadow: rgba(37, 99, 235, 0.6);
+  --download-hover-shadow: rgba(37, 99, 235, 0.75);
+  --download-focus: #7dd3fc;
+}
+
+.download.multiTable {
+  --download-color: #fff7ed;
+  --download-bg: linear-gradient(135deg, #f97316, #c2410c);
+  --download-shadow: rgba(234, 88, 12, 0.6);
+  --download-hover-shadow: rgba(234, 88, 12, 0.75);
+  --download-focus: #fdba74;
+}
+
+.download.blankCells {
+  --download-color: #f8f7ff;
+  --download-bg: linear-gradient(135deg, #a78bfa, #7c3aed);
+  --download-shadow: rgba(124, 58, 237, 0.58);
+  --download-hover-shadow: rgba(124, 58, 237, 0.72);
+  --download-focus: #c4b5fd;
 }
 
 .download:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 20px 42px -12px rgba(33, 163, 102, 0.72);
-}
-
-.download.secondary:hover {
-  box-shadow: 0 20px 42px -12px rgba(37, 99, 235, 0.75);
+  box-shadow: 0 20px 42px -12px var(--download-hover-shadow);
 }
 
 .download:active {
@@ -132,12 +165,8 @@
 }
 
 .download:focus-visible {
-  outline: 2px solid #6ee7b7;
+  outline: 2px solid var(--download-focus);
   outline-offset: 3px;
-}
-
-.download.secondary:focus-visible {
-  outline-color: #7dd3fc;
 }
 
 .download svg {
@@ -225,6 +254,10 @@
     color: #334155;
     background: rgba(2, 6, 12, 0.04);
     border-color: rgba(2, 6, 12, 0.09);
+  }
+
+  .downloads h2 {
+    color: #1e293b;
   }
 
   .preview {

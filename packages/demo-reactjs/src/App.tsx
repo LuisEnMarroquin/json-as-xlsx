@@ -205,6 +205,15 @@ xlsx(data, { fileName: "MySpreadsheet" })`
 
 const features = ["📑 Multi-sheet", "🧱 Multi-table sheets", "🎨 Cell formatting", "⬜ True blank cells", "🟦 TypeScript", "🌐 Browser & Node"]
 
+// Keep each download action visually distinct: new buttons should get a unique
+// color variant and a short label without repeating the "Download" prefix.
+const downloadActions = [
+  { label: "Example", className: "download example", onClick: "downloadFile" },
+  { label: "Styled", className: "download styled", onClick: "downloadStyledFile" },
+  { label: "Multi-table", className: "download multiTable", onClick: "downloadMultiTableFile" },
+  { label: "Blank cells", className: "download blankCells", onClick: "downloadBlankCellFile" },
+] as const
+
 function DownloadIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -248,6 +257,13 @@ function App() {
     xlsx(blankCellData, { fileName: "BlankCellSpreadsheet", writeEmptyValuesAsBlankCells: true })
   }
 
+  const downloadHandlers = {
+    downloadFile,
+    downloadStyledFile,
+    downloadMultiTableFile,
+    downloadBlankCellFile,
+  }
+
   return (
     <div className="page">
       <main className="card">
@@ -265,24 +281,17 @@ function App() {
           ))}
         </ul>
 
-        <div className="actions">
-          <button className="download" onClick={downloadFile}>
-            <DownloadIcon />
-            Download example
-          </button>
-          <button className="download secondary" onClick={downloadStyledFile}>
-            <DownloadIcon />
-            Download styled
-          </button>
-          <button className="download secondary" onClick={downloadMultiTableFile}>
-            <DownloadIcon />
-            Download multi-table
-          </button>
-          <button className="download secondary" onClick={downloadBlankCellFile}>
-            <DownloadIcon />
-            Download blank cells
-          </button>
-        </div>
+        <section className="downloads" aria-labelledby="downloads-title">
+          <h2 id="downloads-title">Downloads</h2>
+          <div className="actions">
+            {downloadActions.map((action) => (
+              <button className={action.className} key={action.label} onClick={downloadHandlers[action.onClick]}>
+                <DownloadIcon />
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <pre className="preview">
           <code>{snippet}</code>

@@ -9,6 +9,16 @@ Guidance for AI coding assistants (e.g. Claude Code) when working in this reposi
 - After editing them, verify from the repository root with `cmp -s AGENTS.md CLAUDE.md`.
 - Do not leave instructions, notes, preferences, or knowledge updates only in one of the two files.
 
+## Concurrent AI Work — IMPORTANT
+
+- Multiple AI assistants may work in this repository at the same time.
+- If you notice changes you did not make, do **not** edit, revert, stage, or
+  otherwise disturb them unless Luis explicitly asks you to handle those exact
+  changes. They likely belong to another AI assistant working in parallel.
+- If those parallel changes affect your task, inspect them enough to avoid
+  conflicts and work around them. Ask Luis before proceeding only if they make
+  your task impossible or unsafe.
+
 ## Project
 
 `json-as-xlsx` — a Yarn + Lerna monorepo. Packages live in `packages/*`:
@@ -181,6 +191,15 @@ digit (0–9) and rolls over instead of going to 10**:
   e.g. `1.0.9` → `1.1.0` (never `1.0.10`).
 - **When both the minor and the patch are `.9`, bump the major and reset both to 0.**
   e.g. `1.9.9` → `2.0.0` (never `1.9.10` or `1.10.0`).
+- When bumping the package version, update every place that intentionally pins
+  the library version:
+  - `packages/main-library/package.json` → `version` (the released npm version).
+  - `packages/demo-reactjs/package.json` → `dependencies["json-as-xlsx"]`.
+  - `packages/demo-express/package.json` → `dependencies["json-as-xlsx"]`.
+- After the bump, inspect the diff and search the repo for the previous version
+  and the new version. Do not leave dangling old-version references, mismatched
+  demo dependency pins, stale generated metadata, or any other version-related
+  loose ends just because the main package version changed.
 
 ## Deploys — who deploys what
 

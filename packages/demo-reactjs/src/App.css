@@ -154,6 +154,22 @@
   --download-focus: #c4b5fd;
 }
 
+.download.hyperlinks {
+  --download-color: #fff7ed;
+  --download-bg: linear-gradient(135deg, #facc15, #ca8a04);
+  --download-shadow: rgba(202, 138, 4, 0.55);
+  --download-hover-shadow: rgba(202, 138, 4, 0.7);
+  --download-focus: #fde68a;
+}
+
+.download.rtl {
+  --download-color: #f8fafc;
+  --download-bg: linear-gradient(135deg, #14b8a6, #0f766e);
+  --download-shadow: rgba(15, 118, 110, 0.58);
+  --download-hover-shadow: rgba(15, 118, 110, 0.72);
+  --download-focus: #5eead4;
+}
+
 .download:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);

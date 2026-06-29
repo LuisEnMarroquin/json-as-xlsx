@@ -106,6 +106,11 @@ users' code keeps working when they upgrade:
 - When the AI makes a commit, it must include **all pending worktree changes**:
   tracked modifications, deletions, and new files. Do not leave local changes
   uncommitted unless Luis explicitly asks to exclude something.
+- When Luis writes `/gacp` or `gacp`, treat it as a request to run the full git
+  add, commit, and push flow for the current task. The AI tool has permission to
+  stage all pending changes, create an appropriate commit, and push `develop`
+  without asking for extra confirmation, while still following the branch and
+  commit rules above.
 
 ## Agent-Specific Instructions
 

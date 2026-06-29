@@ -10,6 +10,7 @@ for the rules.
 
 ## Unreleased
 
+- Minify all JavaScript files published in the npm package.
 - Added opt-in `writeEmptyValuesAsBlankCells` support so empty, null and missing
   values can be exported as true blank cells in Excel.
 - Documentation overhaul: revamped `README.md` (installation, settings table,

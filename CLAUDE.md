@@ -27,6 +27,16 @@ Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 
+## Repository language — IMPORTANT
+
+- English is the language of this repository.
+- All repository artifacts must be written in English, including code,
+  comments, documentation, commit messages, pull request titles/descriptions,
+  issue comments, pull request review replies, release notes, examples, and
+  user-facing copy in the demos.
+- Do not add Spanish text to repository files or GitHub comments unless Luis
+  explicitly asks for Spanish text for a specific user-facing purpose.
+
 ## Demo parity — IMPORTANT
 
 `demo-reactjs` (the web UI) and `demo-express` (the API) are two views of the
@@ -158,7 +168,7 @@ So `--body @-` posts the literal string `@-`. Pick one of the forms below.
 ## Versioning — IMPORTANT
 
 The released version lives in `packages/main-library/package.json`. When asked to
-"bump the version" (subir versión), follow these rules — **each segment is a single
+"bump the version", follow these rules — **each segment is a single
 digit (0–9) and rolls over instead of going to 10**:
 
 - **Default: bump the patch.** e.g. `2.5.7` → `2.5.8`.

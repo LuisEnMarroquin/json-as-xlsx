@@ -1,6 +1,6 @@
 {
   "name": "json-as-xlsx",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
   "private": false,
   "scripts": {
     "start": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json && uglifyjs dist/index.js --output dist/index.js",
+    "build": "tsc -p tsconfig.json && uglifyjs dist/index.js --output dist/index.js && uglifyjs dist/styles.js --output dist/styles.js",
     "test": "jest --coverage"
   },
   "dependencies": {

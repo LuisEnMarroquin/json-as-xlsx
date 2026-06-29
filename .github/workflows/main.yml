@@ -13,8 +13,8 @@ jobs:
       id-token: write
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7.0.0
+      - uses: actions/setup-node@v6.4.0
         with:
           node-version-file: .nvmrc
       - run: yarn
@@ -39,7 +39,7 @@ jobs:
           gh release create ${{ env.CURRENT_VERSION }} -F README.md -t "Released ${{ env.CURRENT_VERSION }}"
       - name: Prepare static files for deployment
         run: yarn run static
-      - uses: JamesIves/github-pages-deploy-action@v4
+      - uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           folder: build
           branch: gh-pages

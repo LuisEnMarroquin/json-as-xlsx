@@ -187,6 +187,23 @@ const blankCellData: IJsonSheet[] = [
   },
 ]
 
+// Hyperlink columns turn URL strings into clickable links in Excel.
+const linkData: IJsonSheet[] = [
+  {
+    sheet: "Project links",
+    columns: [
+      { label: "Resource", value: "resource" },
+      { label: "URL", value: "url", format: "hyperlink" },
+      { label: "Owner", value: "owner" },
+    ],
+    content: [
+      { resource: "GitHub repository", url: "https://github.com/LuisEnMarroquin/json-as-xlsx", owner: "Open source" },
+      { resource: "npm package", url: "https://www.npmjs.com/package/json-as-xlsx", owner: "Registry" },
+      { resource: "Live demo", url: "https://xlsx.luismarroquin.com", owner: "Cloudflare Pages" },
+    ],
+  },
+]
+
 const snippet = `import xlsx from "json-as-xlsx"
 
 const data = [{
@@ -204,6 +221,17 @@ const data = [{
 xlsx(data, { fileName: "MySpreadsheet" })`
 
 const features = ["📑 Multi-sheet", "🧱 Multi-table sheets", "🎨 Cell formatting", "⬜ True blank cells", "🟦 TypeScript", "🌐 Browser & Node"]
+
+// Keep each download action visually distinct: new buttons should get a unique
+// color variant and a short label without repeating the "Download" prefix.
+const downloadActions = [
+  { label: "Example", className: "download example", onClick: "downloadFile" },
+  { label: "Styled", className: "download styled", onClick: "downloadStyledFile" },
+  { label: "Multi-table", className: "download multiTable", onClick: "downloadMultiTableFile" },
+  { label: "Blank cells", className: "download blankCells", onClick: "downloadBlankCellFile" },
+  { label: "Links", className: "download hyperlinks", onClick: "downloadLinkFile" },
+  { label: "RTL", className: "download rtl", onClick: "downloadRtlFile" },
+] as const
 
 function DownloadIcon() {
   return (
@@ -248,6 +276,23 @@ function App() {
     xlsx(blankCellData, { fileName: "BlankCellSpreadsheet", writeEmptyValuesAsBlankCells: true })
   }
 
+  const downloadLinkFile = () => {
+    xlsx(linkData, { fileName: "LinksSpreadsheet" })
+  }
+
+  const downloadRtlFile = () => {
+    xlsx(data, { fileName: "RTLSpreadsheet", RTL: true })
+  }
+
+  const downloadHandlers = {
+    downloadFile,
+    downloadStyledFile,
+    downloadMultiTableFile,
+    downloadBlankCellFile,
+    downloadLinkFile,
+    downloadRtlFile,
+  }
+
   return (
     <div className="page">
       <main className="card">
@@ -265,24 +310,17 @@ function App() {
           ))}
         </ul>
 
-        <div className="actions">
-          <button className="download" onClick={downloadFile}>
-            <DownloadIcon />
-            Download example
-          </button>
-          <button className="download secondary" onClick={downloadStyledFile}>
-            <DownloadIcon />
-            Download styled
-          </button>
-          <button className="download secondary" onClick={downloadMultiTableFile}>
-            <DownloadIcon />
-            Download multi-table
-          </button>
-          <button className="download secondary" onClick={downloadBlankCellFile}>
-            <DownloadIcon />
-            Download blank cells
-          </button>
-        </div>
+        <section className="downloads" aria-labelledby="downloads-title">
+          <h2 id="downloads-title">Downloads</h2>
+          <div className="actions">
+            {downloadActions.map((action) => (
+              <button className={action.className} key={action.label} onClick={downloadHandlers[action.onClick]}>
+                <DownloadIcon />
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <pre className="preview">
           <code>{snippet}</code>

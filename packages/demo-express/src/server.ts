@@ -194,6 +194,24 @@ const blankCellData: IJsonSheet[] = [
   },
 ]
 
+// Hyperlink columns turn URL strings into clickable links in Excel.
+// Kept in parity with the React demo (packages/demo-reactjs/src/App.tsx)
+const linkData: IJsonSheet[] = [
+  {
+    sheet: "Project links",
+    columns: [
+      { label: "Resource", value: "resource" },
+      { label: "URL", value: "url", format: "hyperlink" },
+      { label: "Owner", value: "owner" },
+    ],
+    content: [
+      { resource: "GitHub repository", url: "https://github.com/LuisEnMarroquin/json-as-xlsx", owner: "Open source" },
+      { resource: "npm package", url: "https://www.npmjs.com/package/json-as-xlsx", owner: "Registry" },
+      { resource: "Live demo", url: "https://xlsx.luismarroquin.com", owner: "Cloudflare Pages" },
+    ],
+  },
+]
+
 const settings: ISettings = {
   writeOptions: {
     type: "buffer",
@@ -222,6 +240,15 @@ app.get("/rtl", (_, res) => {
   res.writeHead(200, {
     "Content-Type": "application/octet-stream",
     "Content-disposition": "attachment; filename=MySheet-RTL.xlsx",
+  })
+  res.end(buffer)
+})
+
+app.get("/links", (_, res) => {
+  const buffer = xlsx(linkData, settings)
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-disposition": "attachment; filename=MySheet-Links.xlsx",
   })
   res.end(buffer)
 })

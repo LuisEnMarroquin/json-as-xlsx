@@ -11,5 +11,5 @@ jobs:
         with:
           node-version-file: .nvmrc
       - run: yarn
-      - run: npx prettier --check .
+      - run: yarn prettier --check .
       - run: yarn test

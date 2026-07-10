@@ -36,12 +36,20 @@ jobs:
           NAME=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
           echo "Resolved $NAME@$VERSION"
-          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+          set +e
+          VIEW_OUTPUT=$(npm view "$NAME@$VERSION" version 2>&1)
+          VIEW_STATUS=$?
+          set -e
+          if [ $VIEW_STATUS -eq 0 ]; then
             echo "$NAME@$VERSION is already published; skipping npm publish and GitHub release."
             echo "should_publish=false" >> "$GITHUB_OUTPUT"
-          else
+          elif echo "$VIEW_OUTPUT" | grep -q "E404"; then
             echo "$NAME@$VERSION is not published yet; will publish."
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "npm view failed with an unexpected (non-404) error; refusing to guess:"
+            echo "$VIEW_OUTPUT"
+            exit 1
           fi
       - name: Publish package to NPM registry
         if: steps.check.outputs.should_publish == 'true'

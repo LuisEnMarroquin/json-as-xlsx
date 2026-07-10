@@ -33,9 +33,11 @@ Validation commands (run from the repo root):
 - `yarn build` — builds `main-library` (tsc + uglify) and `demo-reactjs`.
 - `yarn static` — copies the built `demo-reactjs` site into `build/` for deploy.
 
-Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc`,
-so it must stay on a version supported by the toolchain (lerna 9 needs
-`^20.19 || ^22.12 || >=24`).
+Use the Node version in `.nvmrc` (currently `24.11.1`). `.node-version` pins the
+same version — always update both together: GitHub Actions reads `.nvmrc`
+(`node-version-file`) and Cloudflare Pages' build system reads `.node-version`
+(in practice it ignores `.nvmrc`). Keep it on a version supported by the
+toolchain (lerna 9 needs `^20.19 || ^22.12 || >=24`).
 
 TypeScript is intentionally pinned to `^6.0.3` in every package — do not bump it
 to 7.x yet. ts-jest still needs the legacy JS compiler API (e.g.

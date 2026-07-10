@@ -29,10 +29,26 @@ jobs:
           echo "CURRENT_VERSION=$(node -e "console.log('v' + require('./package.json').version)")" >> $GITHUB_ENV
           echo CURRENT_VERSION ${{ env.CURRENT_VERSION }}
         working-directory: packages/main-library/
+      - name: Check if version is already published
+        id: check
+        working-directory: packages/main-library/
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Resolved $NAME@$VERSION"
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already published; skipping npm publish and GitHub release."
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$NAME@$VERSION is not published yet; will publish."
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Publish package to NPM registry
+        if: steps.check.outputs.should_publish == 'true'
         run: npm publish --provenance --access public
         working-directory: packages/main-library/
       - name: Create a new GitHub release
+        if: steps.check.outputs.should_publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

@@ -19,5 +19,8 @@
   },
   "resolutions": {
     "babel-plugin-istanbul": "8.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.5"
   }
 }

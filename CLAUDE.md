@@ -33,7 +33,7 @@ Validation commands (run from the repo root):
 - `yarn build` — builds `main-library` (tsc + uglify) and `demo-reactjs`.
 - `yarn static` — copies the built `demo-reactjs` site into `build/` for deploy.
 
-Use the Node version in `.nvmrc` (currently `24.11.1`). `.node-version` pins the
+Use the Node version in `.nvmrc` (currently `24.18.0`). `.node-version` pins the
 same version — always update both together: GitHub Actions reads `.nvmrc`
 (`node-version-file`) and Cloudflare Pages' build system reads `.node-version`
 (in practice it ignores `.nvmrc`). Keep it on a version supported by the

@@ -19,7 +19,7 @@ The packages live under `packages/*`:
 
 ## Requirements
 
-Use the Node version pinned in [`.nvmrc`](.nvmrc) (currently **24.11.1**). If you
+Use the Node version pinned in [`.nvmrc`](.nvmrc) (currently **24.18.0**). If you
 use [nvm](https://github.com/nvm-sh/nvm):
 
 ```shell

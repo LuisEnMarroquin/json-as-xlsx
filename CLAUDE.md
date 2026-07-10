@@ -39,7 +39,8 @@ same version — always update both together: GitHub Actions reads `.nvmrc`
 (in practice it ignores `.nvmrc`). Keep it on a version supported by the
 toolchain (lerna 9 needs `^20.19 || ^22.12 || >=24`).
 
-TypeScript is intentionally pinned to `^6.0.3` in every package — do not bump it
+TypeScript is intentionally pinned to `~6.0.3` (6.0.x only, matching the tilde
+pin used across the maintainer's other repos) in every package — do not bump it
 to 7.x yet. ts-jest still needs the legacy JS compiler API (e.g.
 `ts.sys.fileExists`) that TypeScript 7 (the Go-native compiler, released
 2026-07-08) removed. Retry the upgrade once ts-jest supports TS 7; everything

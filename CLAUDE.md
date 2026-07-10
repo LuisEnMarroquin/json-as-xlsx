@@ -37,6 +37,12 @@ Use the Node version in `.nvmrc` (currently `24.11.1`). Cloudflare reads `.nvmrc
 so it must stay on a version supported by the toolchain (lerna 9 needs
 `^20.19 || ^22.12 || >=24`).
 
+TypeScript is intentionally pinned to `^6.0.3` in every package — do not bump it
+to 7.x yet. ts-jest still needs the legacy JS compiler API (e.g.
+`ts.sys.fileExists`) that TypeScript 7 (the Go-native compiler, released
+2026-07-08) removed. Retry the upgrade once ts-jest supports TS 7; everything
+else stays on latest.
+
 ## Repository language — IMPORTANT
 
 - English is the language of this repository.

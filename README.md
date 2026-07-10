@@ -89,15 +89,15 @@ xlsx(data, settings) // Will download the excel file
 
 ### Settings
 
-| Option         | Type                  | Default         | Description                                                                                   |
-| -------------- | --------------------- | --------------- | --------------------------------------------------------------------------------------------- |
-| `enableStyles` | `boolean`             | `false`         | Write cell style objects into the `.xlsx` file. Only supported with `bookType: "xlsx"`.         |
-| `fileName`     | `string`              | `"Spreadsheet"` | Name of the resulting file (the `.xlsx` extension is added automatically).                     |
-| `extraLength`  | `number`              | `1`             | Extra characters added to every auto-calculated column width.                                 |
-| `writeMode`    | `"writeFile"`/`"write"` | `"writeFile"` | `"writeFile"` downloads/writes the file; `"write"` returns the raw data (e.g. a Node buffer).  |
-| `writeOptions` | `object`              | `{}`            | Passed straight to SheetJS — see [write options](https://docs.sheetjs.com/docs/api/write-options). |
-| `RTL`          | `boolean`             | `false`         | Render every sheet right-to-left.                                                             |
-| `writeEmptyValuesAsBlankCells` | `boolean` | `false` | Omit empty-string, `null`, `undefined` and missing-path values so Excel treats them as blank cells. |
+| Option                         | Type                    | Default         | Description                                                                                         |
+| ------------------------------ | ----------------------- | --------------- | --------------------------------------------------------------------------------------------------- |
+| `enableStyles`                 | `boolean`               | `false`         | Write cell style objects into the `.xlsx` file. Only supported with `bookType: "xlsx"`.             |
+| `fileName`                     | `string`                | `"Spreadsheet"` | Name of the resulting file (the `.xlsx` extension is added automatically).                          |
+| `extraLength`                  | `number`                | `1`             | Extra characters added to every auto-calculated column width.                                       |
+| `writeMode`                    | `"writeFile"`/`"write"` | `"writeFile"`   | `"writeFile"` downloads/writes the file; `"write"` returns the raw data (e.g. a Node buffer).       |
+| `writeOptions`                 | `object`                | `{}`            | Passed straight to SheetJS — see [write options](https://docs.sheetjs.com/docs/api/write-options).  |
+| `RTL`                          | `boolean`               | `false`         | Render every sheet right-to-left.                                                                   |
+| `writeEmptyValuesAsBlankCells` | `boolean`               | `false`         | Omit empty-string, `null`, `undefined` and missing-path values so Excel treats them as blank cells. |
 
 ### True blank cells
 
@@ -115,12 +115,7 @@ let data = [
       { label: "Email", value: (row) => row.contact?.email ?? "" },
       { label: "Score", value: "score", format: "0.00" },
     ],
-    content: [
-      { id: "ID-101", contact: { email: "ada@example.com" }, score: 98.5 },
-      { id: "ID-102", contact: { email: "" } },
-      { id: "ID-103", score: null },
-      { id: "ID-104" },
-    ],
+    content: [{ id: "ID-101", contact: { email: "ada@example.com" }, score: 98.5 }, { id: "ID-102", contact: { email: "" } }, { id: "ID-103", score: null }, { id: "ID-104" }],
   },
 ]
 
@@ -321,11 +316,11 @@ xlsx(data, { fileName: "MultiTableSpreadsheet" })
 When `tables` is present and non-empty it takes precedence over the sheet's
 top-level `columns`/`content`.
 
-| Sheet option    | Type                         | Default      | Description                                                              |
-| --------------- | ---------------------------- | ------------ | ------------------------------------------------------------------------ |
-| `tables`        | `{ columns, content }[]`     | —            | Render multiple tables in the sheet. Each table keeps its own formatting. |
-| `tablesLayout`  | `"vertical"`/`"horizontal"`  | `"vertical"` | Stack tables top-to-bottom or place them left-to-right.                  |
-| `tablesGap`     | `number`                     | `1`          | Blank rows (vertical) or columns (horizontal) left between tables.       |
+| Sheet option   | Type                        | Default      | Description                                                               |
+| -------------- | --------------------------- | ------------ | ------------------------------------------------------------------------- |
+| `tables`       | `{ columns, content }[]`    | —            | Render multiple tables in the sheet. Each table keeps its own formatting. |
+| `tablesLayout` | `"vertical"`/`"horizontal"` | `"vertical"` | Stack tables top-to-bottom or place them left-to-right.                   |
+| `tablesGap`    | `number`                    | `1`          | Blank rows (vertical) or columns (horizontal) left between tables.        |
 
 ## TypeScript
 
@@ -338,12 +333,8 @@ import xlsx, { IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json
 // or:
 // import { xlsx, IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
 
-const data: IJsonSheet[] = [
-  /* ... */
-]
-const settings: ISettings = {
-  /* ... */
-}
+const data: IJsonSheet[] = [/* ... */]
+const settings: ISettings = {/* ... */}
 
 xlsx(data, settings)
 ```

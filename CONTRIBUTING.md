@@ -11,15 +11,15 @@ By participating in this project you agree to abide by our
 This is a [Yarn](https://yarnpkg.com) + [Lerna](https://lerna.js.org) monorepo.
 The packages live under `packages/*`:
 
-| Package        | Description                                                          |
-| -------------- | ------------------------------------------------------------------- |
-| `main-library` | The published npm package `json-as-xlsx`. **This is what ships.**    |
-| `demo-express` | Runnable Express example (`ts-node`).                               |
-| `demo-reactjs` | The web UI / demo site (built with Vite).                           |
+| Package        | Description                                                       |
+| -------------- | ----------------------------------------------------------------- |
+| `main-library` | The published npm package `json-as-xlsx`. **This is what ships.** |
+| `demo-express` | Runnable Express example (`ts-node`).                             |
+| `demo-reactjs` | The web UI / demo site (built with Vite).                         |
 
 ## Requirements
 
-Use the Node version pinned in [`.nvmrc`](.nvmrc) (currently **24.11.1**). If you
+Use the Node version pinned in [`.nvmrc`](.nvmrc) (currently **24.18.0**). If you
 use [nvm](https://github.com/nvm-sh/nvm):
 
 ```shell
@@ -73,7 +73,7 @@ npx prettier --write .
 
 ## Submitting changes
 
-1. Fork the repository and create your branch from `develop`.
+1. Fork the repository and create your branch from `test`.
 2. Make your change, add tests, and make sure `yarn test` and `yarn build` pass.
 3. Open a pull request against `main` describing what and why.
 

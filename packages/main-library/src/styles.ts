@@ -8,19 +8,7 @@ export interface ICellStyleColor {
   auto?: boolean
 }
 
-export type IBorderStyle =
-  | "dashDot"
-  | "dashDotDot"
-  | "dashed"
-  | "dotted"
-  | "hair"
-  | "medium"
-  | "mediumDashDot"
-  | "mediumDashDotDot"
-  | "mediumDashed"
-  | "slantDashDot"
-  | "thick"
-  | "thin"
+export type IBorderStyle = "dashDot" | "dashDotDot" | "dashed" | "dotted" | "hair" | "medium" | "mediumDashDot" | "mediumDashDotDot" | "mediumDashed" | "slantDashDot" | "thick" | "thin"
 
 export interface ICellStyle {
   alignment?: {
@@ -89,7 +77,11 @@ class XmlNode {
   private childNodes: XmlNode[]
   private prefixText = ""
 
-  constructor(private tagName: string, attributes: XmlAttributes = {}, children: XmlNode[] = []) {
+  constructor(
+    private tagName: string,
+    attributes: XmlAttributes = {},
+    children: XmlNode[] = [],
+  ) {
     this.attributes = attributes
     this.childNodes = children
   }
@@ -163,12 +155,7 @@ class StyleBuilder {
   private cellStyles = new XmlNode("cellStyles").attr("count", 1).append(new XmlNode("cellStyle").attr("name", "Normal").attr("xfId", 0).attr("builtinId", 0))
   private dxfs = new XmlNode("dxfs").attr("count", 0)
   private tableStyles = new XmlNode("tableStyles").attr("count", 0).attr("defaultTableStyle", "TableStyleMedium9").attr("defaultPivotStyle", "PivotStyleMedium4")
-  private styles = new XmlNode("styleSheet")
-    .attr("xmlns:mc", "http://schemas.openxmlformats.org/markup-compatibility/2006")
-    .attr("xmlns:x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac")
-    .attr("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main")
-    .attr("mc:Ignorable", "x14ac")
-    .prefix('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
+  private styles = new XmlNode("styleSheet").attr("xmlns:mc", "http://schemas.openxmlformats.org/markup-compatibility/2006").attr("xmlns:x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac").attr("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main").attr("mc:Ignorable", "x14ac").prefix('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
 
   constructor(defaultCellStyle: ICellStyle = {}) {
     this.defaultStyle = mergeCellStyles(
@@ -178,7 +165,7 @@ class StyleBuilder {
         font: { name: "Calibri", sz: 11 },
         numFmt: 0,
       },
-      defaultCellStyle
+      defaultCellStyle,
     )
 
     this.styles
@@ -246,9 +233,7 @@ class StyleBuilder {
     const cached = this.fontHashIndex.get(key)
     if (cached !== undefined) return cached
 
-    const fontNode = new XmlNode("font")
-      .append(new XmlNode("sz").attr("val", font.sz ?? this.defaultStyle.font?.sz ?? 11))
-      .append(new XmlNode("name").attr("val", font.name ?? this.defaultStyle.font?.name ?? "Calibri"))
+    const fontNode = new XmlNode("font").append(new XmlNode("sz").attr("val", font.sz ?? this.defaultStyle.font?.sz ?? 11)).append(new XmlNode("name").attr("val", font.name ?? this.defaultStyle.font?.name ?? "Calibri"))
 
     if (font.bold) fontNode.append(new XmlNode("b"))
     if (font.underline) fontNode.append(new XmlNode("u"))
@@ -402,29 +387,11 @@ const hasEffectiveAlignment = (alignment?: ICellStyle["alignment"]): boolean => 
 }
 
 const hasEffectiveFont = (font?: ICellStyle["font"]): boolean => {
-  return Boolean(
-    font &&
-      (font.bold ||
-        font.italic ||
-        font.outline ||
-        font.shadow ||
-        font.strike ||
-        font.underline ||
-        hasMeaningfulValue(font.name) ||
-        hasMeaningfulValue(font.sz) ||
-        hasMeaningfulValue(font.vertAlign) ||
-        (font.color && hasColor(font.color)))
-  )
+  return Boolean(font && (font.bold || font.italic || font.outline || font.shadow || font.strike || font.underline || hasMeaningfulValue(font.name) || hasMeaningfulValue(font.sz) || hasMeaningfulValue(font.vertAlign) || (font.color && hasColor(font.color))))
 }
 
 const hasEffectiveFill = (fill?: ICellStyle["fill"]): boolean => {
-  return Boolean(
-    fill &&
-      (fill.patternType === "solid" ||
-        fill.patternType === "gray125" ||
-        (fill.fgColor && hasColor(fill.fgColor)) ||
-        (fill.bgColor && hasColor(fill.bgColor)))
-  )
+  return Boolean(fill && (fill.patternType === "solid" || fill.patternType === "gray125" || (fill.fgColor && hasColor(fill.fgColor)) || (fill.bgColor && hasColor(fill.bgColor))))
 }
 
 const hasEffectiveBorderSide = (side?: { color?: ICellStyleColor; style?: IBorderStyle }): boolean => {
@@ -432,16 +399,7 @@ const hasEffectiveBorderSide = (side?: { color?: ICellStyleColor; style?: IBorde
 }
 
 const hasEffectiveBorder = (border?: ICellStyle["border"]): boolean => {
-  return Boolean(
-    border &&
-      (hasEffectiveBorderSide(border.top) ||
-        hasEffectiveBorderSide(border.bottom) ||
-        hasEffectiveBorderSide(border.left) ||
-        hasEffectiveBorderSide(border.right) ||
-        hasEffectiveBorderSide(border.diagonal) ||
-        border.diagonal?.diagonalUp ||
-        border.diagonal?.diagonalDown)
-  )
+  return Boolean(border && (hasEffectiveBorderSide(border.top) || hasEffectiveBorderSide(border.bottom) || hasEffectiveBorderSide(border.left) || hasEffectiveBorderSide(border.right) || hasEffectiveBorderSide(border.diagonal) || border.diagonal?.diagonalUp || border.diagonal?.diagonalDown))
 }
 
 const hasEffectiveNumFmt = (numFmt?: string | number): boolean => {
@@ -454,13 +412,7 @@ const hasEffectiveCellStyle = (style: unknown): style is ICellStyle => {
   // Empty/no-op style objects must not write s="..." markers. They are common
   // when callers build cell objects conditionally, and treating them as real
   // styles bloats styles.xml without changing the rendered workbook.
-  return (
-    hasEffectiveAlignment(style.alignment) ||
-    hasEffectiveBorder(style.border) ||
-    hasEffectiveFill(style.fill) ||
-    hasEffectiveFont(style.font) ||
-    hasEffectiveNumFmt(style.numFmt)
-  )
+  return hasEffectiveAlignment(style.alignment) || hasEffectiveBorder(style.border) || hasEffectiveFill(style.fill) || hasEffectiveFont(style.font) || hasEffectiveNumFmt(style.numFmt)
 }
 
 export const patchStyledWorkbook = (workbook: IWorkbookLike, workbookData: ArrayBuffer | Uint8Array): Uint8Array => {

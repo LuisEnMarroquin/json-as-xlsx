@@ -33,7 +33,7 @@ test("", () => {
           return content.explicit ? "Yes" : "No"
         },
       },
-    ])
+    ]),
   ).toEqual({ "Explicit content": "No" })
 
   expect(getJsonSheetRow(track, [{ label: "Popularity", value: "popularity" }])).toEqual({ Popularity: 21 })
@@ -46,7 +46,7 @@ test("", () => {
           return (content.durationMs as number) / 1000 + "s"
         },
       },
-    ])
+    ]),
   ).toEqual({ Duration: "4.01s" })
 
   expect(getJsonSheetRow(track, [{ label: "URI", value: "uri" }])).toEqual({ URI: "" })
@@ -76,7 +76,7 @@ test("Should optionally keep function-column empty strings as blank cells", () =
         label: "URI",
         value: (content: IContent) => content.uri,
       },
-    ])
+    ]),
   ).toEqual({ URI: "" })
 
   expect(
@@ -88,7 +88,7 @@ test("Should optionally keep function-column empty strings as blank cells", () =
           value: (content: IContent) => content.uri,
         },
       ],
-      { writeEmptyValuesAsBlankCells: true }
-    )
+      { writeEmptyValuesAsBlankCells: true },
+    ),
   ).toEqual({ URI: null })
 })

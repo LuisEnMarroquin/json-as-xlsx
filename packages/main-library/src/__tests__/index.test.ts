@@ -222,10 +222,7 @@ describe("json-as-xlsx", () => {
         {
           sheet: "Users",
           columns: [{ label: "Name", value: "metadata.person.name" }],
-          content: [
-            { metadata: { person: { v: "not a cell", name: "Martin" } } },
-            { metadata: { person: { v: "not a cell", name: "Robert" } } },
-          ],
+          content: [{ metadata: { person: { v: "not a cell", name: "Martin" } } }, { metadata: { person: { v: "not a cell", name: "Robert" } } }],
         },
       ]
       const buffer = jsonxlsx(sheets, settings)

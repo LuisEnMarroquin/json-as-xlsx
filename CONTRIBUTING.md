@@ -73,7 +73,7 @@ npx prettier --write .
 
 ## Submitting changes
 
-1. Fork the repository and create your branch from `develop`.
+1. Fork the repository and create your branch from `test`.
 2. Make your change, add tests, and make sure `yarn test` and `yarn build` pass.
 3. Open a pull request against `main` describing what and why.
 

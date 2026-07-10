@@ -1,5 +1,5 @@
 # Cloudflare Pages configuration.
-# `develop` is the production branch (https://xlsx.luismarroquin.com / https://xlsx.pages.dev);
+# `test` is the production branch (https://xlsx.luismarroquin.com / https://xlsx.pages.dev);
 # other branches get preview deployments. The dashboard build command stays
 # `yarn build && yarn static`, which writes the static site into `build/`.
 name = "xlsx"

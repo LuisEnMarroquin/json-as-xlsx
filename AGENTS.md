@@ -93,22 +93,22 @@ users' code keeps working when they upgrade:
 
 ## Branch workflow — IMPORTANT
 
-- **Never create new branches.** All work happens on `develop`. The AI must not
-  create feature/topic branches — commit to `develop` and push it.
-- **Pushing `develop` is always safe — do it freely, no confirmation needed.**
+- **Never create new branches.** All work happens on `test`. The AI must not
+  create feature/topic branches — commit to `test` and push it.
+- **Pushing `test` is always safe — do it freely, no confirmation needed.**
   It only triggers a Cloudflare deploy to the dev environment, which is Luis's
-  internal/staging site. Nothing is published to npm or end users from `develop`.
+  internal/staging site. Nothing is published to npm or end users from `test`.
 - **`main` is push-protected: you CANNOT push to it from local.** Whenever you
-  find yourself on `main`, switch to `develop` and do the work there.
-- **When moving to `develop`, first bring in the latest changes from `main`**
-  (e.g. `git switch develop && git merge origin/main`) so we never start from
-  outdated code. Then make changes, commit, and push `develop`.
-- Changes reach `main` via Pull Request (develop → main), since direct pushes
+  find yourself on `main`, switch to `test` and do the work there.
+- **When moving to `test`, first bring in the latest changes from `main`**
+  (e.g. `git switch test && git merge origin/main`) so we never start from
+  outdated code. Then make changes, commit, and push `test`.
+- Changes reach `main` via Pull Request (test → main), since direct pushes
   to `main` are blocked.
-- **When Luis asks to "make a PR" (or "open the PR") and we are on `develop`,
-  it is ALWAYS a PR from `develop` into `main`.** Don't ask which base branch —
+- **When Luis asks to "make a PR" (or "open the PR") and we are on `test`,
+  it is ALWAYS a PR from `test` into `main`.** Don't ask which base branch —
   the target is always `main`.
-- **The AI may, at most, open the Pull Request (develop → main). It must never
+- **The AI may, at most, open the Pull Request (test → main). It must never
   merge it** — Luis reviews and merges the PR himself.
 
 ## Commit workflow — IMPORTANT
@@ -118,7 +118,7 @@ users' code keeps working when they upgrade:
   uncommitted unless Luis explicitly asks to exclude something.
 - When Luis writes `/gacp` or `gacp`, treat it as a request to run the full git
   add, commit, and push flow for the current task. The AI tool has permission to
-  stage all pending changes, create an appropriate commit, and push `develop`
+  stage all pending changes, create an appropriate commit, and push `test`
   without asking for extra confirmation, while still following the branch and
   commit rules above.
 
@@ -203,8 +203,8 @@ digit (0–9) and rolls over instead of going to 10**:
 
 ## Deploys — who deploys what
 
-- **`develop` → Cloudflare Pages.** Pushing `develop` builds and deploys the
-  web UI (`demo-reactjs`) to Cloudflare (`develop` is the Cloudflare production
+- **`test` → Cloudflare Pages.** Pushing `test` builds and deploys the
+  web UI (`demo-reactjs`) to Cloudflare (`test` is the Cloudflare production
   branch; build command `yarn build && yarn static`, output `build`). Live at
   **https://xlsx.luismarroquin.com** / **https://xlsx.pages.dev**. Other
   branches get Cloudflare *preview* deployments.

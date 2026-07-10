@@ -6,11 +6,7 @@
   padding: 2.5rem 1.25rem;
   overflow-x: hidden;
   color: #e6edf3;
-  background:
-    radial-gradient(1100px 600px at 12% -10%, rgba(110, 231, 183, 0.22), transparent 60%),
-    radial-gradient(900px 500px at 112% 8%, rgba(33, 163, 102, 0.18), transparent 55%),
-    radial-gradient(800px 800px at 50% 120%, rgba(56, 189, 248, 0.12), transparent 60%),
-    #0b1220;
+  background: radial-gradient(1100px 600px at 12% -10%, rgba(110, 231, 183, 0.22), transparent 60%), radial-gradient(900px 500px at 112% 8%, rgba(33, 163, 102, 0.18), transparent 55%), radial-gradient(800px 800px at 50% 120%, rgba(56, 189, 248, 0.12), transparent 60%), #0b1220;
 }
 
 .card {
@@ -119,7 +115,10 @@
   border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 14px 32px -10px var(--download-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
 }
 
 .download.example {
@@ -239,10 +238,7 @@
 @media (prefers-color-scheme: light) {
   .page {
     color: #1f2937;
-    background:
-      radial-gradient(1100px 600px at 12% -10%, rgba(33, 163, 102, 0.18), transparent 60%),
-      radial-gradient(900px 500px at 112% 8%, rgba(56, 189, 248, 0.14), transparent 55%),
-      #f5f8fb;
+    background: radial-gradient(1100px 600px at 12% -10%, rgba(33, 163, 102, 0.18), transparent 60%), radial-gradient(900px 500px at 112% 8%, rgba(56, 189, 248, 0.14), transparent 55%), #f5f8fb;
   }
 
   .card {

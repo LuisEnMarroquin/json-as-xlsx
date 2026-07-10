@@ -278,8 +278,7 @@ const buildJsonSheetRows = (columns: IColumn[], content: IContent[], settings: I
 const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => {
   // A sheet either holds a single table (`columns`/`content`) or several
   // (`tables`). Normalize both into one list so the rest is layout-agnostic.
-  const tables: IJsonSheetTable[] =
-    jsonSheet.tables && jsonSheet.tables.length > 0 ? jsonSheet.tables : [{ columns: jsonSheet.columns ?? [], content: jsonSheet.content ?? [] }]
+  const tables: IJsonSheetTable[] = jsonSheet.tables && jsonSheet.tables.length > 0 ? jsonSheet.tables : [{ columns: jsonSheet.columns ?? [], content: jsonSheet.content ?? [] }]
 
   const layout = jsonSheet.tablesLayout ?? "vertical"
   const gap = jsonSheet.tablesGap ?? 1
@@ -361,10 +360,7 @@ const isStyledCell = (value: unknown): value is IStyledCell => {
   // `v` alone is too generic, and so are marker names with arbitrary values
   // (`t` is a common "type" field in user data). Only unwrap objects that look
   // like actual worksheet cells with a value plus a valid cell marker.
-  return (
-    "v" in cell &&
-    (validCellTypes.has(String(cell.t)) || hasStyleKeys(cell.s) || typeof cell.z === "string" || isCellLink(cell.l))
-  )
+  return "v" in cell && (validCellTypes.has(String(cell.t)) || hasStyleKeys(cell.s) || typeof cell.z === "string" || isCellLink(cell.l))
 }
 
 const writeWorkbook = (workbook: WorkBook, settings: ISettings = {}): IStyledOutput | undefined => {

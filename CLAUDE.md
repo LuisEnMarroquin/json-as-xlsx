@@ -207,7 +207,7 @@ digit (0–9) and rolls over instead of going to 10**:
   web UI (`demo-reactjs`) to Cloudflare (`test` is the Cloudflare production
   branch; build command `yarn build && yarn static`, output `build`). Live at
   **https://xlsx.luismarroquin.com** / **https://xlsx.pages.dev**. Other
-  branches get Cloudflare *preview* deployments.
+  branches get Cloudflare _preview_ deployments.
 - **`main` → GitHub Actions.** Pushing/merging to `main` runs `.github/workflows/main.yml`,
   which tests, builds, **publishes the package to npm**, creates a GitHub release,
   and deploys the UI to GitHub Pages at **https://xlsx.marroquin.dev** (the

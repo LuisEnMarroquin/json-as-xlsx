@@ -8,9 +8,7 @@ import { fileURLToPath } from "node:url"
 // compatibility" warnings (see issue #96). Those paths never run in the browser
 // — downloads use a Blob — so we alias the built-ins to an empty module to
 // silence the warnings without affecting behavior.
-const emptyBuiltin = fileURLToPath(
-  new URL("./src/empty-node-builtin.ts", import.meta.url)
-)
+const emptyBuiltin = fileURLToPath(new URL("./src/empty-node-builtin.ts", import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({

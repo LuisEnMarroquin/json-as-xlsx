@@ -11,11 +11,11 @@ By participating in this project you agree to abide by our
 This is a [Yarn](https://yarnpkg.com) + [Lerna](https://lerna.js.org) monorepo.
 The packages live under `packages/*`:
 
-| Package        | Description                                                          |
-| -------------- | ------------------------------------------------------------------- |
-| `main-library` | The published npm package `json-as-xlsx`. **This is what ships.**    |
-| `demo-express` | Runnable Express example (`ts-node`).                               |
-| `demo-reactjs` | The web UI / demo site (built with Vite).                           |
+| Package        | Description                                                       |
+| -------------- | ----------------------------------------------------------------- |
+| `main-library` | The published npm package `json-as-xlsx`. **This is what ships.** |
+| `demo-express` | Runnable Express example (`ts-node`).                             |
+| `demo-reactjs` | The web UI / demo site (built with Vite).                         |
 
 ## Requirements
 

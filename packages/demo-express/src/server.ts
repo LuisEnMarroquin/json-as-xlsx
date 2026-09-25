@@ -207,7 +207,7 @@ const linkData: IJsonSheet[] = [
     content: [
       { resource: "GitHub repository", url: "https://github.com/LuisEnMarroquin/json-as-xlsx", owner: "Open source" },
       { resource: "npm package", url: "https://www.npmjs.com/package/json-as-xlsx", owner: "Registry" },
-      { resource: "Live demo", url: "https://xlsx.luismarroquin.com", owner: "Cloudflare Pages" },
+      { resource: "Live demo", url: "https://excel.marroquin.dev", owner: "Cloudflare Pages" },
     ],
   },
 ]

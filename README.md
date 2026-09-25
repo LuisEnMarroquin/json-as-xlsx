@@ -333,12 +333,8 @@ import xlsx, { IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json
 // or:
 // import { xlsx, IJsonSheet, ISettings, IColumn, IContent, ICellStyle } from "json-as-xlsx"
 
-const data: IJsonSheet[] = [
-  /* ... */
-]
-const settings: ISettings = {
-  /* ... */
-}
+const data: IJsonSheet[] = [/* ... */]
+const settings: ISettings = {/* ... */}
 
 xlsx(data, settings)
 ```

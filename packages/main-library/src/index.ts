@@ -106,14 +106,35 @@ export function getContentProperty(content: IContent, property: string, options:
   return accessContentProperties(content, properties)
 }
 
+const getColumnValue = (content: IContent, column: IColumn, options: IEmptyCellOptions): IContentValue => {
+  if (typeof column.value === "function") {
+    return normalizeEmptyCellValue(column.value(content), options)
+  }
+
+  return getContentProperty(content, column.value, options)
+}
+
+// Public helper: returns a row keyed by column label. Columns that share a label
+// collapse into one key here, so the worksheet itself is built from
+// position-keyed rows instead (see getPositionKeyedRow).
 export const getJsonSheetRow = (content: IContent, columns: IColumn[], options: IEmptyCellOptions = {}): IJsonSheetRow => {
   const jsonSheetRow: IJsonSheetRow = {}
   columns.forEach((column) => {
-    if (typeof column.value === "function") {
-      jsonSheetRow[column.label] = normalizeEmptyCellValue(column.value(content), options)
-    } else {
-      jsonSheetRow[column.label] = getContentProperty(content, column.value, options)
-    }
+    jsonSheetRow[column.label] = getColumnValue(content, column, options)
+  })
+  return jsonSheetRow
+}
+
+// Worksheet rows are keyed by column position rather than by label. Keying by
+// label merged columns that share a label into a single one (issue #121) and let
+// JavaScript move integer-like labels such as "2024" ahead of the others, which
+// left formats and styles (always applied by position) on the wrong columns.
+const getColumnKeys = (columns: IColumn[]): string[] => columns.map((_column, index) => String(index))
+
+const getPositionKeyedRow = (content: IContent, columns: IColumn[], columnKeys: string[], options: IEmptyCellOptions): IJsonSheetRow => {
+  const jsonSheetRow: IJsonSheetRow = {}
+  columns.forEach((column, index) => {
+    jsonSheetRow[columnKeys[index]] = getColumnValue(content, column, options)
   })
   return jsonSheetRow
 }
@@ -262,9 +283,9 @@ export const getWorksheetColumnWidths = (worksheet: WorkSheet, extraLength: numb
   })
 }
 
-const buildJsonSheetRows = (columns: IColumn[], content: IContent[], settings: ISettings): IJsonSheetRow[] => {
+const buildJsonSheetRows = (columns: IColumn[], columnKeys: string[], content: IContent[], settings: ISettings): IJsonSheetRow[] => {
   if (content.length > 0) {
-    return content.map((contentItem) => getJsonSheetRow(contentItem, columns, settings))
+    return content.map((contentItem) => getPositionKeyedRow(contentItem, columns, columnKeys, settings))
   }
 
   if (settings.writeEmptyValuesAsBlankCells) {
@@ -272,7 +293,15 @@ const buildJsonSheetRows = (columns: IColumn[], content: IContent[], settings: I
   }
 
   // If there's no content, show only column labels
-  return columns.map((column) => ({ [column.label]: "" }))
+  return columnKeys.map((columnKey) => ({ [columnKey]: "" }))
+}
+
+// SheetJS writes the position keys as the header row, so replace each one with
+// its column label. The cell shape matches the one SheetJS creates for headers.
+const writeHeaderLabels = (worksheet: WorkSheet, columns: IColumn[], startRow: number, startCol: number) => {
+  columns.forEach((column, index) => {
+    worksheet[utils.encode_cell({ r: startRow, c: startCol + index })] = { t: "s", v: String(column.label) }
+  })
 }
 
 const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => {
@@ -289,8 +318,11 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
   const placedTables: IPlacedTable[] = []
 
   tables.forEach((table) => {
-    const jsonSheetRows = buildJsonSheetRows(table.columns, table.content, settings)
-    const jsonSheetOptions = table.content.length === 0 && settings.writeEmptyValuesAsBlankCells ? { header: table.columns.map((column) => column.label) } : {}
+    const columnKeys = getColumnKeys(table.columns)
+    const jsonSheetRows = buildJsonSheetRows(table.columns, columnKeys, table.content, settings)
+    // An explicit header pins every column to its declared position, including
+    // when there are no rows to infer the columns from.
+    const jsonSheetOptions = { header: columnKeys }
     const startRow = nextRow
     const startCol = nextCol
 
@@ -300,6 +332,8 @@ const getWorksheet = (jsonSheet: IJsonSheet, settings: ISettings): WorkSheet => 
     } else {
       utils.sheet_add_json(worksheet, jsonSheetRows, { ...jsonSheetOptions, origin: { r: startRow, c: startCol } })
     }
+
+    writeHeaderLabels(worksheet, table.columns, startRow, startCol)
 
     placedTables.push({ columns: table.columns, startRow, startCol, dataRowCount: jsonSheetRows.length })
 

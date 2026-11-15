@@ -10,6 +10,10 @@ for the rules.
 
 ## Unreleased
 
+- Fixed columns that share a `label` being merged into a single column, which
+  dropped data and left formats and styles on the wrong columns. Columns are now
+  written by position, so integer-like labels such as `"2024"` also keep their
+  declared order.
 - Minify all JavaScript files published in the npm package.
 - Added opt-in `writeEmptyValuesAsBlankCells` support so empty, null and missing
   values can be exported as true blank cells in Excel.

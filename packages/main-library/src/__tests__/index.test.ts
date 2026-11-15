@@ -1087,6 +1087,164 @@ describe("json-as-xlsx", () => {
     })
   })
 
+  describe("columns are written by position (issue #121)", () => {
+    const bufferSettings: ISettings = { writeOptions: { type: "buffer" } }
+
+    const captureWorksheet = (sheets: IJsonSheet[], settings: ISettings = {}) => {
+      let workbook: any
+      jsonxlsx(sheets, { ...settings, writeMode: "write" }, (capturedWorkbook) => {
+        workbook = capturedWorkbook
+      })
+      return workbook.Sheets[sheets[0].sheet as string]
+    }
+
+    it("keeps columns that share a label as separate columns", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Scores",
+          columns: [
+            { label: "Name", value: "name" },
+            { label: "Score", value: "math" },
+            { label: "Score", value: "physics" },
+          ],
+          content: [
+            { name: "Ada", math: 90, physics: 70 },
+            { name: "Alan", math: 80, physics: 95 },
+          ],
+        },
+      ]
+
+      const workSheet = readBufferWorkBook(jsonxlsx(sheets, bufferSettings)).Sheets.Scores
+
+      expect(workSheet["!ref"]).toBe("A1:C3")
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.B1.v).toBe("Score")
+      expect(workSheet.C1.v).toBe("Score")
+      expect(workSheet.A2.v).toBe("Ada")
+      expect(workSheet.B2.v).toBe(90)
+      expect(workSheet.C2.v).toBe(70)
+      expect(workSheet.A3.v).toBe("Alan")
+      expect(workSheet.B3.v).toBe(80)
+      expect(workSheet.C3.v).toBe(95)
+    })
+
+    it("keeps formats and styles on their own columns when labels repeat", () => {
+      const workSheet = captureWorksheet(
+        [
+          {
+            sheet: "Scores",
+            columns: [
+              { label: "Score", value: "math" },
+              {
+                label: "Score",
+                value: "physics",
+                format: "0.00%",
+                headerStyle: { font: { bold: true } },
+                cellStyle: { font: { italic: true } },
+              },
+              { label: "Name", value: "name" },
+              { label: "Total", value: "total", format: "$0.00" },
+            ],
+            content: [{ math: 0.9, physics: 0.7, name: "Ada", total: 160 }],
+          },
+        ],
+        { enableStyles: true },
+      )
+
+      expect(workSheet["!ref"]).toBe("A1:D2")
+      expect(workSheet.B2.v).toBe(0.7)
+      expect(workSheet.B2.z).toBe("0.00%")
+      expect(workSheet.B1.s).toEqual({ font: { bold: true } })
+      expect(workSheet.B2.s).toEqual({ font: { italic: true } })
+      expect(workSheet.D2.v).toBe(160)
+      expect(workSheet.D2.z).toBe("$0.00")
+      // The neighbours keep no format or style of their own
+      expect(workSheet.A2.z).toBeUndefined()
+      expect(workSheet.C2.z).toBeUndefined()
+      expect(workSheet.A1.s).toBeUndefined()
+      expect(workSheet.C1.s).toBeUndefined()
+      expect(workSheet.C2.s).toBeUndefined()
+    })
+
+    it("keeps the declared order for integer-like labels", () => {
+      const workSheet = captureWorksheet([
+        {
+          sheet: "Years",
+          columns: [
+            { label: "Name", value: "name" },
+            { label: "2024", value: "current", format: "$0.00" },
+            { label: "2023", value: "previous" },
+          ],
+          content: [{ name: "Ada", current: 2, previous: 1 }],
+        },
+      ])
+
+      expect(workSheet.A1.v).toBe("Name")
+      expect(workSheet.B1.v).toBe("2024")
+      expect(workSheet.C1.v).toBe("2023")
+      expect(workSheet.A2.v).toBe("Ada")
+      expect(workSheet.B2.v).toBe(2)
+      expect(workSheet.B2.z).toBe("$0.00")
+      expect(workSheet.C2.v).toBe(1)
+      expect(workSheet.C2.z).toBeUndefined()
+    })
+
+    it("writes every header when labels repeat and there is no content", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Scores",
+          columns: [
+            { label: "Name", value: "name" },
+            { label: "Score", value: "math" },
+            { label: "Score", value: "physics" },
+          ],
+          content: [],
+        },
+      ]
+
+      const defaultWorkSheet = readBufferWorkBook(jsonxlsx(sheets, bufferSettings)).Sheets.Scores
+      const blankWorkSheet = readBufferWorkBook(jsonxlsx(sheets, { ...bufferSettings, writeEmptyValuesAsBlankCells: true })).Sheets.Scores
+
+      ;[defaultWorkSheet, blankWorkSheet].forEach((workSheet) => {
+        expect(workSheet.A1.v).toBe("Name")
+        expect(workSheet.B1.v).toBe("Score")
+        expect(workSheet.C1.v).toBe("Score")
+      })
+      expect(blankWorkSheet["!ref"]).toBe("A1:C1")
+    })
+
+    it("places the next horizontal table after every column of the previous one", () => {
+      const sheets: IJsonSheet[] = [
+        {
+          sheet: "Multi",
+          tablesLayout: "horizontal",
+          tables: [
+            {
+              columns: [
+                { label: "Score", value: "math" },
+                { label: "Score", value: "physics" },
+              ],
+              content: [{ math: 90, physics: 70 }],
+            },
+            {
+              columns: [{ label: "Product", value: "product" }],
+              content: [{ product: "Pen" }],
+            },
+          ],
+        },
+      ]
+
+      const workSheet = readBufferWorkBook(jsonxlsx(sheets, bufferSettings)).Sheets.Multi
+
+      expect(workSheet.A2.v).toBe(90)
+      expect(workSheet.B2.v).toBe(70)
+      // Column C is the gap and stays empty
+      expect(workSheet.C1).toBeUndefined()
+      expect(workSheet.D1.v).toBe("Product")
+      expect(workSheet.D2.v).toBe("Pen")
+    })
+  })
+
   describe("styled binary output", () => {
     const bytes = new Uint8Array([0x00, 0x41, 0x7f, 0x80, 0x9f, 0xff])
     const expectedCharCodes = Array.from(bytes)
